@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">ShoppingMore</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+ 
+    <string name="first_tag_name">推荐</string>
+    <string name="second_tag_name">货到付款</string>
+    <string name="third_tag_name">淘宝好店</string>
 
 </resources>
