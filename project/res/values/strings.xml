@@ -3,8 +3,8 @@
 
     <string name="app_name">ShoppingMore</string>
  
-    <string name="first_tag_name">推荐</string>
-    <string name="second_tag_name">货到付款</string>
-    <string name="third_tag_name">淘宝好店</string>
+    <string name="str_recommend">推荐</string>
+    <string name="str_cash_delivery">货到付款</string>
+    <string name="str_taobao">淘宝好店</string>
 
 </resources>
