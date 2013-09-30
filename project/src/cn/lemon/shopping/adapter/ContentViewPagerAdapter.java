@@ -10,10 +10,10 @@ public class ContentViewPagerAdapter extends PagerAdapter {
 
     private List<String> mTagList;
 
-    public ContentViewPagerAdapter() {
+    public ContentViewPagerAdapter(List<String> taglist) {
 
         super();
-        mTagList = mTagList;
+        mTagList = taglist;
     }
 
     @Override
