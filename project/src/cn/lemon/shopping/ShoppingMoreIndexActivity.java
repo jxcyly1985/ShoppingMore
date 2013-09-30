@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -50,6 +51,15 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
         initView();
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+
+        mLocalActivityManager.dispatchDestroy(true);
+    }
+
     private void initView() {
 
         Resources resources = getResources();
@@ -70,14 +80,13 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
         mTabHost.addTab(getTabSpecItem(mRecommendString));
         mTabHost.addTab(getTabSpecItem(mCashDeliveryString));
         mTabHost.addTab(getTabSpecItem(mTabbaoString));
+        initViewPager();
 
         // change tab widget height
         tabWidgetHeight = resources.getDimensionPixelSize(R.dimen.dimen_tab_widget_height);
         mTabWidget.getLayoutParams().height = tabWidgetHeight;
         mTabHost.setCurrentTab(0);
         updateTab(mTabHost);
-
-        initViewPager();
 
     }
 
@@ -101,17 +110,6 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
     }
 
     private void initViewPager() {
-
-//        ImageView imageview1 = new ImageView(this);
-//        ImageView imageview2 = new ImageView(this);
-//        ImageView imageview3 = new ImageView(this);
-//        imageview1.setImageResource(R.drawable.beauty_o);
-//        imageview2.setImageResource(R.drawable.beauty_r);
-//        imageview3.setImageResource(R.drawable.beauty_t);
-//        ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
-//        mViewPager.addView(imageview1, layoutParams);
-//        mViewPager.addView(imageview2, layoutParams);
-//        mViewPager.addView(imageview3, layoutParams);
 
         ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
         mViewPager.setAdapter(adapter);
@@ -148,13 +146,14 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // TODO Auto-generated method stub
 
-                DebugUtil.debug(TAG, "onPageScrolled");
+                DebugUtil.debug(TAG, "onPageScrolled position " + position + " positionOffset "
+                        + positionOffset + " positionOffsetPixels " + positionOffsetPixels);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 // TODO Auto-generated method stub
-                DebugUtil.debug(TAG, "onPageScrollStateChanged");
+                DebugUtil.debug(TAG, "onPageScrollStateChanged state " + state);
 
             }
         });
@@ -184,10 +183,15 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
     private TabSpec getTabSpecItem(String tag) {
 
-        Intent intent = new Intent(this, EmptyActivity.class);
+        TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag)
+                .setContent(R.id.id_empty_tabcontent_text_view);
+        return tabspec;
+    }
+
+    private TabSpec getTabSpecItem(String tag, Intent intent) {
+
         TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag).setContent(intent);
         return tabspec;
-
     }
 
     @Override
