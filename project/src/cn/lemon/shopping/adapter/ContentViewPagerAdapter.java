@@ -8,29 +8,39 @@ import android.view.ViewGroup;
 
 public class ContentViewPagerAdapter extends PagerAdapter {
 
-    private List<String> mTagList;
+    private List<View> mViews;
 
-    public ContentViewPagerAdapter(List<String> taglist) {
+    public ContentViewPagerAdapter(List<View> views) {
 
         super();
-        mTagList = taglist;
+        mViews = views;
     }
 
     @Override
     public int getCount() {
 
-        return mTagList.size();
+        return mViews.size();
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
         // TODO Auto-generated method stub
-        return false;
+        return view == object;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         // TODO Auto-generated method stub
-        return super.instantiateItem(container, position);
+        View view = mViews.get(position);
+        container.addView(view);
+        return view;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+
+        View view = mViews.get(position);
+        container.removeView(view);
+
     }
 }

@@ -2,10 +2,20 @@ package cn.lemon.shopping;
 
 import java.util.Observable;
 
+import android.os.Bundle;
+
 import cn.lemon.framework.BaseActivity;
 
 public class ExternalWebActivity extends BaseActivity {
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+        
+        setContentView(R.layout.external_web_layout);
+    }
+    
 	@Override
 	public void addObserver() {
 		// TODO Auto-generated method stub

@@ -2,19 +2,9 @@ package cn.lemon.shopping;
 
 import java.util.Observable;
 
-import android.os.Bundle;
-
 import cn.lemon.framework.BaseActivity;
 
-public class RecommendActivity extends BaseActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.recommend_layout);
-    }
+public class EmptyActivity extends BaseActivity {
 
     @Override
     public void addObserver() {

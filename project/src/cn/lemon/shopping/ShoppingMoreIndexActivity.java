@@ -1,10 +1,15 @@
 package cn.lemon.shopping;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import cn.lemon.framework.BaseActivityGroup;
+import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
 import cn.lemon.utils.DebugUtil;
 import android.os.Bundle;
+import android.app.LocalActivityManager;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v4.view.ViewPager;
@@ -12,6 +17,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
@@ -33,6 +39,9 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
     private String mCashDeliveryString;
     private String mTabbaoString;
 
+    private List<View> mViews;
+    private LocalActivityManager mLocalActivityManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +54,12 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
         Resources resources = getResources();
 
+        mLocalActivityManager = getLocalActivityManager();
+        buildContentViews();
+
         int tabWidgetHeight = 0;
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
-        mTabHost.setup();
+        mTabHost.setup(mLocalActivityManager);
         mTabWidget = (TabWidget) findViewById(android.R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.id_shopping_more_view_pager);
 
@@ -69,19 +81,40 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
     }
 
+    @SuppressWarnings("deprecation")
+    private void buildContentViews() {
+
+        mViews = new ArrayList<View>();
+
+        Intent recommendIntent = new Intent(this, RecommendActivity.class);
+        Window recommendWindow = mLocalActivityManager.startActivity(mRecommendString, recommendIntent);
+        mViews.add(recommendWindow.getDecorView());
+
+        Intent cashDeliveryIntent = new Intent(this, ExternalWebActivity.class);
+        Window cashDelieryWindow = mLocalActivityManager.startActivity(mRecommendString, cashDeliveryIntent);
+        mViews.add(cashDelieryWindow.getDecorView());
+
+        Intent taobaoIntent = new Intent(this, TaobaoTopicActivity.class);
+        Window taobaoWindow = mLocalActivityManager.startActivity(mRecommendString, taobaoIntent);
+        mViews.add(taobaoWindow.getDecorView());
+
+    }
+
     private void initViewPager() {
 
-        ImageView imageview1 = new ImageView(this);
-        ImageView imageview2 = new ImageView(this);
-        ImageView imageview3 = new ImageView(this);
-        imageview1.setImageResource(R.drawable.beauty_o);
-        imageview2.setImageResource(R.drawable.beauty_r);
-        imageview3.setImageResource(R.drawable.beauty_t);
-        ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
+//        ImageView imageview1 = new ImageView(this);
+//        ImageView imageview2 = new ImageView(this);
+//        ImageView imageview3 = new ImageView(this);
+//        imageview1.setImageResource(R.drawable.beauty_o);
+//        imageview2.setImageResource(R.drawable.beauty_r);
+//        imageview3.setImageResource(R.drawable.beauty_t);
+//        ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
+//        mViewPager.addView(imageview1, layoutParams);
+//        mViewPager.addView(imageview2, layoutParams);
+//        mViewPager.addView(imageview3, layoutParams);
 
-        mViewPager.addView(imageview1, layoutParams);
-        mViewPager.addView(imageview2, layoutParams);
-        mViewPager.addView(imageview3, layoutParams);
+        ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
+        mViewPager.setAdapter(adapter);
 
         mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 
@@ -125,6 +158,8 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
             }
         });
+
+        mViewPager.setCurrentItem(0);
     }
 
     private void updateTab(final TabHost tabHost) {
@@ -149,8 +184,8 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
     private TabSpec getTabSpecItem(String tag) {
 
-        TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag)
-                .setContent(R.id.id_shopping_more_view_pager);
+        Intent intent = new Intent(this, EmptyActivity.class);
+        TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag).setContent(intent);
         return tabspec;
 
     }
