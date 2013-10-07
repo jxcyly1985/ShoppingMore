@@ -159,6 +159,7 @@ final class UpgradeDownloadManager {
 							while ((readLen = bufferedInputStream.read(buffer)) != -1) {
 								mDoneSize += readLen;
 								bufferedOutputStream.write(buffer, 0, readLen);
+								bufferedOutputStream.flush();
 								mDownloadChangeListener.onSizeChange(mDoneSize);
 							}
 

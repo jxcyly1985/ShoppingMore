@@ -39,6 +39,7 @@ public class UpgradeManager {
 	private long mDoneSize = 0;
 	private NotificationManager mNotificationManager;
 
+	private UpgradeNotificationInfo mUpgradeNotificationInfo;
 	private int mIconId;
 	private int mNotificationId;
 	private String mNotificationTicker = "";
@@ -104,6 +105,16 @@ public class UpgradeManager {
 		String mSaveFilePath;
 	}
 
+	public static class UpgradeNotificationInfo {
+
+		public int mNotificationId;
+		public int mIconId;
+		public String mNotificationTicker = "";
+		public String mNotificationTitle = "";
+		public Bitmap mNotificationIcon;
+		public PendingIntent mPendingIntent;
+	}
+
 	public static class UpgradeManagerHolder {
 		static UpgradeManager sInstance = new UpgradeManager();
 	}
@@ -143,13 +154,9 @@ public class UpgradeManager {
 		mUpgradeDownloadManager.cancel();
 	}
 
-	public void setNotificationInfo(int notificationId, int iconId,
-			String ticker, String title) {
-		mNotificationId = notificationId;
-		mIconId = iconId;
-		mNotificationTicker = ticker;
-		mNotificationTitle = title;
-		mNotificationIcon = BitmapFactory.decodeResource(
+	public void setNotificationInfo(UpgradeNotificationInfo notificationInfo) {
+		mUpgradeNotificationInfo = notificationInfo;
+		notificationInfo.mNotificationIcon = BitmapFactory.decodeResource(
 				mContext.getResources(), mIconId);
 	}
 
@@ -203,16 +210,16 @@ public class UpgradeManager {
 			boolean onGoing) {
 
 		Notification.Builder builder = new Notification.Builder(mContext);
-		builder.setLargeIcon(mNotificationIcon);
-		builder.setSmallIcon(mIconId);
+		builder.setLargeIcon(mUpgradeNotificationInfo.mNotificationIcon);
+		builder.setSmallIcon(mUpgradeNotificationInfo.mIconId);
 		builder.setAutoCancel(autoCancel);
 		builder.setOngoing(onGoing);
 		builder.setProgress(100, progress, false);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 
-		builder.setTicker(mNotificationTicker)
-				.setContentTitle(mNotificationTitle)
-				.setContentIntent(getContentIntent());
+		builder.setTicker(mUpgradeNotificationInfo.mNotificationTicker)
+				.setContentTitle(mUpgradeNotificationInfo.mNotificationTitle)
+				.setContentIntent(mUpgradeNotificationInfo.mPendingIntent);
 
 		mNotificationManager.notify(mNotificationId, builder.build());
 
