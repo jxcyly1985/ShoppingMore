@@ -6,5 +6,7 @@ public class LemonNetWorkRequest {
     
     public String mUrl;
     public Map<String,String> mHeader;
+    public String mPostString;
+    public int mContentLenght;
     
 }
