@@ -148,7 +148,7 @@ final class UpgradeDownloadManager {
 							byte[] buffer = new byte[BUFFER_SIZE];
 							inputStream = entity.getContent();
 							outputStream = new FileOutputStream(
-									mUpgradRequest.mSaveFilePath);
+									mUpgradRequest.mSaveFilePath, true);
 							bufferedInputStream = new BufferedInputStream(
 									inputStream);
 							bufferedOutputStream = new BufferedOutputStream(
