@@ -28,8 +28,8 @@ public class LocalSqliteOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		String createSql = "";
-		db.execSQL(createSql);
+		db.execSQL(MallCategoryTable.getCreateSQL());
+		db.execSQL(MallInfoTable.getCreateSQL());
 
 	}
 
