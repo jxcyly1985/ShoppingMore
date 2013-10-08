@@ -4,10 +4,10 @@ import android.content.Context;
 
 public class LocalSqliteOperator {
 
-    private LocalSqliteOpenHelper mLocalSqliteOpenHelper;
+	private LocalSqliteOpenHelper mLocalSqliteOpenHelper;
 
-    public LocalSqliteOperator(Context context) {
-        mLocalSqliteOpenHelper = new LocalSqliteOpenHelper(context);
-    }
+	public LocalSqliteOperator(Context context) {
+		mLocalSqliteOpenHelper = LocalSqliteOpenHelper.getInstance(context);
+	}
 
 }
