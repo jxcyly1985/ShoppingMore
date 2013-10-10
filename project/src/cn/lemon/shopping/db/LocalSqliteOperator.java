@@ -3,6 +3,7 @@ package cn.lemon.shopping.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.lemon.shopping.model.CategoryEntryInfo;
 import cn.lemon.shopping.model.MallEntryInfo;
 
 import android.content.ContentValues;
@@ -36,17 +37,55 @@ public class LocalSqliteOperator {
         mSQLiteDatabase.close();
     }
 
-    public void insertCategory(ContentValues contentValues) {
+    public void insertCategory(CategoryEntryInfo categoryInfo) {
 
-        if (contentValues != null) {
+        if (categoryInfo != null) {
+            ContentValues contentValues = new ContentValues();
             mSQLiteDatabase.insert(MallCategoryTable.TABLE_NAME, null, contentValues);
         }
 
     }
 
-    public void insertMallInfo(ContentValues contentValues) {
-        if (contentValues != null) {
+    public void insetCategory(List<CategoryEntryInfo> categoryInfoArray) {
+
+        if (categoryInfoArray != null) {
+            mSQLiteDatabase.beginTransaction();
+            try {
+                for (CategoryEntryInfo categoryInfo : categoryInfoArray) {
+                    insertCategory(categoryInfo);
+                }
+                mSQLiteDatabase.setTransactionSuccessful();
+            } finally {
+
+                mSQLiteDatabase.endTransaction();
+            }
+        }
+
+    }
+
+    public void insertMallInfo(MallEntryInfo mallInfo) {
+        if (mallInfo != null) {
+            ContentValues contentValues = new ContentValues();
             mSQLiteDatabase.insert(MallInfoTable.TABLE_NAME, null, contentValues);
+        }
+
+    }
+
+    public void insertMallInfo(List<MallEntryInfo> mallInfoArray) {
+
+        if (mallInfoArray != null) {
+
+            mSQLiteDatabase.beginTransaction();
+            try {
+                for (MallEntryInfo mallInfo : mallInfoArray) {
+                    insertMallInfo(mallInfo);
+                }
+                mSQLiteDatabase.setTransactionSuccessful();
+            } finally {
+
+                mSQLiteDatabase.endTransaction();
+            }
+
         }
 
     }
@@ -70,7 +109,8 @@ public class LocalSqliteOperator {
                     mallInfo = new MallEntryInfo();
                     mallInfo.mName = cursor.getString(0);
                     mallInfo.mIconUrl = cursor.getString(1);
-                    mallInfo.mCategory = cursor.getString(2);
+                    mallInfo.mLinkedUrl = cursor.getString(2);
+                    mallInfo.mCategory = cursor.getString(3);
                     mallInfos.add(mallInfo);
                 } while (cursor.moveToNext());
 

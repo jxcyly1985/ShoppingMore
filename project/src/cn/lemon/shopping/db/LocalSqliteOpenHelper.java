@@ -6,36 +6,36 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class LocalSqliteOpenHelper extends SQLiteOpenHelper {
 
-	private static final int DB_VERSION = 1;
-	private static final String DB_NAME = "shopping_more.db";
+    private static final int DB_VERSION = 1;
+    private static final String DB_NAME = "shopping_more.db";
 
-	private static LocalSqliteOpenHelper sInstance;
+    private static LocalSqliteOpenHelper sInstance;
 
-	public synchronized static LocalSqliteOpenHelper getInstance(Context context) {
+    public synchronized static LocalSqliteOpenHelper getInstance(Context context) {
 
-		if (sInstance == null) {
-			sInstance = new LocalSqliteOpenHelper(context);
-		}
+        if (sInstance == null) {
+            sInstance = new LocalSqliteOpenHelper(context);
+        }
 
-		return sInstance;
-	}
+        return sInstance;
+    }
 
-	private LocalSqliteOpenHelper(Context context) {
+    private LocalSqliteOpenHelper(Context context) {
 
-		super(context, DB_NAME, null, DB_VERSION);
-	}
+        super(context, DB_NAME, null, DB_VERSION);
+    }
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
+    @Override
+    public void onCreate(SQLiteDatabase db) {
 
-		db.execSQL(MallCategoryTable.getCreateSQL());
-		db.execSQL(MallInfoTable.getCreateSQL());
+        db.execSQL(MallCategoryTable.getCreateSQL());
+        db.execSQL(MallInfoTable.getCreateSQL());
 
-	}
+    }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-	}
+    }
 
 }
