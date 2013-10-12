@@ -90,10 +90,75 @@ public class LocalSqliteOperator {
 
     }
 
-    public List<MallEntryInfo> getMallInfoByCategory(String category) {
+    public List<CategoryEntryInfo> getMallCategory() {
 
-        String selection = MallInfoTable.MALL_CATEGORY + "=?";
-        String[] selectionArgs = new String[] {category};
+        List<CategoryEntryInfo> categoryInfos = null;
+        Cursor cursor = null;
+        try {
+            cursor = mSQLiteDatabase.query(MallCategoryTable.TABLE_NAME, MallCategoryTable.COLUMNS, null,
+                    null, null, null, null);
+
+            CategoryEntryInfo categoryEntryInfo = null;
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                categoryInfos = new ArrayList<CategoryEntryInfo>();
+                do {
+                    categoryEntryInfo = new CategoryEntryInfo();
+                    categoryEntryInfo.mServerId = cursor.getInt(MallCategoryTable.CATEGORY_ID_INDEX);
+                    categoryEntryInfo.mCategoryName = cursor.getString(MallCategoryTable.CATEGORY_NAME_INDEX);
+                    categoryInfos.add(categoryEntryInfo);
+                } while (cursor.moveToNext());
+
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return categoryInfos;
+
+    }
+
+    public List<MallEntryInfo> getMallInfo() {
+
+        Cursor cursor = null;
+        List<MallEntryInfo> mallInfos = null;
+        try {
+            cursor = mSQLiteDatabase.query(MallInfoTable.TABLE_NAME, MallInfoTable.COLUMNS, null, null, null,
+                    null, null);
+
+            if (cursor.getCount() > 0) {
+                mallInfos = new ArrayList<MallEntryInfo>();
+                cursor.moveToFirst();
+                MallEntryInfo mallInfo = null;
+                do {
+                    mallInfo = new MallEntryInfo();
+                    mallInfo.mName = cursor.getString(MallInfoTable.MALL_NAME_INDEX);
+                    mallInfo.mIconUrl = cursor.getString(MallInfoTable.MALL_ICON_URL_INDEX);
+                    mallInfo.mLinkedUrl = cursor.getString(MallInfoTable.MALL_URL_INDEX);
+                    mallInfo.mCategoryId = cursor.getInt(MallInfoTable.MALL_CATEGORY_ID_INDEX);
+                    mallInfo.mWeight = cursor.getInt(MallInfoTable.MALL_WEIGHT_INDEX);
+                    mallInfos.add(mallInfo);
+                } while (cursor.moveToNext());
+
+            }
+
+        } finally {
+
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return mallInfos;
+    }
+
+    public List<MallEntryInfo> getMallInfoByCategory(int categoryId) {
+
+        String selection = MallInfoTable.MALL_CATEGORY_ID + "=?";
+        String categoryIdString = String.valueOf(categoryId);
+        String[] selectionArgs = new String[] {categoryIdString};
 
         Cursor cursor = null;
         List<MallEntryInfo> mallInfos = null;
@@ -114,7 +179,6 @@ public class LocalSqliteOperator {
                     mallInfos.add(mallInfo);
                 } while (cursor.moveToNext());
 
-                return mallInfos;
             }
 
         } finally {
@@ -124,7 +188,7 @@ public class LocalSqliteOperator {
             }
         }
 
-        return null;
+        return mallInfos;
 
     }
 }

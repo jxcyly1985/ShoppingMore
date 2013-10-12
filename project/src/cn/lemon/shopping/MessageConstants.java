@@ -1,7 +1,7 @@
-package cn.lemon.framework;
+package cn.lemon.shopping;
 
 public class MessageConstants {
-    
+
     public static final int MSG_LOAD_DATA_COMPLETE = 0x100001;
 
 }

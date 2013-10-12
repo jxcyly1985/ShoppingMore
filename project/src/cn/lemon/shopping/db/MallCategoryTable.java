@@ -8,16 +8,19 @@ public class MallCategoryTable implements BaseColumns {
 
     public static final String CATEGORY_ID = "server_id";
     public static final String CATEGORY_NAME = "category_name";
-    public static final String VERSION = "version";
 
     public static String SP = " ";
 
-    public static String[] COLUMNS = new String[] {CATEGORY_NAME, VERSION};
+    public static String[] COLUMNS = new String[] {CATEGORY_ID, CATEGORY_NAME};
+
+    public static final int CATEGORY_ID_INDEX = 0;
+    public static final int CATEGORY_NAME_INDEX = 1;
 
     public static String getCreateSQL() {
 
         String CREATE_SQL = "CREATE TABLE" + SP + TABLE_NAME + SP + "(" + MallCategoryTable._ID
-                + "INTEGER PRIMARY KEY," + CATEGORY_NAME + SP + "TEXT," + SP + VERSION + SP + "TEXT)";
+                + "INTEGER PRIMARY KEY," + CATEGORY_ID + SP + "INTEGER UNIQUE," + CATEGORY_NAME + SP
+                + "TEXT," + ")";
         return CREATE_SQL;
     }
 

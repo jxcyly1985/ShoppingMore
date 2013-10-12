@@ -1,14 +1,14 @@
 package cn.lemon.shopping.model;
 
 import java.util.List;
-import java.util.Map;
+import android.util.SparseArray;
 
 public class MallTotalInfo {
 
     public String mVersion;
 
-    public List<String> mCategoryList;
+    public List<CategoryEntryInfo> mCategoryList;
 
-    public Map<String, List<MallEntryInfo>> mCategoryMappingMall;
+    public SparseArray<List<MallEntryInfo>> mCategoryMappingMall;
 
 }
