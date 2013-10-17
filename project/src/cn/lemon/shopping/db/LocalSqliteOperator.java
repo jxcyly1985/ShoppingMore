@@ -39,6 +39,18 @@ public class LocalSqliteOperator {
     }
 
     public void insertMallTotalInfo(MallTotalInfo mallTotalInfo) {
+        if (mallTotalInfo != null) {
+            List<CategoryEntryInfo> categoryEntryInfos = mallTotalInfo.mCategoryList;
+            insertCategory(categoryEntryInfos);
+
+            int mallListSize = mallTotalInfo.mCategoryMappingMall.size();
+
+            for (int i = 0; i < mallListSize; ++i) {
+                List<MallEntryInfo> mallEntryInfos = mallTotalInfo.mCategoryMappingMall.valueAt(i);
+                insertMallInfo(mallEntryInfos);
+            }
+
+        }
 
     }
 
@@ -51,7 +63,7 @@ public class LocalSqliteOperator {
 
     }
 
-    public void insetCategory(List<CategoryEntryInfo> categoryInfoArray) {
+    public void insertCategory(List<CategoryEntryInfo> categoryInfoArray) {
 
         if (categoryInfoArray != null) {
             mSQLiteDatabase.beginTransaction();
@@ -177,10 +189,11 @@ public class LocalSqliteOperator {
                 MallEntryInfo mallInfo = null;
                 do {
                     mallInfo = new MallEntryInfo();
-                    mallInfo.mName = cursor.getString(0);
-                    mallInfo.mIconUrl = cursor.getString(1);
-                    mallInfo.mLinkedUrl = cursor.getString(2);
-                    mallInfo.mCategory = cursor.getString(3);
+                    mallInfo.mName = cursor.getString(MallInfoTable.MALL_NAME_INDEX);
+                    mallInfo.mIconUrl = cursor.getString(MallInfoTable.MALL_ICON_URL_INDEX);
+                    mallInfo.mLinkedUrl = cursor.getString(MallInfoTable.MALL_URL_INDEX);
+                    mallInfo.mCategoryId = cursor.getInt(MallInfoTable.MALL_CATEGORY_ID_INDEX);
+                    mallInfo.mWeight = cursor.getInt(MallInfoTable.MALL_WEIGHT_INDEX);
                     mallInfos.add(mallInfo);
                 } while (cursor.moveToNext());
 

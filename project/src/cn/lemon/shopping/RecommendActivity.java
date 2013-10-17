@@ -4,11 +4,7 @@ import java.util.Observable;
 
 import android.os.Bundle;
 import android.os.Message;
-
 import cn.lemon.framework.BaseActivity;
-import cn.lemon.framework.MessageConstants;
-import cn.lemon.framework.MessageManager;
-import cn.lemon.shopping.model.MallTotalInfo;
 import cn.lemon.utils.DebugUtil;
 
 public class RecommendActivity extends BaseActivity {
@@ -65,7 +61,7 @@ public class RecommendActivity extends BaseActivity {
         switch (msg.what) {
             case MessageConstants.MSG_LOAD_DATA_COMPLETE:
                 // notify adapter data set changed
-                
+
                 break;
 
             default:

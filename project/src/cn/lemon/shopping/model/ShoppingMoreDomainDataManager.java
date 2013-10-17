@@ -57,16 +57,13 @@ public class ShoppingMoreDomainDataManager {
 
     }
 
-    public void insertCategory(List<CategoryEntryInfo> categoryInfoArray) {
-
-        mLocalSqliteOperator.insetCategory(categoryInfoArray);
-    }
 
     private LemonNetWorkHandler mMallInfoHandler = new LemonNetWorkHandler() {
 
         @Override
         public void onHandleReceiveError() {
 
+            
         }
 
         @Override
