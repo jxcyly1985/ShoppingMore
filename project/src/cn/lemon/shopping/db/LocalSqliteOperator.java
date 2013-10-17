@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.lemon.shopping.model.CategoryEntryInfo;
 import cn.lemon.shopping.model.MallEntryInfo;
+import cn.lemon.shopping.model.MallTotalInfo;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -35,6 +36,10 @@ public class LocalSqliteOperator {
     public void close() {
 
         mSQLiteDatabase.close();
+    }
+
+    public void insertMallTotalInfo(MallTotalInfo mallTotalInfo) {
+
     }
 
     public void insertCategory(CategoryEntryInfo categoryInfo) {

@@ -2,17 +2,28 @@ package cn.lemon.shopping.model;
 
 import java.util.List;
 
+import cn.lemon.network.LemonHttpRequest;
+import cn.lemon.network.LemonNetWorkHandler;
+import cn.lemon.network.LemonNetWorkRequest;
+import cn.lemon.utils.StaticUtils;
+
 public class ModelUtils {
 
-    public static void sendMallRequest() {
+    public static void sendMallRequest(LemonNetWorkHandler handler) {
+
+        LemonNetWorkRequest request = new LemonNetWorkRequest();
+        request.mUrl = StaticUtils.MALL_DATA_URL;
+
+        LemonHttpRequest httpRequest = new LemonHttpRequest(request, handler);
+        httpRequest.post();
 
     }
 
-    public static List<MallEntryInfo> jsonToObject(String json) {
+    public static MallTotalInfo jsonToObject(String json) {
 
-        List<MallEntryInfo> mallInfos = null;
+        MallTotalInfo mallTotalInfo = null;
 
-        return mallInfos;
+        return mallTotalInfo;
     }
 
 }
