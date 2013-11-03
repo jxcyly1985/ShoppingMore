@@ -16,89 +16,91 @@ import cn.lemon.shopping.db.LocalSqliteOperator;
 
 public class ShoppingMoreDomainDataManager {
 
-    private Context mContext;
-    private LocalSqliteOperator mLocalSqliteOperator;
+	private Context mContext;
+	private LocalSqliteOperator mLocalSqliteOperator;
 
-    private ShoppingMoreDomainDataManager() {
+	private ShoppingMoreDomainDataManager() {
 
-    }
+	}
 
-    private static class ShoppingMoreDomainDataManagerHolder {
+	private static class ShoppingMoreDomainDataManagerHolder {
 
-        static ShoppingMoreDomainDataManager sInstance = new ShoppingMoreDomainDataManager();
-    }
+		static ShoppingMoreDomainDataManager sInstance = new ShoppingMoreDomainDataManager();
+	}
 
-    public static ShoppingMoreDomainDataManager getInstance() {
-        return ShoppingMoreDomainDataManagerHolder.sInstance;
-    }
+	public static ShoppingMoreDomainDataManager getInstance() {
+		return ShoppingMoreDomainDataManagerHolder.sInstance;
+	}
 
-    public void initialize(Context context) {
+	public void initialize(Context context) {
 
-        mContext = context;
-        mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
-    }
+		mContext = context;
+		mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
+	}
 
-    public MallTotalInfo getMallTotalInfo() {
+	public MallTotalInfo getMallTotalInfo() {
 
-        MallTotalInfo mallTotalInfo = null;
+		MallTotalInfo mallTotalInfo = null;
 
-        List<CategoryEntryInfo> categoryInfos = mLocalSqliteOperator.getMallCategory();
+		List<CategoryEntryInfo> categoryInfos = mLocalSqliteOperator
+				.getMallCategory();
 
-        if (categoryInfos != null) {
+		if (categoryInfos != null) {
 
-            getDataFromDatabase(categoryInfos);
+			mallTotalInfo = getDataFromDatabase(categoryInfos);
 
-        } else {
+		} else {
 
-            ModelUtils.sendMallRequest(mMallInfoHandler);
-        }
+			ModelUtils.sendMallRequest(mMallInfoHandler);
+		}
 
-        return mallTotalInfo;
+		return mallTotalInfo;
 
-    }
+	}
 
+	private LemonNetWorkHandler mMallInfoHandler = new LemonNetWorkHandler() {
 
-    private LemonNetWorkHandler mMallInfoHandler = new LemonNetWorkHandler() {
+		@Override
+		public void onHandleReceiveError() {
+			
+		}
 
-        @Override
-        public void onHandleReceiveError() {
+		@Override
+		public void onHandleReceiveSuccess(String result) {
 
-            
-        }
+			MallTotalInfo mallTotalInfo = ModelUtils.jsonToObject(result);
+			Message msg = FramewokUtils.makeMessage(
+					MessageConstants.MSG_LOAD_DATA_COMPLETE, mallTotalInfo, 0,
+					0);
+			MessageManager.getInstance().sendNotifyMessage(msg);
 
-        @Override
-        public void onHandleReceiveSuccess(String result) {
+		}
 
-            MallTotalInfo mallTotalInfo = ModelUtils.jsonToObject(result);
-            Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_LOAD_DATA_COMPLETE, mallTotalInfo,
-                    0, 0);
-            MessageManager.getInstance().sendNotifyMessage(msg);
+	};
 
-        }
+	private MallTotalInfo getDataFromDatabase(
+			List<CategoryEntryInfo> categoryInfos) {
 
-    };
+		MallTotalInfo mallTotalInfo = new MallTotalInfo();
+		mallTotalInfo.mCategoryList = categoryInfos;
+		List<MallEntryInfo> mallInfos = mLocalSqliteOperator.getMallInfo();
+		if (mallInfos != null) {
+			SparseArray<List<MallEntryInfo>> sparseArry = new SparseArray<List<MallEntryInfo>>();
 
-    private MallTotalInfo getDataFromDatabase(List<CategoryEntryInfo> categoryInfos) {
+			for (MallEntryInfo mallEntryInfo : mallInfos) {
+				List<MallEntryInfo> mallInfoArray = sparseArry
+						.get(mallEntryInfo.mCategoryId);
+				if (mallInfoArray == null) {
+					mallInfoArray = new ArrayList<MallEntryInfo>();
+				}
+				mallInfoArray.add(mallEntryInfo);
 
-        MallTotalInfo mallTotalInfo = new MallTotalInfo();
-        mallTotalInfo.mCategoryList = categoryInfos;
-        List<MallEntryInfo> mallInfos = mLocalSqliteOperator.getMallInfo();
-        if (mallInfos != null) {
-            SparseArray<List<MallEntryInfo>> sparseArry = new SparseArray<List<MallEntryInfo>>();
+				sparseArry.append(mallEntryInfo.mCategoryId, mallInfoArray);
+			}
 
-            for (MallEntryInfo mallEntryInfo : mallInfos) {
-                List<MallEntryInfo> mallInfoArray = sparseArry.get(mallEntryInfo.mCategoryId);
-                if (mallInfoArray == null) {
-                    mallInfoArray = new ArrayList<MallEntryInfo>();
-                }
-                mallInfoArray.add(mallEntryInfo);
+			mallTotalInfo.mCategoryMappingMall = sparseArry;
+		}
 
-                sparseArry.append(mallEntryInfo.mCategoryId, mallInfoArray);
-            }
-
-            mallTotalInfo.mCategoryMappingMall = sparseArry;
-        }
-
-        return mallTotalInfo;
-    }
+		return mallTotalInfo;
+	}
 }
