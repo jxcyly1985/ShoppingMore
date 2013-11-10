@@ -4,69 +4,101 @@ import java.util.Observable;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.utils.DebugUtil;
 
-public class RecommendActivity extends BaseActivity {
+public class RecommendActivity extends BaseActivity implements OnClickListener {
 
-    public static final String TAG = "RecommendActivity";
+	public static final String TAG = "RecommendActivity";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	private ImageView mSearchImageView;
+	
+	// Add Image Fetcher
+	
+	
 
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-        DebugUtil.debug(TAG, "onCreate");
-        setContentView(R.layout.recommend_layout);
+		super.onCreate(savedInstanceState);
 
-    }
+		DebugUtil.debug(TAG, "onCreate");
+		setContentView(R.layout.recommend_layout);
+		initData();
+		initView();
 
-    @Override
-    protected void onPause() {
+	}
 
-        super.onPause();
-        DebugUtil.debug(TAG, "onPause");
-    }
+	private void initData() {
 
-    @Override
-    protected void onResume() {
+	}
+	
+	private void initView() {
+		mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
+		mSearchImageView.setOnClickListener(this);
+	}
 
-        super.onResume();
-        DebugUtil.debug(TAG, "onResume");
-    }
 
-    @Override
-    protected void onDestroy() {
 
-        super.onDestroy();
-        DebugUtil.debug(TAG, "onDestroy");
-    }
+	@Override
+	public void onClick(View v) {
+		
+		
+	}
+	
+	@Override
+	protected void onPause() {
 
-    @Override
-    public void addObserver() {
+		super.onPause();
+		DebugUtil.debug(TAG, "onPause");
+	}
 
-        this.mMesssageManager.addOberver(MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
-    }
+	@Override
+	protected void onResume() {
 
-    @Override
-    public void deleteObserver() {
-        this.mMesssageManager.deleteOberver(MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
-    }
+		super.onResume();
+		DebugUtil.debug(TAG, "onResume");
+	}
 
-    @Override
-    public void update(Observable observable, Object data) {
+	@Override
+	protected void onDestroy() {
 
-        Message msg = (Message) data;
+		super.onDestroy();
+		DebugUtil.debug(TAG, "onDestroy");
+	}
 
-        switch (msg.what) {
-            case MessageConstants.MSG_LOAD_DATA_COMPLETE:
-                // notify adapter data set changed
+	@Override
+	public void addObserver() {
 
-                break;
+		this.mMesssageManager.addOberver(
+				MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
+	}
 
-            default:
-                break;
-        }
-    }
+	@Override
+	public void deleteObserver() {
+		this.mMesssageManager.deleteOberver(
+				MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+
+		Message msg = (Message) data;
+
+		switch (msg.what) {
+		case MessageConstants.MSG_LOAD_DATA_COMPLETE:
+			// notify adapter data set changed
+
+			break;
+
+		default:
+			break;
+		}
+	}
+
+
 
 }

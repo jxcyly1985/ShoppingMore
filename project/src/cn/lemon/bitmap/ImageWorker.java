@@ -16,6 +16,8 @@
 
 package cn.lemon.bitmap;
 
+import java.lang.ref.WeakReference;
+
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,9 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.storage.StorageManager;
 import android.widget.ImageView;
-
-import java.lang.ref.WeakReference;
-
 import cn.lemon.utils.DebugUtil;
 
 /**
