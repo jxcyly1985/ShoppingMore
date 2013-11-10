@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Message;
-import android.provider.Settings.Global;
 import android.util.SparseArray;
 import cn.lemon.framework.FramewokUtils;
 import cn.lemon.framework.MessageManager;

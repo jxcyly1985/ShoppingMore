@@ -252,8 +252,8 @@ public class UpgradeManager {
 				.setContentTitle(mUpgradeNotificationInfo.mNotificationTitle)
 				.setContentIntent(mUpgradeNotificationInfo.mPendingIntent);
 
-		mNotificationManager.notify(mUpgradeNotificationInfo.mNotificationId,
-				builder.build());
+        Notification notification = builder.build();
+		mNotificationManager.notify(mUpgradeNotificationInfo.mNotificationId,notification);
 
 	}
 

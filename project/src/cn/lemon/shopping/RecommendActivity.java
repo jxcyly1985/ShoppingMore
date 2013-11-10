@@ -13,8 +13,6 @@ import cn.lemon.utils.DebugUtil;
 public class RecommendActivity extends BaseActivity implements OnClickListener {
 
 	public static final String TAG = "RecommendActivity";
-
-	private ImageView mSearchImageView;
 	
 	// Add Image Fetcher
 	
@@ -37,8 +35,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 	}
 	
 	private void initView() {
-		mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
-		mSearchImageView.setOnClickListener(this);
+		
 	}
 
 

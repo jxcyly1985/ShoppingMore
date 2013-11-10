@@ -7,5 +7,6 @@
     <string name="str_worth_buying">值得买</string>
     <string name="str_setting">设置</string>
     <string name="str_search">搜索</string>
+    <string name="str_item_image">图片描述</string>
 
 </resources>

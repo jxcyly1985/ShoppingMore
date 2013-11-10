@@ -18,8 +18,10 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -27,7 +29,8 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
-public class ShoppingMoreIndexActivity extends BaseActivityGroup {
+public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
+		OnClickListener {
 
 	public static final String TAG = "ShoppingMoreIndexActivity";
 
@@ -43,6 +46,11 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
 	private List<View> mViews;
 	private LocalActivityManager mLocalActivityManager;
+
+	private ImageView mSearchImageView;
+	private int mSelectPos = 0;
+	
+	private PopupWindow mSettingWindow;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +100,9 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 		mTabHost.setCurrentTab(0);
 		updateTab(mTabHost);
 
+		mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
+		mSearchImageView.setOnClickListener(this);
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -127,17 +138,16 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 			public void onTabChanged(String tabId) {
 
 				DebugUtil.debug(TAG, "onTabChanged tabId " + tabId);
-				int selected = 0;
 				if (tabId.equals(mRecommendString)) {
-					selected = 0;
+					mSelectPos = 0;
 				} else if (tabId.equals(mCashDeliveryString)) {
-					selected = 1;
+					mSelectPos = 1;
 				} else if (tabId.equals(mWorthBuyingString)) {
-					selected = 2;
+					mSelectPos = 2;
 				} else if (tabId.equals(mSettingString)) {
-					selected = 3;
+					PopupSettingDialog();
 				}
-				mViewPager.setCurrentItem(selected);
+				mViewPager.setCurrentItem(mSelectPos);
 
 			}
 		});
@@ -172,6 +182,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 		mViewPager.setCurrentItem(0);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void updateTab(final TabHost tabHost) {
 		for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
 			View view = tabHost.getTabWidget().getChildAt(i);
@@ -196,6 +207,12 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 						android.R.color.white));
 			}
 		}
+	}
+
+	private void PopupSettingDialog() {
+		
+		mSettingWindow.showAtLocation(null, Gravity.BOTTOM, 0, 0);
+		
 	}
 
 	private TabSpec getTabSpecItem(String tag) {
@@ -233,6 +250,12 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup {
 
 	@Override
 	public void update(Observable observable, Object data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
 	}
