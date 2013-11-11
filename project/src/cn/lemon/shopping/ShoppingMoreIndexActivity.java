@@ -6,6 +6,7 @@ import java.util.Observable;
 
 import cn.lemon.framework.BaseActivityGroup;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
+import cn.lemon.shopping.adapter.SettingViewAdapter;
 import cn.lemon.utils.DebugUtil;
 import android.os.Bundle;
 import android.app.LocalActivityManager;
@@ -14,12 +15,17 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -49,7 +55,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
 	private ImageView mSearchImageView;
 	private int mSelectPos = 0;
-	
+
 	private PopupWindow mSettingWindow;
 
 	@Override
@@ -102,6 +108,9 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
 		mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
 		mSearchImageView.setOnClickListener(this);
+
+		// initialize setting pop up window
+		initSettingPopupWindow();
 
 	}
 
@@ -182,6 +191,54 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mViewPager.setCurrentItem(0);
 	}
 
+	private void initSettingPopupWindow() {
+
+		List<Pair<Integer, String>> settingPairs = new ArrayList<Pair<Integer, String>>();
+		String[] settingArray = getResources().getStringArray(
+				R.array.setting_array);
+		Pair<Integer, String> refreshItem = Pair.create(
+				android.R.drawable.ic_delete, settingArray[0]);
+		Pair<Integer, String> checkVersionItem = Pair.create(
+				android.R.drawable.ic_delete, settingArray[1]);
+		Pair<Integer, String> helpItem = Pair.create(
+				android.R.drawable.ic_delete, settingArray[2]);
+		Pair<Integer, String> exitItem = Pair.create(
+				android.R.drawable.ic_delete, settingArray[3]);
+		settingPairs.add(refreshItem);
+		settingPairs.add(checkVersionItem);
+		settingPairs.add(helpItem);
+		settingPairs.add(exitItem);
+
+		SettingViewAdapter settingAdapter = new SettingViewAdapter(
+				getApplicationContext(), R.layout.image_text_item_layout,
+				settingPairs);
+
+		// create pop up window
+		mSettingWindow = new PopupWindow(getApplicationContext());
+
+		View contentView = View.inflate(getApplicationContext(),
+				R.layout.setting_layout, null);
+		GridView settingGrid = (GridView) contentView
+				.findViewById(R.id.id_setting_grid);
+		settingGrid.setAdapter(settingAdapter);
+		settingGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				return true;
+			}
+		});
+		contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.beauty_o));
+		mSettingWindow.setContentView(contentView);
+		mSettingWindow.setWidth(700);
+		mSettingWindow.setHeight(200);
+		// mSettingWindow.update(700, 200);
+
+	}
+
 	@SuppressWarnings("deprecation")
 	private void updateTab(final TabHost tabHost) {
 		for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
@@ -210,9 +267,9 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 	}
 
 	private void PopupSettingDialog() {
-		
-		mSettingWindow.showAtLocation(null, Gravity.BOTTOM, 0, 0);
-		
+
+		mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
+
 	}
 
 	private TabSpec getTabSpecItem(String tag) {
