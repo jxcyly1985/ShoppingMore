@@ -18,9 +18,11 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -135,7 +137,8 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mViews.add(taobaoWindow.getDecorView());
 
 	}
-
+	
+	
 	private void initViewPager() {
 
 		ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
@@ -215,9 +218,35 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
 		// create pop up window
 		mSettingWindow = new PopupWindow(getApplicationContext());
+		// let pop up window can get focus
+		mSettingWindow.setFocusable(true);
 
 		View contentView = View.inflate(getApplicationContext(),
 				R.layout.setting_layout, null);
+		// may need not call setFocusable && setFocusableInTouchMode
+		contentView.setFocusable(true);
+		contentView.setFocusableInTouchMode(true);
+        contentView.setOnKeyListener(new OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                
+                DebugUtil.debug(TAG, "initSettingPopupWindow onKey keycode " + keyCode);
+                
+                if (event.getAction() == KeyEvent.ACTION_UP) {
+
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        if (mSettingWindow.isShowing()) {
+                            mSettingWindow.dismiss();
+                            return true;
+                        }
+
+                    }
+                }
+                return false;
+
+            }
+        });
 		GridView settingGrid = (GridView) contentView
 				.findViewById(R.id.id_setting_grid);
 		settingGrid.setAdapter(settingAdapter);
@@ -231,6 +260,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 			}
 		});
 		contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		// let dismiss pop up window when click outside  
 		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.beauty_o));
 		mSettingWindow.setContentView(contentView);
 		mSettingWindow.setWidth(700);
