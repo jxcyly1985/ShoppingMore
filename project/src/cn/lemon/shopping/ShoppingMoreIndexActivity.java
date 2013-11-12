@@ -77,6 +77,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mLocalActivityManager.dispatchDestroy(true);
 	}
 
+	
 	private void initView() {
 
 		Resources resources = getResources();
@@ -216,24 +217,23 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 				getApplicationContext(), R.layout.image_text_item_layout,
 				settingPairs);
 
-		// create pop up window
-		mSettingWindow = new PopupWindow(getApplicationContext());
-		// let pop up window can get focus
-		mSettingWindow.setFocusable(true);
 
 		View contentView = View.inflate(getApplicationContext(),
 				R.layout.setting_layout, null);
 		// may need not call setFocusable && setFocusableInTouchMode
 		contentView.setFocusable(true);
+		// response to menu key click
 		contentView.setFocusableInTouchMode(true);
         contentView.setOnKeyListener(new OnKeyListener() {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 
-                DebugUtil.debug(TAG, "initSettingPopupWindow onKey keycode " + keyCode);
+                DebugUtil.debug(TAG, "initSettingPopupWindow keycode " + keyCode
+                        + " action " + event.getAction());
                 
-                if (event.getAction() == KeyEvent.ACTION_UP) {
+                // compare to ACTION_DOWN if ACTION_UP cause problem
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
                         if (mSettingWindow.isShowing()) {
@@ -241,6 +241,15 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
                             return true;
                         }
 
+                    }
+                    if (keyCode == KeyEvent.KEYCODE_MENU) {
+                        if (mSettingWindow.isShowing()) {
+                            mSettingWindow.dismiss();
+                        } else {
+                            PopupSettingDialog();
+                        }
+
+                        return true;
                     }
                 }
                 return false;
@@ -260,12 +269,14 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 			}
 		});
 		contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		
+		// create pop up window
+        mSettingWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        // let pop up window can get focus
+        mSettingWindow.setFocusable(true);
+        
 		// let dismiss pop up window when click outside  
 		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.beauty_o));
-		mSettingWindow.setContentView(contentView);
-		mSettingWindow.setWidth(700);
-		mSettingWindow.setHeight(200);
-		// mSettingWindow.update(700, 200);
 
 	}
 
@@ -316,34 +327,49 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		return tabspec;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.shopping_more_index, menu);
-		return true;
-	}
+	
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        DebugUtil.debug(TAG, "activity onKeyDown");
+
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (mSettingWindow.isShowing()) {
+                mSettingWindow.dismiss();
+            } else {
+                PopupSettingDialog();
+                // change to setting tab
+                mTabHost.setCurrentTab(3);
+            }
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 	@Override
 	public void addObserver() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void deleteObserver() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void update(Observable observable, Object data) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
