@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Pair;
@@ -27,6 +30,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -60,6 +65,8 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
 	private PopupWindow mSettingWindow;
 
+	private boolean mSettingNoIcon = true;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,7 +84,6 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mLocalActivityManager.dispatchDestroy(true);
 	}
 
-	
 	private void initView() {
 
 		Resources resources = getResources();
@@ -106,6 +112,10 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		tabWidgetHeight = resources
 				.getDimensionPixelSize(R.dimen.dimen_tab_widget_height);
 		mTabWidget.getLayoutParams().height = tabWidgetHeight;
+		// remove bottom indicator
+		if (android.os.Build.VERSION.SDK_INT >= 8) {
+			mTabWidget.setStripEnabled(false);
+		}
 		mTabHost.setCurrentTab(0);
 		updateTab(mTabHost);
 
@@ -138,8 +148,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mViews.add(taobaoWindow.getDecorView());
 
 	}
-	
-	
+
 	private void initViewPager() {
 
 		ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
@@ -161,6 +170,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 					PopupSettingDialog();
 				}
 				mViewPager.setCurrentItem(mSelectPos);
+				updateTab(mTabHost);
 
 			}
 		});
@@ -195,28 +205,42 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		mViewPager.setCurrentItem(0);
 	}
 
+	private void PopupSettingDialog() {
+
+		mSettingWindow.setAnimationStyle(R.style.popup_window_anim);
+		
+		mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
+
+	}
+	
 	private void initSettingPopupWindow() {
 
 		List<Pair<Integer, String>> settingPairs = new ArrayList<Pair<Integer, String>>();
 		String[] settingArray = getResources().getStringArray(
 				R.array.setting_array);
-		Pair<Integer, String> refreshItem = Pair.create(
-				android.R.drawable.ic_delete, settingArray[0]);
-		Pair<Integer, String> checkVersionItem = Pair.create(
-				android.R.drawable.ic_delete, settingArray[1]);
-		Pair<Integer, String> helpItem = Pair.create(
-				android.R.drawable.ic_delete, settingArray[2]);
-		Pair<Integer, String> exitItem = Pair.create(
-				android.R.drawable.ic_delete, settingArray[3]);
-		settingPairs.add(refreshItem);
-		settingPairs.add(checkVersionItem);
-		settingPairs.add(helpItem);
-		settingPairs.add(exitItem);
 
-		SettingViewAdapter settingAdapter = new SettingViewAdapter(
-				getApplicationContext(), R.layout.image_text_item_layout,
-				settingPairs);
+		BaseAdapter settingAdapter = null;
 
+		if (mSettingNoIcon) {
+			settingAdapter = new ArrayAdapter<String>(getApplicationContext(),
+					R.layout.text_item_layout, 0, settingArray);
+
+		} else {
+			Pair<Integer, String> refreshItem = Pair.create(
+					android.R.drawable.ic_delete, settingArray[0]);
+			Pair<Integer, String> checkVersionItem = Pair.create(
+					android.R.drawable.ic_delete, settingArray[1]);
+			Pair<Integer, String> helpItem = Pair.create(
+					android.R.drawable.ic_delete, settingArray[2]);
+			Pair<Integer, String> exitItem = Pair.create(
+					android.R.drawable.ic_delete, settingArray[3]);
+			settingPairs.add(refreshItem);
+			settingPairs.add(checkVersionItem);
+			settingPairs.add(helpItem);
+			settingPairs.add(exitItem);
+			settingAdapter = new SettingViewAdapter(getApplicationContext(),
+					R.layout.image_text_item_layout, settingPairs);
+		}
 
 		View contentView = View.inflate(getApplicationContext(),
 				R.layout.setting_layout, null);
@@ -224,38 +248,38 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		contentView.setFocusable(true);
 		// response to menu key click
 		contentView.setFocusableInTouchMode(true);
-        contentView.setOnKeyListener(new OnKeyListener() {
+		contentView.setOnKeyListener(new OnKeyListener() {
 
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                
-                DebugUtil.debug(TAG, "initSettingPopupWindow keycode " + keyCode
-                        + " action " + event.getAction());
-                
-                // compare to ACTION_DOWN if ACTION_UP cause problem
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        if (mSettingWindow.isShowing()) {
-                            mSettingWindow.dismiss();
-                            return true;
-                        }
+				DebugUtil.debug(TAG, "initSettingPopupWindow keycode "
+						+ keyCode + " action " + event.getAction());
 
-                    }
-                    if (keyCode == KeyEvent.KEYCODE_MENU) {
-                        if (mSettingWindow.isShowing()) {
-                            mSettingWindow.dismiss();
-                        } else {
-                            PopupSettingDialog();
-                        }
+				// compare to ACTION_DOWN if ACTION_UP cause problem
+				if (event.getAction() == KeyEvent.ACTION_DOWN) {
 
-                        return true;
-                    }
-                }
-                return false;
+					if (keyCode == KeyEvent.KEYCODE_BACK) {
+						if (mSettingWindow.isShowing()) {
+							mSettingWindow.dismiss();
+							return true;
+						}
 
-            }
-        });
+					}
+					if (keyCode == KeyEvent.KEYCODE_MENU) {
+						if (mSettingWindow.isShowing()) {
+							mSettingWindow.dismiss();
+						} else {
+							PopupSettingDialog();
+						}
+
+						return true;
+					}
+				}
+				return false;
+
+			}
+		});
 		GridView settingGrid = (GridView) contentView
 				.findViewById(R.id.id_setting_grid);
 		settingGrid.setAdapter(settingAdapter);
@@ -268,15 +292,20 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 				return true;
 			}
 		});
-		contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-		
+		contentView.setLayoutParams(new ViewGroup.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+
 		// create pop up window
-        mSettingWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        // let pop up window can get focus
-        mSettingWindow.setFocusable(true);
-        
-		// let dismiss pop up window when click outside  
-		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.beauty_o));
+		mSettingWindow = new PopupWindow(contentView,
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT, true);
+		// let pop up window can get focus
+		mSettingWindow.setFocusable(true);
+
+		// let dismiss pop up window when click outside
+		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.beauty_o));
 
 	}
 
@@ -286,36 +315,49 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 			View view = tabHost.getTabWidget().getChildAt(i);
 			TextView tv = (TextView) mTabWidget.getChildAt(i).findViewById(
 					android.R.id.title);
-			tv.setTextScaleX(getResources().getDisplayMetrics().density);
-			tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, 20);
+
+			// Set Tab view Bottom padding
+			int verticalPadding = getResources().getInteger(
+					R.integer.tab_vertical);
+			view.setPadding(0, verticalPadding, 0, verticalPadding);
+
+			// set tab text size in dip unit
+			int textSize = getResources().getInteger(R.integer.tab_text_size);
+			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+
+			// set text view align bottom
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tv
 					.getLayoutParams();
-			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
-			params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-			tv.setTypeface(Typeface.SERIF, 2);
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
+					RelativeLayout.TRUE);
+
+			// http://blog.csdn.net/thinkscape/article/details/1967339
+			tv.setTypeface(Typeface.SANS_SERIF);
+
+			// remove tab widget position Indicator
+			view.setBackground(null);
+
 			if (tabHost.getCurrentTab() == i) {
-				view.setBackgroundDrawable(getResources().getDrawable(
-						R.drawable.ic_launcher));
-				tv.setTextColor(this.getResources().getColorStateList(
-						android.R.color.black));
+				view.setBackgroundColor(getResources().getColor(R.color.white));
+				tv.setTextColor(this.getResources().getColor(
+						R.color.tab_text_selected_color));
 			} else {
-				view.setBackgroundDrawable(getResources().getDrawable(
-						R.drawable.ic_launcher));
-				tv.setTextColor(this.getResources().getColorStateList(
-						android.R.color.white));
+				view.setBackgroundColor(getResources().getColor(R.color.white));
+				tv.setTextColor(this.getResources().getColor(
+						R.color.tab_text_normal_color));
 			}
 		}
 	}
 
-	private void PopupSettingDialog() {
-
-		mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
-
-	}
 
 	private TabSpec getTabSpecItem(String tag) {
 
-		TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag)
+		@SuppressWarnings("deprecation")
+		Drawable iconDrawable = new BitmapDrawable(
+				BitmapFactory.decodeResource(getResources(),
+						R.drawable.ic_launcher));
+		TabSpec tabspec = mTabHost.newTabSpec(tag)
+				.setIndicator(tag, iconDrawable)
 				.setContent(R.id.id_empty_tabcontent_text_view);
 		return tabspec;
 	}
@@ -327,49 +369,43 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 		return tabspec;
 	}
 
-	
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        DebugUtil.debug(TAG, "activity onKeyDown");
+		DebugUtil.debug(TAG, "activity onKeyDown");
 
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (mSettingWindow.isShowing()) {
-                mSettingWindow.dismiss();
-            } else {
-                PopupSettingDialog();
-                // change to setting tab
-                mTabHost.setCurrentTab(3);
-            }
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			if (mSettingWindow.isShowing()) {
+				mSettingWindow.dismiss();
+			} else {
+				PopupSettingDialog();
+				// change to setting tab
+				mTabHost.setCurrentTab(3);
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        return super.onKeyDown(keyCode, event);
-    }
-
+		return super.onKeyDown(keyCode, event);
+	}
 
 	@Override
 	public void addObserver() {
-		
 
 	}
 
 	@Override
 	public void deleteObserver() {
-		
 
 	}
 
 	@Override
 	public void update(Observable observable, Object data) {
-		
 
 	}
 
 	@Override
 	public void onClick(View v) {
-		
 
 	}
 

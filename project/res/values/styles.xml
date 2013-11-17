@@ -17,8 +17,12 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="ShoppingMoreTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        
+    <style name="ShoppingMoreTheme" parent="@android:style/Theme.Light.NoTitleBar"></style>
+
+    <!-- Popup Window Animation -->
+    <style name="popup_window_anim" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/y_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/y_leave_anim</item>
     </style>
-    
+
 </resources>
