@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/dimen_tab_widget_vertical_padding"
+                android:paddingBottom="@dimen/dimen_tab_widget_vertical_padding">
+    <ImageView
+            android:id="@+id/id_tab_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:layout_centerHorizontal="true"></ImageView>
+    <TextView
+            android:id="@+id/id_tab_item_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/dimen_tab_widget_text_size"
+            android:textColor="@drawable/tab_text_color_selector"
+            android:typeface="sans"
+            android:layout_below="@+id/id_tab_item_icon"
+            android:layout_centerHorizontal="true"></TextView>
+
+</RelativeLayout>

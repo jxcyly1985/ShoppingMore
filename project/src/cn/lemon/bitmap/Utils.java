@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,20 +23,7 @@ import android.os.StrictMode;
  * Class containing some static utility methods.
  */
 public class Utils {
-    private Utils() {
-    };
-
-    public static void enableStrictMode() {
-        if (Utils.hasGingerbread()) {
-            StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
-                    .detectAll().penaltyLog();
-            StrictMode.VmPolicy.Builder vmPolicyBuilder = new StrictMode.VmPolicy.Builder().detectAll()
-                    .penaltyLog();
-
-            StrictMode.setThreadPolicy(threadPolicyBuilder.build());
-            StrictMode.setVmPolicy(vmPolicyBuilder.build());
-        }
-    }
+    private Utils() {};
 
     public static boolean hasFroyo() {
         // Can use static final constants like FROYO, declared in later versions
@@ -56,6 +44,6 @@ public class Utils {
     }
 
     public static boolean hasJellyBean() {
-        return true; // Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 }

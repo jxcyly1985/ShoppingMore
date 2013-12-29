@@ -17,7 +17,9 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="ShoppingMoreTheme" parent="@android:style/Theme.Light.NoTitleBar"></style>
+    <style name="ShoppingMoreTheme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
     <!-- Popup Window Animation -->
     <style name="popup_window_anim" parent="@android:style/Animation">

@@ -6,8 +6,8 @@ public class MallInfoTable implements BaseColumns {
 
     public static final String TABLE_NAME = "mall_infos";
     public static final String MALL_NAME = "mall_name";
-    public static final String MALL_ICON_URL = "mall_iconUrl";
-    public static final String MALL_URL = "mall_url";
+    public static final String MALL_ICON_URL = "mall_imageUrl";
+    public static final String MALL_URL = "mall_linkUrl";
     public static final String MALL_CATEGORY_ID = "category_id";
     public static final String MALL_WEIGHT = "mall_weight";
 
@@ -24,9 +24,14 @@ public class MallInfoTable implements BaseColumns {
 
     public static String getCreateSQL() {
 
-        String CREATE_SQL = "CREATE TABLE" + SP + TABLE_NAME + SP + "(" + MallInfoTable._ID
-                + "INTEGER PRIMARY KEY," + MALL_NAME + SP + "TEXT," + SP + MALL_ICON_URL + SP + "TEXT,"
-                + MALL_URL + SP + "TEXT," + MALL_CATEGORY_ID + SP + "INTEGER," + MALL_WEIGHT + SP + "INTEGER"
+        String CREATE_SQL = "CREATE TABLE" + SP
+                + TABLE_NAME + SP
+                + "(" + MallInfoTable._ID + SP +"INTEGER PRIMARY KEY,"
+                + MALL_NAME + SP + "TEXT," + SP
+                + MALL_ICON_URL + SP + "TEXT,"
+                + MALL_URL + SP + "TEXT,"
+                + MALL_CATEGORY_ID + SP + "TEXT,"
+                + MALL_WEIGHT + SP + "INTEGER"
                 + ")";
         return CREATE_SQL;
     }

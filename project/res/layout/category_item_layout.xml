@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
+
+    <ImageView
+            android:id="@+id/id_category_item_top_side"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category_item_top__side"></ImageView>
+
+    <RelativeLayout
+            android:id="@+id/id_category_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/dimen_category_bar_height"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dimen_category_mall_margin_top"
+            android:layout_marginLeft="@dimen/dimen_category_mall_margin_horizontal"
+            android:layout_marginRight="@dimen/dimen_category_mall_margin_horizontal">
+
+        <ImageView android:id="@+id/id_category_icon"
+                   android:layout_width="@dimen/dimen_category_bar_image_size"
+                   android:layout_height="@dimen/dimen_category_bar_image_size"
+                   android:layout_alignParentLeft="true">
+        </ImageView>
+
+        <TextView
+                android:id="@+id/id_category_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/dimen_category_bar_text_size"
+                android:textColor="@color/white"
+                android:gravity="center_vertical">
+
+        </TextView>
+
+    </RelativeLayout>
+
+    <GridView
+            android:id="@+id/id_category_grid"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="@integer/integer_category_item_columns"
+            android:verticalSpacing="@dimen/dimen_mall_grid_v_spacing"
+            android:horizontalSpacing="@dimen/dimen_mall_grid_h_spacing"
+            android:layout_marginTop="@dimen/dimen_category_mall_grid_margin_top"
+            android:layout_marginLeft="@dimen/dimen_category_mall_margin_horizontal"
+            android:layout_marginRight="@dimen/dimen_category_mall_margin_horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:gravity="center_horizontal"
+            android:stretchMode="columnWidth"
+            android:scrollingCache="false"
+            android:fadingEdge="none"
+            android:cacheColorHint="@android:color/transparent">
+
+    </GridView>
+
+    <ImageView
+            android:id="@+id/id_category_item_bottom_side"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category_item_bottom_side"
+            android:layout_marginTop="@dimen/dimen_category_mall_margin_bottom"></ImageView>
+
+</LinearLayout>

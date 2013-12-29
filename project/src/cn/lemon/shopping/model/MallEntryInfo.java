@@ -3,9 +3,8 @@ package cn.lemon.shopping.model;
 public class MallEntryInfo {
 
     public String mName;
-    public String mIconUrl;
+    public String mImageUrl;
     public String mLinkedUrl;
-    public int mCategoryId;
-    public int mWeight;
+    public String mCategoryId;
 
 }

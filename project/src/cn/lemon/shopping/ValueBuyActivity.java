@@ -7,9 +7,9 @@ import android.os.Bundle;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.utils.DebugUtil;
 
-public class TaobaoTopicActivity extends BaseActivity {
+public class ValueBuyActivity extends BaseActivity {
 
-    public static final String TAG = "TaobaoTopicActivity";
+    public static final String TAG = "ValueBuyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +17,7 @@ public class TaobaoTopicActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         DebugUtil.debug(TAG, "onCreate");
-        setContentView(R.layout.taobao_layout);
+        setContentView(R.layout.value_buy_layout);
     }
 
     @Override

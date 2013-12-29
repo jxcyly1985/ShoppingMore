@@ -27,7 +27,7 @@ public class LocalSqliteOperatorManager implements INotifyInterface {
         Message msg = (Message) arg1;
 
         switch (msg.what) {
-            case MessageConstants.MSG_LOAD_DATA_COMPLETE:
+            case MessageConstants.MSG_MALL_DATA_RETURN:
                 MallTotalInfo mallTotalInfo = (MallTotalInfo) msg.obj;
                 insertData(mallTotalInfo);
                 break;
@@ -59,12 +59,12 @@ public class LocalSqliteOperatorManager implements INotifyInterface {
 
     @Override
     public void addObserver() {
-        mMessageManager.addOberver(MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
+        mMessageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
     }
 
     @Override
     public void deleteObserver() {
-        mMessageManager.deleteOberver(MessageConstants.MSG_LOAD_DATA_COMPLETE, this);
+        mMessageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
     }
 
 }

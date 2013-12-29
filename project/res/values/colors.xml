@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
+
     <color name="white">#ffffffff</color>
-    
-    <color name="tab_text_selected_color">#ff00ff00</color>
-    <color name="tab_text_normal_color">#ff333333</color>
-    
+
+    <color name="title_color">#ffffff</color>
+    <color name="tab_text_selected_color">#ff4fdfbd</color>
+    <color name="tab_text_normal_color">#ff787878</color>
+    <color name="setting_text_color">#ff787878</color>
+
+    <color name="ad_flag_selected_color">#0000ff00</color>
+    <color name="ad_flag_normal_color">#00ffffff</color>
+
+    <color name="mall_text_color">#ff7a7a7a</color>
+    <color name="mall_grid_bg_color">#fff3f1f2</color>
+    <color name="page_color">#ffdce2e2</color>
+
 </resources>

@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="left">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
-    <!-- android:layout_centerHorizontal="true" -->
-    <ImageView
-        android:id="@+id/id_item_image"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/str_item_image"
-        android:scaleType="fitStart" />
+    <LinearLayout
+            android:layout_width="@dimen/dimen_mall_grid_item_width"
+            android:layout_height="@dimen/dimen_mall_grid_item_height"
+            android:orientation="vertical"
+            android:background="@color/white">
 
-    <TextView
-        android:id="@+id/id_item_text"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/id_item_image"
-        android:singleLine="true"
-        android:textIsSelectable="false" 
-       	android:gravity="left"/>
+        <ImageView
+                android:id="@+id/id_item_image"
+                android:layout_width="@dimen/dimen_mall_item_image_width"
+                android:layout_height="@dimen/dimen_mall_item_image_height"
+                android:contentDescription="@string/str_item_image"
+                android:scaleType="fitXY"/>
 
-</RelativeLayout>
+        <TextView
+                android:id="@+id/id_item_text"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/dimen_mall_item_text_height"
+                android:singleLine="true"
+                android:textIsSelectable="false"
+                android:textColor="@color/mall_text_color"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/dimen_mall_text_size"/>
+    </LinearLayout>
+
+</FrameLayout>

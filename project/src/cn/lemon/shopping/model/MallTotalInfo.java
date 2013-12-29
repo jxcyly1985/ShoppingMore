@@ -6,9 +6,7 @@ import android.util.SparseArray;
 public class MallTotalInfo {
 
     public String mVersion;
-
+    public String mMsg;
     public List<CategoryEntryInfo> mCategoryList;
-
-    public SparseArray<List<MallEntryInfo>> mCategoryMappingMall;
 
 }

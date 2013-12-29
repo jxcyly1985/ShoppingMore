@@ -1,10 +1,10 @@
 package cn.lemon.framework;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 
-public abstract class BaseActivity extends Activity implements INotifyInterface{
+public abstract class BaseActivity extends FragmentActivity implements INotifyInterface{
     
     protected MessageManager mMesssageManager;
     

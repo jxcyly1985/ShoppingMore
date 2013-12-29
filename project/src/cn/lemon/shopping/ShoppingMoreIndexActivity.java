@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import android.graphics.drawable.StateListDrawable;
+import android.widget.*;
 import cn.lemon.framework.BaseActivityGroup;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
 import cn.lemon.shopping.adapter.SettingViewAdapter;
@@ -22,391 +24,420 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
-import android.widget.TextView;
 
 public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
-		OnClickListener {
+        OnClickListener {
 
-	public static final String TAG = "ShoppingMoreIndexActivity";
+    public static final String TAG = "ShoppingMoreIndexActivity";
 
-	private TabHost mTabHost;
-	private TabWidget mTabWidget;
+    private TabHost mTabHost;
+    private TabWidget mTabWidget;
 
-	private ViewPager mViewPager;
+    private ViewPager mViewPager;
 
-	private String mRecommendString;
-	private String mCashDeliveryString;
-	private String mWorthBuyingString;
-	private String mSettingString;
+    private String mRecommendString;
+    private String mCashDeliveryString;
+    private String mWorthBuyingString;
+    private String mSettingString;
 
-	private List<View> mViews;
-	private LocalActivityManager mLocalActivityManager;
+    private List<View> mViews;
+    private LocalActivityManager mLocalActivityManager;
 
-	private ImageView mSearchImageView;
-	private int mSelectPos = 0;
+    private ImageView mSearchImageView;
+    private int mSelectPos = 0;
 
-	private PopupWindow mSettingWindow;
+    private PopupWindow mSettingWindow;
 
-	private boolean mSettingNoIcon = true;
+    private boolean mSettingNoIcon = true;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    private int[] mTabIconRes;
+    private int[] mTabTextRes;
 
-		setContentView(R.layout.activity_shopping_more_index);
-		initView();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
+        setContentView(R.layout.activity_shopping_more_index);
+        initRes();
+        initView();
+    }
 
-		mLocalActivityManager.dispatchDestroy(true);
-	}
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
 
-	private void initView() {
+        mLocalActivityManager.dispatchDestroy(true);
+    }
 
-		Resources resources = getResources();
+    private void initRes() {
 
-		mLocalActivityManager = getLocalActivityManager();
-		buildContentViews();
+        Resources resources = getResources();
 
-		int tabWidgetHeight = 0;
-		mTabHost = (TabHost) findViewById(android.R.id.tabhost);
-		mTabHost.setup(mLocalActivityManager);
-		mTabWidget = (TabWidget) findViewById(android.R.id.tabs);
-		mViewPager = (ViewPager) findViewById(R.id.id_shopping_more_view_pager);
+        mTabIconRes = new int[]{R.drawable.tab_recommend_icon_selector, R.drawable.tab_cash_icon_selector,
+                R.drawable.tab_value_buy_selector};
+        mTabTextRes = new int[]{R.string.str_recommend, R.string.str_cash_delivery, R.string.str_worth_buying};
 
-		mRecommendString = resources.getString(R.string.str_recommend);
-		mCashDeliveryString = resources.getString(R.string.str_cash_delivery);
-		mWorthBuyingString = resources.getString(R.string.str_worth_buying);
-		mSettingString = resources.getString(R.string.str_setting);
+        mRecommendString = resources.getString(R.string.str_recommend);
+        mCashDeliveryString = resources.getString(R.string.str_cash_delivery);
+        mWorthBuyingString = resources.getString(R.string.str_worth_buying);
+        mSettingString = resources.getString(R.string.str_setting);
 
-		mTabHost.addTab(getTabSpecItem(mRecommendString));
-		mTabHost.addTab(getTabSpecItem(mCashDeliveryString));
-		mTabHost.addTab(getTabSpecItem(mWorthBuyingString));
-		mTabHost.addTab(getTabSpecItem(mSettingString));
-		initViewPager();
+    }
 
-		// change tab widget height
-		tabWidgetHeight = resources
-				.getDimensionPixelSize(R.dimen.dimen_tab_widget_height);
-		mTabWidget.getLayoutParams().height = tabWidgetHeight;
-		// remove bottom indicator
-		if (android.os.Build.VERSION.SDK_INT >= 8) {
-			mTabWidget.setStripEnabled(false);
-		}
-		mTabHost.setCurrentTab(0);
-		updateTab(mTabHost);
+    private void initView() {
 
-		mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
-		mSearchImageView.setOnClickListener(this);
+        mLocalActivityManager = getLocalActivityManager();
+        buildContentViews();
 
-		// initialize setting pop up window
-		initSettingPopupWindow();
+        int tabWidgetHeight = 0;
+        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(mLocalActivityManager);
+        mTabWidget = (TabWidget) findViewById(android.R.id.tabs);
+        mViewPager = (ViewPager) findViewById(R.id.id_shopping_more_view_pager);
 
-	}
+        mTabHost.addTab(getTabSpecItem(mRecommendString));
+        mTabHost.addTab(getTabSpecItem(mCashDeliveryString));
+        mTabHost.addTab(getTabSpecItem(mWorthBuyingString));
+        //mTabHost.addTab(getTabSpecItem(mSettingString));
+        initViewPager();
 
-	@SuppressWarnings("deprecation")
-	private void buildContentViews() {
+        // remove bottom indicator
+        if (android.os.Build.VERSION.SDK_INT >= 8) {
+            mTabWidget.setStripEnabled(false);
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            mTabWidget.setShowDividers(TabWidget.SHOW_DIVIDER_MIDDLE);
+        }
 
-		mViews = new ArrayList<View>();
+        mTabWidget.setDividerDrawable(R.drawable.tab_widget_divider);
+        int dividerPadding = getResources().getDimensionPixelOffset(R.dimen.dimen_tab_widget_divider_padding);
+        mTabWidget.setDividerPadding(dividerPadding);
+        mTabHost.setCurrentTab(0);
+        updateTab(mTabHost);
 
-		Intent recommendIntent = new Intent(this, RecommendActivity.class);
-		Window recommendWindow = mLocalActivityManager.startActivity(
-				mRecommendString, recommendIntent);
-		mViews.add(recommendWindow.getDecorView());
-
-		Intent cashDeliveryIntent = new Intent(this, ExternalWebActivity.class);
-		Window cashDelieryWindow = mLocalActivityManager.startActivity(
-				mRecommendString, cashDeliveryIntent);
-		mViews.add(cashDelieryWindow.getDecorView());
-
-		Intent taobaoIntent = new Intent(this, TaobaoTopicActivity.class);
-		Window taobaoWindow = mLocalActivityManager.startActivity(
-				mRecommendString, taobaoIntent);
-		mViews.add(taobaoWindow.getDecorView());
-
-	}
-
-	private void initViewPager() {
-
-		ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
-		mViewPager.setAdapter(adapter);
-
-		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
-
-			@Override
-			public void onTabChanged(String tabId) {
-
-				DebugUtil.debug(TAG, "onTabChanged tabId " + tabId);
-				if (tabId.equals(mRecommendString)) {
-					mSelectPos = 0;
-				} else if (tabId.equals(mCashDeliveryString)) {
-					mSelectPos = 1;
-				} else if (tabId.equals(mWorthBuyingString)) {
-					mSelectPos = 2;
-				} else if (tabId.equals(mSettingString)) {
-					PopupSettingDialog();
-				}
-				mViewPager.setCurrentItem(mSelectPos);
-				updateTab(mTabHost);
-
-			}
-		});
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-
-			@Override
-			public void onPageSelected(int position) {
-				// TODO Auto-generated method stub
-
-				DebugUtil.debug(TAG, "onPageSelected");
-				mTabHost.setCurrentTab(position);
-			}
-
-			@Override
-			public void onPageScrolled(int position, float positionOffset,
-					int positionOffsetPixels) {
-				// TODO Auto-generated method stub
-
-				DebugUtil.debug(TAG, "onPageScrolled position " + position
-						+ " positionOffset " + positionOffset
-						+ " positionOffsetPixels " + positionOffsetPixels);
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
-				// TODO Auto-generated method stub
-				DebugUtil.debug(TAG, "onPageScrollStateChanged state " + state);
-
-			}
-		});
-
-		mViewPager.setCurrentItem(0);
-	}
-
-	private void PopupSettingDialog() {
-
-		mSettingWindow.setAnimationStyle(R.style.popup_window_anim);
-		
-		mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
-
-	}
-	
-	private void initSettingPopupWindow() {
-
-		List<Pair<Integer, String>> settingPairs = new ArrayList<Pair<Integer, String>>();
-		String[] settingArray = getResources().getStringArray(
-				R.array.setting_array);
-
-		BaseAdapter settingAdapter = null;
-
-		if (mSettingNoIcon) {
-			settingAdapter = new ArrayAdapter<String>(getApplicationContext(),
-					R.layout.text_item_layout, 0, settingArray);
-
-		} else {
-			Pair<Integer, String> refreshItem = Pair.create(
-					android.R.drawable.ic_delete, settingArray[0]);
-			Pair<Integer, String> checkVersionItem = Pair.create(
-					android.R.drawable.ic_delete, settingArray[1]);
-			Pair<Integer, String> helpItem = Pair.create(
-					android.R.drawable.ic_delete, settingArray[2]);
-			Pair<Integer, String> exitItem = Pair.create(
-					android.R.drawable.ic_delete, settingArray[3]);
-			settingPairs.add(refreshItem);
-			settingPairs.add(checkVersionItem);
-			settingPairs.add(helpItem);
-			settingPairs.add(exitItem);
-			settingAdapter = new SettingViewAdapter(getApplicationContext(),
-					R.layout.image_text_item_layout, settingPairs);
-		}
-
-		View contentView = View.inflate(getApplicationContext(),
-				R.layout.setting_layout, null);
-		// may need not call setFocusable && setFocusableInTouchMode
-		contentView.setFocusable(true);
-		// response to menu key click
-		contentView.setFocusableInTouchMode(true);
-		contentView.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-				DebugUtil.debug(TAG, "initSettingPopupWindow keycode "
-						+ keyCode + " action " + event.getAction());
-
-				// compare to ACTION_DOWN if ACTION_UP cause problem
-				if (event.getAction() == KeyEvent.ACTION_DOWN) {
-
-					if (keyCode == KeyEvent.KEYCODE_BACK) {
-						if (mSettingWindow.isShowing()) {
-							mSettingWindow.dismiss();
-							return true;
-						}
-
-					}
-					if (keyCode == KeyEvent.KEYCODE_MENU) {
-						if (mSettingWindow.isShowing()) {
-							mSettingWindow.dismiss();
-						} else {
-							PopupSettingDialog();
-						}
-
-						return true;
-					}
-				}
-				return false;
-
-			}
-		});
-		GridView settingGrid = (GridView) contentView
-				.findViewById(R.id.id_setting_grid);
-		settingGrid.setAdapter(settingAdapter);
-		settingGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-
-				return true;
-			}
-		});
-		contentView.setLayoutParams(new ViewGroup.LayoutParams(
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT));
-
-		// create pop up window
-		mSettingWindow = new PopupWindow(contentView,
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT, true);
-		// let pop up window can get focus
-		mSettingWindow.setFocusable(true);
-
-		// let dismiss pop up window when click outside
-		mSettingWindow.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.beauty_o));
-
-	}
-
-	@SuppressWarnings("deprecation")
-	private void updateTab(final TabHost tabHost) {
-		for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
-			View view = tabHost.getTabWidget().getChildAt(i);
-			TextView tv = (TextView) mTabWidget.getChildAt(i).findViewById(
-					android.R.id.title);
-
-			// Set Tab view Bottom padding
-			int verticalPadding = getResources().getInteger(
-					R.integer.tab_vertical);
-			view.setPadding(0, verticalPadding, 0, verticalPadding);
-
-			// set tab text size in dip unit
-			int textSize = getResources().getInteger(R.integer.tab_text_size);
-			tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
-
-			// set text view align bottom
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tv
-					.getLayoutParams();
-			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-					RelativeLayout.TRUE);
-
-			// http://blog.csdn.net/thinkscape/article/details/1967339
-			tv.setTypeface(Typeface.SANS_SERIF);
-
-			// remove tab widget position Indicator
-			view.setBackground(null);
-
-			if (tabHost.getCurrentTab() == i) {
-				view.setBackgroundColor(getResources().getColor(R.color.white));
-				tv.setTextColor(this.getResources().getColor(
-						R.color.tab_text_selected_color));
-			} else {
-				view.setBackgroundColor(getResources().getColor(R.color.white));
-				tv.setTextColor(this.getResources().getColor(
-						R.color.tab_text_normal_color));
-			}
-		}
-	}
-
-
-	private TabSpec getTabSpecItem(String tag) {
-
-		@SuppressWarnings("deprecation")
-		Drawable iconDrawable = new BitmapDrawable(
-				BitmapFactory.decodeResource(getResources(),
-						R.drawable.ic_launcher));
-		TabSpec tabspec = mTabHost.newTabSpec(tag)
-				.setIndicator(tag, iconDrawable)
-				.setContent(R.id.id_empty_tabcontent_text_view);
-		return tabspec;
-	}
-
-	private TabSpec getTabSpecItem(String tag, Intent intent) {
-
-		TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag)
-				.setContent(intent);
-		return tabspec;
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-		DebugUtil.debug(TAG, "activity onKeyDown");
-
-		if (keyCode == KeyEvent.KEYCODE_MENU) {
-			if (mSettingWindow.isShowing()) {
-				mSettingWindow.dismiss();
-			} else {
-				PopupSettingDialog();
-				// change to setting tab
-				mTabHost.setCurrentTab(3);
-			}
-
-			return true;
-		}
-
-		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	public void addObserver() {
-
-	}
-
-	@Override
-	public void deleteObserver() {
-
-	}
-
-	@Override
-	public void update(Observable observable, Object data) {
-
-	}
-
-	@Override
-	public void onClick(View v) {
-
-	}
+        mSearchImageView = (ImageView) findViewById(R.id.id_search_image_view);
+        mSearchImageView.setOnClickListener(this);
+
+        // initialize setting pop up window
+        initSettingPopupWindow();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void buildContentViews() {
+
+        mViews = new ArrayList<View>();
+
+        Intent recommendIntent = new Intent(this, RecommendActivity.class);
+        Window recommendWindow = mLocalActivityManager.startActivity(
+                mRecommendString, recommendIntent);
+        mViews.add(recommendWindow.getDecorView());
+
+        Intent cashDeliveryIntent = new Intent(this, ExternalWebActivity.class);
+        Window cashDeliveryWindow = mLocalActivityManager.startActivity(
+                mCashDeliveryString, cashDeliveryIntent);
+        mViews.add(cashDeliveryWindow.getDecorView());
+
+        Intent valueBuyIntent = new Intent(this, ValueBuyActivity.class);
+        Window valueBuyWindow = mLocalActivityManager.startActivity(
+                mWorthBuyingString, valueBuyIntent);
+        mViews.add(valueBuyWindow.getDecorView());
+
+    }
+
+    private void onActivityPageChanged(){
+
+        // send resume, pause and stop state
+
+        mLocalActivityManager.dispatchPause(false);
+        mLocalActivityManager.dispatchStop();
+
+    }
+
+    private void initViewPager() {
+
+        ContentViewPagerAdapter adapter = new ContentViewPagerAdapter(mViews);
+        mViewPager.setAdapter(adapter);
+
+        mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
+
+            @Override
+            public void onTabChanged(String tabId) {
+
+                DebugUtil.debug(TAG, "onTabChanged tabId " + tabId);
+                if (tabId.equals(mRecommendString)) {
+                    mSelectPos = 0;
+                } else if (tabId.equals(mCashDeliveryString)) {
+                    mSelectPos = 1;
+                } else if (tabId.equals(mWorthBuyingString)) {
+                    mSelectPos = 2;
+                } else if (tabId.equals(mSettingString)) {
+                    PopupSettingDialog();
+                }
+                onActivityPageChanged();
+                mViewPager.setCurrentItem(mSelectPos);
+
+                // updateTab(mTabHost);
+
+            }
+        });
+        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+
+                DebugUtil.debug(TAG, "onPageSelected");
+                onActivityPageChanged();
+                mTabHost.setCurrentTab(position);
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+
+                DebugUtil.debug(TAG, "onPageScrolled position " + position
+                        + " positionOffset " + positionOffset
+                        + " positionOffsetPixels " + positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+                DebugUtil.debug(TAG, "onPageScrollStateChanged state " + state);
+
+            }
+        });
+
+        mViewPager.setCurrentItem(0);
+    }
+
+    private void PopupSettingDialog() {
+
+        mSettingWindow.setAnimationStyle(R.style.popup_window_anim);
+
+        mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
+
+    }
+
+    private void initSettingPopupWindow() {
+
+        List<Pair<Integer, String>> settingPairs = new ArrayList<Pair<Integer, String>>();
+        String[] settingArray = getResources().getStringArray(
+                R.array.setting_array);
+
+        BaseAdapter settingAdapter = null;
+
+        if (mSettingNoIcon) {
+            settingAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                    R.layout.text_item_layout, R.id.id_text_item, settingArray);
+
+        } else {
+            Pair<Integer, String> refreshItem = Pair.create(
+                    android.R.drawable.ic_delete, settingArray[0]);
+            Pair<Integer, String> checkVersionItem = Pair.create(
+                    android.R.drawable.ic_delete, settingArray[1]);
+            Pair<Integer, String> helpItem = Pair.create(
+                    android.R.drawable.ic_delete, settingArray[2]);
+            Pair<Integer, String> exitItem = Pair.create(
+                    android.R.drawable.ic_delete, settingArray[3]);
+            settingPairs.add(refreshItem);
+            settingPairs.add(checkVersionItem);
+            settingPairs.add(helpItem);
+            settingPairs.add(exitItem);
+            settingAdapter = new SettingViewAdapter(getApplicationContext(),
+                    R.layout.image_text_item_layout, settingPairs);
+        }
+
+        View contentView = View.inflate(getApplicationContext(),
+                R.layout.setting_layout, null);
+        // may need not call setFocusable && setFocusableInTouchMode
+        contentView.setFocusable(true);
+        // response to menu key click
+        contentView.setFocusableInTouchMode(true);
+        contentView.setOnKeyListener(new OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                DebugUtil.debug(TAG, "initSettingPopupWindow keycode "
+                        + keyCode + " action " + event.getAction());
+
+                // compare to ACTION_DOWN if ACTION_UP cause problem
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        if (mSettingWindow.isShowing()) {
+                            mSettingWindow.dismiss();
+                            return true;
+                        }
+
+                    }
+                    if (keyCode == KeyEvent.KEYCODE_MENU) {
+                        if (mSettingWindow.isShowing()) {
+                            mSettingWindow.dismiss();
+                        } else {
+                            PopupSettingDialog();
+                        }
+
+                        return true;
+                    }
+                }
+                return false;
+
+            }
+        });
+        ListView settingView = (ListView) contentView
+                .findViewById(R.id.id_setting_adapter_view);
+        settingView.setAdapter(settingAdapter);
+        settingView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+
+                return true;
+            }
+        });
+        contentView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        // create pop up window
+        mSettingWindow = new PopupWindow(contentView,
+                ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        // let pop up window can get focus
+        mSettingWindow.setFocusable(true);
+
+        // let dismiss pop up window when click outside
+        mSettingWindow.setBackgroundDrawable(getResources().getDrawable(
+                R.drawable.popup_window_bg));
+
+    }
+
+    private void updateTab(final TabHost tabHost) {
+        for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+            View indicatorView = tabHost.getTabWidget().getChildAt(i);
+            ImageView icon = (ImageView) indicatorView.findViewById(R.id.id_tab_item_icon);
+            TextView textView = (TextView) indicatorView.findViewById(R.id.id_tab_item_text);
+            // set selector
+            icon.setImageResource(mTabIconRes[i]);
+            textView.setText(mTabTextRes[i]);
+
+        }
+    }
+
+
+    @SuppressWarnings("deprecation")
+    private void updateTab2(final TabHost tabHost) {
+        for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+            View view = tabHost.getTabWidget().getChildAt(i);
+            TextView tv = (TextView) mTabWidget.getChildAt(i).findViewById(
+                    android.R.id.title);
+            ImageView icon = (ImageView) mTabWidget.getChildAt(i).findViewById(android.R.id.icon);
+
+            // Set Tab view Bottom padding
+            int verticalPadding = getResources().getInteger(
+                    R.integer.tab_vertical);
+            view.setPadding(0, verticalPadding, 0, verticalPadding);
+
+            // set tab text size in dip unit
+            int textSize = getResources().getInteger(R.integer.tab_text_size);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+
+            // set text view align bottom
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tv
+                    .getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
+                    RelativeLayout.TRUE);
+
+            // http://blog.csdn.net/thinkscape/article/details/1967339
+            tv.setTypeface(Typeface.SANS_SERIF);
+            // set selector
+            view.setBackgroundResource(R.drawable.tab_widget_bg);
+            tv.setTextColor(R.color.tab_text_selected_color);
+            icon.setImageResource(mTabIconRes[i]);
+
+        }
+    }
+
+
+//    private TabSpec getTabSpecItem(String tag) {
+//
+//        @SuppressWarnings("deprecation")
+//        Drawable iconDrawable = new StateListDrawable();
+//        TabSpec tabspec = mTabHost.newTabSpec(tag)
+//                .setIndicator(tag, iconDrawable)
+//                .setContent(R.id.id_empty_tabcontent_text_view);
+//        return tabspec;
+//    }
+
+
+    private TabSpec getTabSpecItem(String tag) {
+
+
+        View indicatorView = getLayoutInflater().inflate(R.layout.tab_widget_item_layout, null);
+        TabSpec tabspec = mTabHost.newTabSpec(tag)
+                .setIndicator(indicatorView)
+                .setContent(R.id.id_empty_tabcontent_text_view);
+        return tabspec;
+    }
+
+    private TabSpec getTabSpecItem(String tag, Intent intent) {
+
+        TabSpec tabspec = mTabHost.newTabSpec(tag).setIndicator(tag)
+                .setContent(intent);
+        return tabspec;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        DebugUtil.debug(TAG, "activity onKeyDown");
+
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (mSettingWindow.isShowing()) {
+                mSettingWindow.dismiss();
+            } else {
+                PopupSettingDialog();
+                // change to setting tab
+                mTabHost.setCurrentTab(3);
+            }
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void addObserver() {
+
+    }
+
+    @Override
+    public void deleteObserver() {
+
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
 
 }

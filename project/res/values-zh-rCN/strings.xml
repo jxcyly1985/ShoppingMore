@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="app_name">多多购物</string>
+    <string name="app_name">购物公园</string>
+
+    <string name="str_recommend">商城首页</string>
+    <string name="str_cash_delivery">货到付款</string>
+    <string name="str_worth_buying">值得买</string>
+    <string name="str_setting">设置</string>
+    <string name="str_search">搜索</string>
+    <string name="str_item_image">图片描述</string>
+
+    <!-- Array -->
+    <string-array name="setting_array">
+        <item>刷新</item>
+        <item>检查新版本</item>
+        <item>帮助</item>
+        <item>退出</item>
+    </string-array>
     
 </resources>

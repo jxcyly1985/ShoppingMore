@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:paddingBottom="@dimen/dimen_recommend_padding_bottom"
+            android:background="@color/page_color">
+    <LinearLayout
+            android:id="@+id/id_recommend_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/beauty_o" />
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
 
-</RelativeLayout>
+            <ImageSwitcher
+                    android:id="@+id/id_ad_image_switch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+            </ImageSwitcher>
+
+
+            <cn.lemon.shopping.ui.ViewPagerIndicator
+                    android:id="@+id/id_ad_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right">
+
+            </cn.lemon.shopping.ui.ViewPagerIndicator>
+
+        </FrameLayout>
+
+    </LinearLayout>
+</ScrollView>

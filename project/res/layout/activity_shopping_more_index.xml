@@ -1,40 +1,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ShoppingMoreIndexActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".ShoppingMoreIndexActivity">
 
-    <include layout="@layout/shopping_more_index_title_layout" />
+    <include layout="@layout/shopping_more_index_title_layout"/>
 
     <TabHost
-        android:id="@android:id/tabhost"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/id_shopping_more_title_relativelayout" >
+            android:id="@android:id/tabhost"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/id_shopping_more_title_relativelayout">
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/id_shopping_more_view_pager"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@android:color/black" />
+                android:id="@+id/id_shopping_more_view_pager"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@android:color/black"/>
 
         <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone" >
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone">
 
             <TextView
-                android:id="@+id/id_empty_tabcontent_text_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
+                    android:id="@+id/id_empty_tabcontent_text_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"/>
         </FrameLayout>
 
         <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom" >
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@drawable/tab_widget_bg">
         </TabWidget>
     </TabHost>
 

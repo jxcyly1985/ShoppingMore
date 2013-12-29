@@ -3,11 +3,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
     
-    <GridView 
-        android:id="@+id/id_setting_grid"
+    <ListView
+        android:id="@+id/id_setting_adapter_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:numColumns="@integer/setting_columns"></GridView>
+        android:numColumns="@integer/setting_columns"
+        android:divider="@android:drawable/divider_horizontal_bright"></ListView>
     
 
 </RelativeLayout>
