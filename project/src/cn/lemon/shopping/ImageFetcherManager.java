@@ -2,11 +2,18 @@ package cn.lemon.shopping;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import cn.lemon.bitmap.ImageCache;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.bitmap.ImageWorker;
 import android.support.v4.app.FragmentActivity;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,20 +44,6 @@ public class ImageFetcherManager {
     }
 
     private ImageFetcherManager(){
-
-    }
-
-
-    public ImageFetcher getAdImageFetcher(FragmentActivity fragmentActivity){
-        int widthPixel = mContext.getResources().getDisplayMetrics().widthPixels;
-        int height = widthPixel * 9 / 16;
-
-        ImageFetcher imageFetcher = new ImageFetcher(mContext,widthPixel, height);
-        ImageCache.ImageCacheParams imageCacheParams = new ImageCache.ImageCacheParams(mContext, AD_DIR_NAME);
-        //imageCacheParams.setMemCacheSizePercent(0.1f);
-        imageFetcher.addImageCache(fragmentActivity.getSupportFragmentManager(), imageCacheParams);
-
-        return imageFetcher;
 
     }
 

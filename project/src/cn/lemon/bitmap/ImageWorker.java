@@ -50,6 +50,8 @@ public abstract class ImageWorker {
 
     protected Resources mResources;
 
+    private OnResultListener mOnResultListener;
+
     private static final int MESSAGE_CLEAR = 0;
     private static final int MESSAGE_INIT_DISK_CACHE = 1;
     private static final int MESSAGE_FLUSH = 2;
@@ -57,6 +59,16 @@ public abstract class ImageWorker {
 
     protected ImageWorker(Context context) {
         mResources = context.getResources();
+    }
+
+
+    public interface OnResultListener {
+
+        public void onResult(ImageView imageView, String url);
+    }
+
+    public void setOnResultListener(OnResultListener onResultListener) {
+        mOnResultListener = onResultListener;
     }
 
     /**
@@ -320,6 +332,10 @@ public abstract class ImageWorker {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
                 setImageDrawable(imageView, value);
+                if (mOnResultListener != null) {
+                    mOnResultListener.onResult(imageView, String.valueOf(data));
+                }
+
             }
         }
 

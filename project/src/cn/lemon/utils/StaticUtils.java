@@ -31,7 +31,7 @@ public class StaticUtils {
     public int getColor(String hexColor){
         String colorString = hexColor.substring(1);
         try{
-            return Integer.valueOf(colorString, 16);
+            return Integer.valueOf(colorString, 16) | 0xff000000;
         }catch (NumberFormatException e){
             return 0;
         }

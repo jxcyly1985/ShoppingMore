@@ -515,9 +515,12 @@ public class ImageCache {
 
         boolean isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
 
+        // QiYun<LeiYong><2013-12-29> modify for CR000000001 begin
 //        final String cachePath =
 //                isMounted || !isExternalStorageRemovable() ? getExternalCacheDir(context).getPath() :
 //                                context.getCacheDir().getPath();
+        // QiYun<LeiYong><2013-12-29> modify for CR000000001 end
+
         final String cachePath = isMounted ? getExternalCacheDir(context).getPath() :
                 context.getCacheDir().getPath();
 

@@ -43,44 +43,42 @@ public class ShoppingMoreDomainDataManager {
 		mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
 	}
 
-	public MallTotalInfo getMallTotalInfo() {
+    public MallTotalInfo getMallTotalInfo() {
 
-		MallTotalInfo mallTotalInfo = null;
+        Map<String, CategoryEntryInfo> categoryInfosMap = mLocalSqliteOperator.getMallCategory();
+        if (categoryInfosMap != null) {
+            MallTotalInfo mallTotalInfo = getDataFromDatabase(categoryInfosMap);
+            return mallTotalInfo;
+        }
+        ModelUtils.sendMallRequest(mMallInfoHandler);
+        return null;
 
-		Map<String, CategoryEntryInfo> categoryInfosMap = mLocalSqliteOperator
-				.getMallCategory();
+    }
 
-		if (categoryInfosMap != null) {
 
-			mallTotalInfo = getDataFromDatabase(categoryInfosMap);
+    private boolean isAdInfoExpired(AdInfo adInfo){
 
-		} else {
-
-			ModelUtils.sendMallRequest(mMallInfoHandler);
-		}
-
-		return mallTotalInfo;
-
-	}
-
+        long thisTime = System.currentTimeMillis();
+        long pastTime = thisTime - adInfo.mRequestTime;
+        return pastTime > AD_REQUEST_TIMER;
+    }
 
     public AdInfo getAdInfo(){
 
         AdInfo adInfo = ModelUtils.readAdInfo();
 
-        if (adInfo == null) {
-            ModelUtils.sendAdRequest(mAdInfoHandler);
-        } else {
-            if ((System.currentTimeMillis() - adInfo.mRequestTime) > AD_REQUEST_TIMER) {
-                ModelUtils.sendAdRequest(mAdInfoHandler);
-            }
-        }
-
-
         DebugUtil.debug(TAG, "getAdInfo adInfo " + adInfo);
 
-        return adInfo;
+        if(adInfo != null){
 
+            if (!isAdInfoExpired(adInfo)){
+                return adInfo;
+            }
+            ModelUtils.sendAdRequest(null);
+            return adInfo;
+        }
+        ModelUtils.sendAdRequest(mAdInfoHandler);
+        return null;
     }
 
     private void localizeMallTotalInfo(MallTotalInfo mallTotalInfo){
@@ -127,6 +125,7 @@ public class ShoppingMoreDomainDataManager {
             DebugUtil.debug(TAG, "AdInfoHandler onHandleReceiveSuccess result " + result);
 
             AdInfo adInfo = ModelUtils.jsonToAdInfoObject(result);
+            ModelUtils.localizeAdInfo(result);
             Message msg = FramewokUtils.makeMessage(
                     MessageConstants.MSG_AD_DATA_RETURN, adInfo, 0,
                     0);
@@ -164,7 +163,6 @@ public class ShoppingMoreDomainDataManager {
             Collections.sort(categoryEntryInfoArrayList, new Comparator<CategoryEntryInfo>() {
                 @Override
                 public int compare(CategoryEntryInfo lhs, CategoryEntryInfo rhs) {
-
                     return lhs.mServerId.compareTo(rhs.mServerId);
                 }
             });

@@ -1,12 +1,6 @@
 package cn.lemon.shopping;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.framework.BaseActivity;
-import cn.lemon.shopping.Ad.AdImageManager;
+import cn.lemon.shopping.ad.AdImageManager;
 import cn.lemon.shopping.adapter.MallEntryAdapter;
 import cn.lemon.shopping.model.*;
 import cn.lemon.shopping.ui.ViewPagerIndicator;
@@ -40,10 +34,11 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private AdImageManager mAdImageManager;
     private AdInfo mAdInfo;
     private MallTotalInfo mMallTotalInfo;
-    private int mCurrentAdPos = 0;
-    private boolean mAdMoving = true;
+    private boolean mAdCanMove = true;
     private Map<String, SoftReference<BitmapDrawable>> mAdBitmapDrawableMap;
     private final int AD_CHANGE_TIMER = 3 * 1000;
+
+    private int mCurrentAdPos = 0;
 
     // UI
     private LinearLayout mRecommendContainer;
@@ -80,7 +75,6 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         mAdChangeHandler = new AdChangeHandler();
         mAdBitmapDrawableMap = new HashMap<String, SoftReference<BitmapDrawable>>();
 
-        mAdImageFetcher = ImageFetcherManager.getInstance().getAdImageFetcher(RecommendActivity.this);
     }
 
     private void initView() {
@@ -97,23 +91,33 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         initCategory();
     }
 
+    private void submitAdTask(AdInfo adInfo) {
+
+        List<AdInfo.AdData> adDataList = adInfo.mDatas;
+        int adDataSize = adDataList.size();
+        String[] adImageUrls = new String[adDataSize];
+        for (int i = 0; i < adDataSize; ++i) {
+            adImageUrls[i] = adDataList.get(i).mImageURL;
+        }
+        mAdImageManager.submit(adImageUrls);
+
+    }
+
+    private void initAdIndicator(AdInfo adInfo) {
+
+        List<AdInfo.AdData> adDataList = adInfo.mDatas;
+        int adDataSize = adDataList.size();
+        mAdIndicator.setItemCount(adDataSize);
+        mAdIndicator.setSelectedPos(0);
+    }
+
     private void initAdResource() {
 
         if (mAdInfo != null) {
-            List<AdInfo.AdData> adDataList = mAdInfo.mDatas;
-            int adDataSize = adDataList.size();
-            mAdIndicator.setItemCount(adDataSize);
-            mAdIndicator.setSelectedPos(mCurrentAdPos);
-            String[] adImageUrls = new String[adDataSize];
-            for (int i = 0; i < adDataSize; ++i) {
-                adImageUrls[i] = adDataList.get(i).mImageURL;
-            }
-            mAdImageManager.setAdImageUrls(adImageUrls);
-            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+            submitAdTask(mAdInfo);
+            initAdIndicator(mAdInfo);
             initImageSwitch();
-
         }
-
     }
 
 
@@ -165,6 +169,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         View categoryBar = categoryView.findViewById(R.id.id_category_bar);
         int color = StaticUtils.getInstance().getColor(colorString);
         categoryBar.setBackgroundColor(color);
+
+        DebugUtil.debug(TAG, "initCategoryTileBar color " + color);
     }
 
     private void addToPage(View categoryView){
@@ -175,20 +181,43 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         return getLayoutInflater().inflate(R.layout.category_item_layout, null);
     }
 
+    private void initTopSide(View categoryView){
+
+        View topSide = categoryView.findViewById(R.id.id_category_item_top_side);
+        topSide.setVisibility(View.GONE);
+
+    }
+
+    private View initCategoryView(CategoryEntryInfo categoryEntryInfo){
+        View categoryView = obtainCategoryView();
+        initGridView(categoryView, categoryEntryInfo.mMallEntryInfoList);
+        initCategoryTileBar(categoryView, categoryEntryInfo.mBackgroundColor);
+        initCategoryTitle(categoryView, categoryEntryInfo.mCategoryName);
+        initCategoryIcon(categoryView, categoryEntryInfo.mIconUrl);
+        addToPage(categoryView);
+        return categoryView;
+    }
+
+    private void initCategoryViewNoTopSide(CategoryEntryInfo categoryEntryInfo){
+        View categoryView = initCategoryView(categoryEntryInfo);
+        initTopSide(categoryView);
+
+    }
+
+
     private void initCategory() {
 
-        if (mMallTotalInfo != null) {
+        if (mMallTotalInfo != null && mMallTotalInfo.mCategoryList.size() > 0) {
 
-            List<CategoryEntryInfo> categoryEntryInfos = mMallTotalInfo.mCategoryList;
+            int pos = 0;
+            CategoryEntryInfo categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
+            initCategoryViewNoTopSide(categoryEntryInfo);
+            pos ++;
 
-            for (CategoryEntryInfo categoryEntryInfo : categoryEntryInfos) {
-
-                View categoryView = obtainCategoryView();
-                initGridView(categoryView, categoryEntryInfo.mMallEntryInfoList);
-                initCategoryTileBar(categoryView, categoryEntryInfo.mBackgroundColor);
-                initCategoryTitle(categoryView, categoryEntryInfo.mCategoryName);
-                initCategoryIcon(categoryView, categoryEntryInfo.mIconUrl);
-                addToPage(categoryView);
+            while (pos < mMallTotalInfo.mCategoryList.size()) {
+                categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
+                initCategoryView(categoryEntryInfo);
+                pos++;
             }
         }
 
@@ -208,53 +237,29 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         }
     }
 
+    private void handleAdPos(){
+
+        if (mCurrentAdPos == mAdInfo.mDatas.size()) {
+            mCurrentAdPos = 0;
+        }
+    }
+
     private class AdChangeHandler extends Handler {
 
         @Override
         public void handleMessage(Message msg) {
 
-            if (mCurrentAdPos == mAdInfo.mDatas.size()) {
-                mCurrentAdPos = 0;
-            }
-
+            handleAdPos();
             String adImageUrl = getAdImageUrl();
-            BitmapDrawable bitmapDrawable = null;
-            ImageView child = null;
-
             if (adImageUrl != null) {
-                child = (ImageView) mAdImageSwitcher.getNextView();
-                bitmapDrawable = mAdImageManager.getBitmapDrawable(adImageUrl);
-                if (bitmapDrawable != null) {
-                    child.setImageDrawable(bitmapDrawable);
-                }
+                ImageView imageView = (ImageView) mAdImageSwitcher.getNextView();
+                mAdImageManager.getDrawable(imageView, adImageUrl);
                 mAdImageSwitcher.showNext();
+                mCurrentAdPos++;
             }
-
-//            if(adImageUrl != null){
-//                if (mAdBitmapDrawableMap.containsKey(adImageUrl)) {
-//
-//                    bitmapDrawable = mAdBitmapDrawableMap.get(adImageUrl).get();
-//                    if (bitmapDrawable != null) {
-//                        mAdImageSwitcher.setImageDrawable(bitmapDrawable);
-//                    } else {
-//
-//                        mAdImageSwitcher.showNext();
-//                        child = (ImageView) mAdImageSwitcher.getNextView();
-//                        mAdImageFetcher.loadImage(adImageUrl, child);
-//                    }
-//                } else {
-//                    mAdImageSwitcher.showNext();
-//                    child = (ImageView) mAdImageSwitcher.getNextView();
-//                    mAdImageFetcher.loadImage(adImageUrl, child);
-//                }
-//            }
-
-//            mCurrentAdPos++;
-//
-//            if (mAdMoving) {
-//                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
-//            }
-
+            if(isAdCanMove()){
+                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+            }
         }
     }
 
@@ -284,13 +289,24 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         int id = v.getId();
         switch (id) {
-            case R.id.id_ad_image_switch: {
-                String url = getAdLinkUrl();
-                if (url != null) {
-                    ActivityUtils.toAdHostActivity(this, url);
-                }
-            }
+            case R.id.id_ad_image_switch:
+            ActivityUtils.toAdHostActivity(this, getAdLinkUrl());
             break;
+        }
+    }
+
+    private boolean isAdCanMove(){
+        return mAdCanMove;
+    }
+
+    private void setAdCanMove(boolean canMove){
+        mAdCanMove = canMove;
+    }
+
+    private void resumeAd(){
+
+        if(!isAdCanMove()){
+            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
         }
     }
 
@@ -298,7 +314,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     protected void onPause() {
 
         super.onPause();
-        mAdMoving = false;
+        mAdImageManager.onPause();
+        setAdCanMove(false);
         DebugUtil.debug(TAG, "onPause");
 
     }
@@ -307,29 +324,41 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     protected void onResume() {
 
         super.onResume();
+        mAdImageManager.onResume();
+        setAdCanMove(true);
+        resumeAd();
         DebugUtil.debug(TAG, "onResume");
+    }
+
+    private void handleAdDestroy(){
+        mAdImageManager.onDestroy();
+        setAdCanMove(false);
+        mAdChangeHandler.removeMessages(0);
+
     }
 
     @Override
     protected void onDestroy() {
 
         super.onDestroy();
+        handleAdDestroy();
         DebugUtil.debug(TAG, "onDestroy");
     }
 
     @Override
     public void addObserver() {
 
-        this.mMesssageManager.addOberver(
-                MessageConstants.MSG_MALL_DATA_RETURN, this);
-        this.mMesssageManager.addOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMesssageManager.addOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.addOberver(MessageConstants.MSG_AD_IMAGE_READY,this);
+
     }
 
     @Override
     public void deleteObserver() {
-        this.mMesssageManager.deleteOberver(
-                MessageConstants.MSG_MALL_DATA_RETURN, this);
-        this.mMesssageManager.deleteOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_IMAGE_READY,this);
     }
 
     @Override
@@ -342,16 +371,19 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         switch (what) {
             case MessageConstants.MSG_MALL_DATA_RETURN:
-                // notify adapter data set changed
+                DebugUtil.debug(TAG, "MSG_MALL_DATA_RETURN");
                 initCategory();
                 break;
 
             case MessageConstants.MSG_AD_DATA_RETURN:
+                DebugUtil.debug(TAG, "MSG_AD_DATA_RETURN");
                 mAdInfo = (AdInfo) msg.obj;
                 initAdResource();
-
                 break;
-
+            case MessageConstants.MSG_AD_IMAGE_READY:
+                DebugUtil.debug(TAG, "MSG_AD_IMAGE_READY");
+                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+                break;
             default:
                 break;
         }
