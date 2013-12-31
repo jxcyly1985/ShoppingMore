@@ -3,15 +3,16 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
+    <!-- @dimen/dimen_mall_grid_item_width -->
     <LinearLayout
-            android:layout_width="@dimen/dimen_mall_grid_item_width"
+            android:layout_width="fill_parent"
             android:layout_height="@dimen/dimen_mall_grid_item_height"
             android:orientation="vertical"
             android:background="@color/white">
 
         <ImageView
                 android:id="@+id/id_item_image"
-                android:layout_width="@dimen/dimen_mall_item_image_width"
+                android:layout_width="fill_parent"
                 android:layout_height="@dimen/dimen_mall_item_image_height"
                 android:contentDescription="@string/str_item_image"
                 android:scaleType="fitXY"/>

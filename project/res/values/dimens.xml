@@ -17,12 +17,14 @@
     <dimen name="dimen_ad_height">143dp</dimen>
     <dimen name="dimen_ad_flag_width">4dp</dimen>
 
+    <dimen name="dimen_category_vertical_spacing">10dp</dimen>
     <dimen name="dimen_category_bar_height">26dp</dimen>
     <dimen name="dimen_category_bar_text_size">18sp</dimen>
-    <dimen name="dimen_category_bar_image_size">23dp</dimen>
+    <dimen name="dimen_category_bar_image_size">22dp</dimen>
+    <dimen name="dimen_category_bar_image_margin_left">5dp</dimen>
 
-    <dimen name="dimen_category_mall_margin_top">5dp</dimen>
-    <dimen name="dimen_category_mall_margin_horizontal">5dp</dimen>
+    <dimen name="dimen_category_mall_margin_top">8dp</dimen>
+    <dimen name="dimen_category_mall_margin_horizontal">10dp</dimen>
     <dimen name="dimen_category_mall_grid_margin_top">4dp</dimen>
     <dimen name="dimen_category_mall_margin_bottom">12dp</dimen>
     <dimen name="dimen_mall_grid_item_width">82dp</dimen>
@@ -30,7 +32,7 @@
     <dimen name="dimen_mall_item_image_width">82dp</dimen>
     <dimen name="dimen_mall_item_image_height">66dp</dimen>
     <dimen name="dimen_mall_item_text_height">16dp</dimen>
-    <dimen name="dimen_mall_grid_h_spacing">2px</dimen>
+    <dimen name="dimen_mall_grid_h_spacing">4dp</dimen>
     <dimen name="dimen_mall_grid_v_spacing">5dp</dimen>
     <dimen name="dimen_mall_grid_item_padding">3dp</dimen>
     <dimen name="dimen_mall_text_size">12sp</dimen>
