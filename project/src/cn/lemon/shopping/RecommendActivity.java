@@ -13,6 +13,7 @@ import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.ad.AdImageManager;
 import cn.lemon.shopping.adapter.MallEntryAdapter;
+import cn.lemon.shopping.category.CategoryIconManager;
 import cn.lemon.shopping.model.*;
 import cn.lemon.shopping.ui.PosIndicator;
 import cn.lemon.shopping.utils.Utils;
@@ -32,6 +33,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     // Data
     private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private AdImageManager mAdImageManager;
+    private CategoryIconManager mCategoryIconManager;
     private AdInfo mAdInfo;
     private MallTotalInfo mMallTotalInfo;
     private boolean mAdCanMove = true;
@@ -67,6 +69,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         mAdImageManager = AdImageManager.getInstance();
         mAdImageManager.init(this);
+        mCategoryIconManager = CategoryIconManager.getInstance();
+        mCategoryIconManager.init(this);
         mMallImageFetcher = ImageFetcherManager.getInstance().getMallImageFetcher(RecommendActivity.this);
 
         mAdInfo = mShoppingMoreDomainDataManager.getAdInfo();
@@ -155,7 +159,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         ImageView categoryIcon = (ImageView) categoryView.findViewById(R.id.id_category_icon);
         categoryIcon.setImageResource(R.drawable.icon);
-
+        mCategoryIconManager.getIcon(iconUrl, categoryIcon);
     }
 
     private void initCategoryTitle(View categoryView, String categoryName) {
@@ -309,8 +313,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private String getAdLinkUrl() {
 
         if (mAdInfo != null) {
-
-            return mAdInfo.mDatas.get(mCurrentAdPos).mLinkURL;
+            return mAdInfo.mDatas.get(getAdPos()).mLinkURL;
         }
         return null;
     }

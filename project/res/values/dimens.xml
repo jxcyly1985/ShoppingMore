@@ -26,8 +26,8 @@
     <dimen name="dimen_category_vertical_spacing">10dp</dimen>
     <dimen name="dimen_category_bar_height">26dp</dimen>
     <dimen name="dimen_category_bar_text_size">18sp</dimen>
-    <dimen name="dimen_category_bar_image_size">22dp</dimen>
-    <dimen name="dimen_category_bar_image_margin_left">5dp</dimen>
+    <dimen name="dimen_category_bar_image_size">26dp</dimen>
+    <dimen name="dimen_category_bar_image_margin_left">0dp</dimen>
 
     <dimen name="dimen_category_mall_margin_top">8dp</dimen>
     <dimen name="dimen_category_mall_margin_horizontal">10dp</dimen>

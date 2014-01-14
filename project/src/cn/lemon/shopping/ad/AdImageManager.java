@@ -12,11 +12,12 @@ import cn.lemon.bitmap.ImageResizer;
 import cn.lemon.framework.FramewokUtils;
 import cn.lemon.framework.MessageManager;
 import cn.lemon.shopping.MessageConstants;
+import cn.lemon.shopping.R;
+import cn.lemon.shopping.utils.Utils;
 import cn.lemon.utils.DebugUtil;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -34,7 +35,6 @@ public class AdImageManager {
 
     private static final String TAG = "AdImageManager";
 
-    private static final int IO_BUFFER_SIZE = 8 * 1024;
     private ThreadPoolExecutor mImageThreadPoolExecutor;
     private static final String AD_DIR = "AD";
     private boolean mInit = false;
@@ -69,6 +69,8 @@ public class AdImageManager {
 
         if (!mInit) {
             mContext = context;
+            mImageWidth = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_mall_item_image_width);
+            mImageHeight = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_mall_item_image_height);
             mAdDir = ImageCache.getDiskCacheDir(mContext, AD_DIR);
             // QiYun<LeiYong><2014-01-11> modify for CR000000002 begin
             if (!mAdDir.exists()) {
@@ -159,7 +161,7 @@ public class AdImageManager {
         return mImageUrlCleaner.size() == 0;
     }
 
-    private void removeCleaner(String url){
+    private void removeCleaner(String url) {
 
         DebugUtil.debug(TAG, "removeCleaner url " + url);
 
@@ -218,14 +220,15 @@ public class AdImageManager {
         return bitmapDrawable;
     }
 
-    private class DecodeDiskTask extends AsyncTask<String, Integer, BitmapDrawable>{
+    private class DecodeDiskTask extends AsyncTask<String, Integer, BitmapDrawable> {
 
-        private ImageView mImageView;
+        private final WeakReference<ImageView> mImageViewReference;
         private String mUrl;
 
-        public DecodeDiskTask(ImageView imageView){
-            mImageView = imageView;
+        public DecodeDiskTask(ImageView imageView) {
+            mImageViewReference = new WeakReference<ImageView>(imageView);
         }
+
         @Override
         protected BitmapDrawable doInBackground(String... params) {
             mUrl = params[0];
@@ -239,10 +242,17 @@ public class AdImageManager {
 
             if (bitmapDrawable != null) {
                 putMemoryCache(mUrl, bitmapDrawable);
-                if (mImageView.getTag().equals(mUrl)) {
-                    mImageView.setImageDrawable(bitmapDrawable);
+                if (getAttachedImageView() != null) {
+                    if (getAttachedImageView().getTag().equals(mUrl)) {
+                        getAttachedImageView().setImageDrawable(bitmapDrawable);
+                    }
                 }
+
             }
+        }
+
+        private ImageView getAttachedImageView() {
+            return mImageViewReference.get();
         }
     }
 
@@ -262,13 +272,13 @@ public class AdImageManager {
             try {
 
                 File imageFile = getImageFile(mUrl);
-                if(processDiskCacheFile(imageFile)){
+                if (processDiskCacheFile(imageFile)) {
                     DebugUtil.debug(TAG, "run processDiskCacheFile succeed");
                     return;
                 }
 
                 fileOutputStream = new FileOutputStream(imageFile);
-                boolean isSucceed = downloadUrlToStream(mUrl, fileOutputStream);
+                boolean isSucceed = Utils.downloadUrlToStream(mUrl, fileOutputStream);
 
                 if (isSucceed) {
                     DebugUtil.debug(TAG, "run downloadUrlToStream succeed");
@@ -292,7 +302,7 @@ public class AdImageManager {
             }
         }
 
-        private boolean processDiskCacheFile(File imageFile){
+        private boolean processDiskCacheFile(File imageFile) {
 
             DebugUtil.debug(TAG, "processDiskCacheFile");
 
@@ -324,45 +334,4 @@ public class AdImageManager {
             return decodeFile(imageFile);
         }
     }
-
-
-    public boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
-
-        DebugUtil.debug(TAG, "downloadUrlToStream");
-
-        HttpURLConnection urlConnection = null;
-        BufferedOutputStream out = null;
-        BufferedInputStream in = null;
-
-        try {
-            final URL url = new URL(urlString);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            in = new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE);
-            out = new BufferedOutputStream(outputStream, IO_BUFFER_SIZE);
-
-            int b;
-            while ((b = in.read()) != -1) {
-                out.write(b);
-            }
-            return true;
-        } catch (final IOException e) {
-            DebugUtil.debug(TAG, "Error in downloadBitmap - " + e);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (final IOException e) {
-            }
-        }
-        return false;
-    }
-
-
 }
