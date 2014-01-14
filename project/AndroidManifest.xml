@@ -24,7 +24,8 @@
                 android:name="cn.lemon.shopping.ShoppingMoreIndexActivity"
                 android:label="@string/app_name"
                 android:theme="@style/ShoppingMoreTheme"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:shopping="http://schemas.android.com/apk/res/cn.lemon.shopping"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:scrollbars="none"
             android:overScrollMode="never"
-            android:paddingBottom="@dimen/dimen_recommend_padding_bottom"
+            android:paddingBottom="@dimen/dimen_scroll_recommend_padding_bottom"
             android:background="@color/page_color">
     <LinearLayout
             android:id="@+id/id_recommend_container"
@@ -25,13 +26,17 @@
             </ImageSwitcher>
 
 
-            <cn.lemon.shopping.ui.ViewPagerIndicator
+            <cn.lemon.shopping.ui.PosIndicator
                     android:id="@+id/id_ad_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right">
-
-            </cn.lemon.shopping.ui.ViewPagerIndicator>
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginBottom="@dimen/dimen_pos_indicator_margin_bottom"
+                    android:layout_marginRight="@dimen/dimen_pos_indicator_margin_right"
+                    shopping:dot_res="@drawable/pos_indicator_res"
+                    shopping:dot_spacing="@dimen/dimen_pos_indicator_dot_spacing"
+                    shopping:dot_orientation="@integer/integer_pos_indicator_orientation_horizontal">
+            </cn.lemon.shopping.ui.PosIndicator>
 
         </FrameLayout>
 

@@ -4,13 +4,14 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/dimen_category_vertical_spacing">
+              android:background="@drawable/category_bg">
 
     <ImageView
             android:id="@+id/id_category_item_top_side"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/category_item_top__side"></ImageView>
+            android:background="@color/page_color"
+            android:src="@drawable/category_item_top__side"></ImageView>
 
     <RelativeLayout
             android:id="@+id/id_category_bar"
@@ -26,7 +27,7 @@
                    android:layout_width="@dimen/dimen_category_bar_image_size"
                    android:layout_height="@dimen/dimen_category_bar_image_size"
                    android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/dimen_category_bar_image_margin_left">
+                   android:layout_marginLeft="@dimen/dimen_category_bar_image_margin_left">
         </ImageView>
 
         <TextView
@@ -65,7 +66,10 @@
             android:id="@+id/id_category_item_bottom_side"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/category_item_bottom_side"
-            android:layout_marginTop="@dimen/dimen_category_mall_margin_bottom"></ImageView>
+            android:background="@color/page_color"
+            android:src="@drawable/category_item_bottom_side"
+            android:layout_marginTop="@dimen/dimen_category_mall_margin_bottom">
+
+    </ImageView>
 
 </LinearLayout>

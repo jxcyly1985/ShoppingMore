@@ -101,6 +101,8 @@ public class ShoppingMoreDomainDataManager {
         @Override
         public void onHandleReceiveSuccess(String result) {
 
+            DebugUtil.debug(TAG, "MallInfoHandler result " + result);
+
             MallTotalInfo mallTotalInfo = ModelUtils.jsonToMallTotalInfoObject(result);
             localizeMallTotalInfo(mallTotalInfo);
             Message msg = FramewokUtils.makeMessage(

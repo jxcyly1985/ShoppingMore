@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.ImageView;
+import cn.lemon.utils.DebugUtil;
 
 import java.lang.ref.WeakReference;
 
@@ -83,6 +84,9 @@ public abstract class ImageWorker {
      * @param imageView The ImageView to bind the downloaded image to.
      */
     public void loadImage(Object data, ImageView imageView) {
+
+        Log.i(TAG, "loadImage data " + data.toString());
+
         if (data == null) {
             return;
         }
@@ -135,6 +139,7 @@ public abstract class ImageWorker {
      */
     public void addImageCache(FragmentManager fragmentManager,
             ImageCache.ImageCacheParams cacheParams) {
+
         mImageCacheParams = cacheParams;
         mImageCache = ImageCache.getInstance(fragmentManager, mImageCacheParams);
         new CacheAsyncTask().execute(MESSAGE_INIT_DISK_CACHE);

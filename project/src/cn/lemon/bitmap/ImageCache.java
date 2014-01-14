@@ -110,6 +110,9 @@ public class ImageCache {
 
         // No existing ImageCache, create one and store it in RetainFragment
         if (imageCache == null) {
+
+            Log.i(TAG, "getInstance RetainFragment getObject null");
+
             imageCache = new ImageCache(cacheParams);
             mRetainFragment.setObject(imageCache);
         }

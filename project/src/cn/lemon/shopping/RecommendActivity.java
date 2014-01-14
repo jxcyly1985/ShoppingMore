@@ -14,7 +14,7 @@ import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.ad.AdImageManager;
 import cn.lemon.shopping.adapter.MallEntryAdapter;
 import cn.lemon.shopping.model.*;
-import cn.lemon.shopping.ui.ViewPagerIndicator;
+import cn.lemon.shopping.ui.PosIndicator;
 import cn.lemon.shopping.utils.Utils;
 import cn.lemon.utils.DebugUtil;
 import cn.lemon.utils.StaticUtils;
@@ -35,7 +35,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private AdInfo mAdInfo;
     private MallTotalInfo mMallTotalInfo;
     private boolean mAdCanMove = true;
-    private Map<String, SoftReference<BitmapDrawable>> mAdBitmapDrawableMap;
+    private final int AD_WAIT_TIME = 50;
     private final int AD_CHANGE_TIMER = 3 * 1000;
 
     private int mCurrentAdPos = 0;
@@ -43,10 +43,9 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     // UI
     private LinearLayout mRecommendContainer;
     private ImageSwitcher mAdImageSwitcher;
-    private ViewPagerIndicator mAdIndicator;
+    private PosIndicator mAdIndicator;
 
     // Tool
-    private ImageFetcher mAdImageFetcher;
     private ImageFetcher mMallImageFetcher;
     private AdChangeHandler mAdChangeHandler;
 
@@ -68,12 +67,12 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         mAdImageManager = AdImageManager.getInstance();
         mAdImageManager.init(this);
+        mMallImageFetcher = ImageFetcherManager.getInstance().getMallImageFetcher(RecommendActivity.this);
 
         mAdInfo = mShoppingMoreDomainDataManager.getAdInfo();
         mMallTotalInfo = mShoppingMoreDomainDataManager.getMallTotalInfo();
 
         mAdChangeHandler = new AdChangeHandler();
-        mAdBitmapDrawableMap = new HashMap<String, SoftReference<BitmapDrawable>>();
 
     }
 
@@ -82,7 +81,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         mRecommendContainer = (LinearLayout) findViewById(R.id.id_recommend_container);
         mAdImageSwitcher = (ImageSwitcher) findViewById(R.id.id_ad_image_switch);
         mAdImageSwitcher.setFactory(new ImageFoctory());
-        mAdIndicator = (ViewPagerIndicator) findViewById(R.id.id_ad_indicator);
+        mAdIndicator = (PosIndicator) findViewById(R.id.id_ad_indicator);
         mAdImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.x_enter_anim));
         mAdImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.x_leave_anim));
         mAdImageSwitcher.setOnClickListener(this);
@@ -107,31 +106,32 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         List<AdInfo.AdData> adDataList = adInfo.mDatas;
         int adDataSize = adDataList.size();
-        mAdIndicator.setItemCount(adDataSize);
-        mAdIndicator.setSelectedPos(0);
+
+        if (adDataSize > 0) {
+            mAdIndicator.setItemCount(adDataSize);
+            mAdIndicator.setSelectedPos(0);
+        }
     }
 
     private void initAdResource() {
 
         if (mAdInfo != null) {
             submitAdTask(mAdInfo);
-            initAdIndicator(mAdInfo);
             initImageSwitch();
         }
     }
 
-
     private void initImageSwitch() {
 
-        ImageView childZero = (ImageView) mAdImageSwitcher.getChildAt(0);
-        ImageView childOne = (ImageView) mAdImageSwitcher.getChildAt(1);
-        childZero.setImageResource(R.drawable.ad_preload_page_1);
-        childOne.setImageResource(R.drawable.ad_preload_page_2);
+        ImageView child = (ImageView) mAdImageSwitcher.getChildAt(0);
+        child.setImageResource(R.drawable.ad_preload_page);
     }
 
     private MallEntryAdapter getCategoryAdapter(List<MallEntryInfo> mallEntryInfos) {
-        ImageFetcher imageFetcher = ImageFetcherManager.getInstance().getMallImageFetcher(RecommendActivity.this);
-        return new MallEntryAdapter(this, mallEntryInfos, imageFetcher);
+
+        DebugUtil.debug(TAG, "getCategoryAdapter mallEntryInfos size " + mallEntryInfos.size());
+        //ImageFetcher mMallImageFetcher = ImageFetcherManager.getInstance().getMallImageFetcher(RecommendActivity.this);
+        return new MallEntryAdapter(this, mallEntryInfos, mMallImageFetcher);
     }
 
 
@@ -173,50 +173,62 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         DebugUtil.debug(TAG, "initCategoryTileBar color " + color);
     }
 
-    private void addToPage(View categoryView){
-        mRecommendContainer.addView(categoryView);
+    private void addToPage(View categoryView, boolean useMarginTop) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (useMarginTop) {
+            layoutParams.topMargin = getResources().getDimensionPixelOffset(R.dimen.dimen_category_vertical_spacing);
+        }
+        mRecommendContainer.addView(categoryView, layoutParams);
     }
 
-    private View obtainCategoryView(){
+    private View obtainCategoryView() {
         return getLayoutInflater().inflate(R.layout.category_item_layout, null);
     }
 
-    private void initTopSide(View categoryView){
+    private void initTopSide(View categoryView) {
 
         View topSide = categoryView.findViewById(R.id.id_category_item_top_side);
         topSide.setVisibility(View.GONE);
 
     }
 
-    private View initCategoryView(CategoryEntryInfo categoryEntryInfo){
+    private View initCategoryView(CategoryEntryInfo categoryEntryInfo) {
         View categoryView = obtainCategoryView();
         initGridView(categoryView, categoryEntryInfo.mMallEntryInfoList);
         initCategoryTileBar(categoryView, categoryEntryInfo.mBackgroundColor);
         initCategoryTitle(categoryView, categoryEntryInfo.mCategoryName);
         initCategoryIcon(categoryView, categoryEntryInfo.mIconUrl);
-        addToPage(categoryView);
         return categoryView;
     }
 
-    private void initCategoryViewNoTopSide(CategoryEntryInfo categoryEntryInfo){
+    private void initCategoryViewNoTopSide(CategoryEntryInfo categoryEntryInfo) {
+
+        DebugUtil.debug(TAG, "initCategoryViewNoTopSide");
         View categoryView = initCategoryView(categoryEntryInfo);
         initTopSide(categoryView);
+        addToPage(categoryView, false);
+    }
 
+    private void initCategoryViewWithTopSide(CategoryEntryInfo categoryEntryInfo) {
+
+        DebugUtil.debug(TAG, "initCategoryViewWithTopSide");
+        View categoryView = initCategoryView(categoryEntryInfo);
+        addToPage(categoryView, true);
     }
 
 
     private void initCategory() {
 
         if (mMallTotalInfo != null && mMallTotalInfo.mCategoryList.size() > 0) {
-
             int pos = 0;
             CategoryEntryInfo categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
             initCategoryViewNoTopSide(categoryEntryInfo);
-            pos ++;
+            pos++;
 
             while (pos < mMallTotalInfo.mCategoryList.size()) {
                 categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
-                initCategoryView(categoryEntryInfo);
+                initCategoryViewWithTopSide(categoryEntryInfo);
                 pos++;
             }
         }
@@ -237,41 +249,60 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         }
     }
 
-    private void handleAdPos(){
+    private int getAdPos() {
 
         if (mCurrentAdPos == mAdInfo.mDatas.size()) {
             mCurrentAdPos = 0;
         }
+
+        return mCurrentAdPos;
     }
+
+    private void IncAdPos() {
+        mCurrentAdPos++;
+    }
+
+    private void switchAdView(String imageUrl, int pos) {
+
+        DebugUtil.debug(TAG, "switchAdView imageUrl " + imageUrl + " pos " + pos);
+
+        if (imageUrl != null) {
+            ImageView imageView = (ImageView) mAdImageSwitcher.getNextView();
+            mAdImageManager.getDrawable(imageView, imageUrl);
+            mAdImageSwitcher.showNext();
+            mAdIndicator.setSelectedPos(pos);
+        }
+    }
+
+    private void invokeNextAdChange(){
+        if (isAdCanMove()) {
+            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+        }
+    }
+
 
     private class AdChangeHandler extends Handler {
 
         @Override
         public void handleMessage(Message msg) {
 
-            handleAdPos();
-            String adImageUrl = getAdImageUrl();
-            if (adImageUrl != null) {
-                ImageView imageView = (ImageView) mAdImageSwitcher.getNextView();
-                mAdImageManager.getDrawable(imageView, adImageUrl);
-                mAdImageSwitcher.showNext();
-                mCurrentAdPos++;
-            }
-            if(isAdCanMove()){
-                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
-            }
+            DebugUtil.debug(TAG, "AdChangeHandler handleMessage");
+
+            int pos = getAdPos();
+            String adImageUrl = getAdImageUrl(pos);
+            switchAdView(adImageUrl, pos);
+            IncAdPos();
+            invokeNextAdChange();
         }
     }
 
 
-    private String getAdImageUrl() {
+    private String getAdImageUrl(int pos) {
 
         if (mAdInfo != null) {
-
-            return mAdInfo.mDatas.get(mCurrentAdPos).mImageURL;
+            return mAdInfo.mDatas.get(pos).mImageURL;
         }
         return null;
-
     }
 
 
@@ -290,24 +321,23 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.id_ad_image_switch:
-            ActivityUtils.toAdHostActivity(this, getAdLinkUrl());
-            break;
+                ActivityUtils.toAdHostActivity(this, getAdLinkUrl());
+                break;
         }
     }
 
-    private boolean isAdCanMove(){
+    private boolean isAdCanMove() {
         return mAdCanMove;
     }
 
-    private void setAdCanMove(boolean canMove){
+    private void setAdCanMove(boolean canMove) {
         mAdCanMove = canMove;
     }
 
-    private void resumeAd(){
-
-        if(!isAdCanMove()){
-            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
-        }
+    private void resumeAd() {
+        setAdCanMove(true);
+        mAdImageManager.onResume();
+        mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
     }
 
     @Override
@@ -324,13 +354,11 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     protected void onResume() {
 
         super.onResume();
-        mAdImageManager.onResume();
-        setAdCanMove(true);
         resumeAd();
         DebugUtil.debug(TAG, "onResume");
     }
 
-    private void handleAdDestroy(){
+    private void handleAdDestroy() {
         mAdImageManager.onDestroy();
         setAdCanMove(false);
         mAdChangeHandler.removeMessages(0);
@@ -350,7 +378,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         mMesssageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
         mMesssageManager.addOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
-        mMesssageManager.addOberver(MessageConstants.MSG_AD_IMAGE_READY,this);
+        mMesssageManager.addOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
 
     }
 
@@ -358,7 +386,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     public void deleteObserver() {
         mMesssageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
         mMesssageManager.deleteOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
-        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_IMAGE_READY,this);
+        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
     }
 
     @Override
@@ -372,6 +400,9 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         switch (what) {
             case MessageConstants.MSG_MALL_DATA_RETURN:
                 DebugUtil.debug(TAG, "MSG_MALL_DATA_RETURN");
+                // QiYun<LeiYong><2014-01-11> modify for CR00000004 begin
+                mMallTotalInfo = (MallTotalInfo) msg.obj;
+                // QiYun<LeiYong><2014-01-11> modify for CR00000004 end
                 initCategory();
                 break;
 
@@ -382,7 +413,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
                 break;
             case MessageConstants.MSG_AD_IMAGE_READY:
                 DebugUtil.debug(TAG, "MSG_AD_IMAGE_READY");
-                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+                mAdChangeHandler.sendEmptyMessageDelayed(0, AD_WAIT_TIME);
+                initAdIndicator(mAdInfo);
                 break;
             default:
                 break;

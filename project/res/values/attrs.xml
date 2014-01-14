@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="indicator">
+
+        <attr name="dot_res" format="reference"></attr>
+        <attr name="dot_spacing" format="dimension"></attr>
+        <attr name="dot_orientation" format="integer"></attr>
+
+    </declare-styleable>
+
+</resources>

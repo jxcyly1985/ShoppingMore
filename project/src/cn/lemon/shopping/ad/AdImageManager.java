@@ -65,9 +65,16 @@ public class AdImageManager {
 
     public void init(Context context) {
 
+        DebugUtil.debug(TAG, "init");
+
         if (!mInit) {
             mContext = context;
             mAdDir = ImageCache.getDiskCacheDir(mContext, AD_DIR);
+            // QiYun<LeiYong><2014-01-11> modify for CR000000002 begin
+            if (!mAdDir.exists()) {
+                mAdDir.mkdirs();
+            }
+            // QiYun<LeiYong><2014-01-11> modify for CR000000002 end
             mInit = true;
         }
     }
@@ -93,7 +100,6 @@ public class AdImageManager {
         clearMemoryCache();
     }
 
-
     private AdImageManager() {
 
         mImageThreadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
@@ -104,10 +110,8 @@ public class AdImageManager {
     public void submit(String[] imageUrls) {
 
         DebugUtil.debug(TAG, "submit");
-
         setAdImageUrls(imageUrls);
         getAdImages();
-
     }
 
     private void setAdImageUrls(String[] imageUrls) {
@@ -139,7 +143,7 @@ public class AdImageManager {
 
     public void getDrawable(ImageView imageView, String url) {
 
-        BitmapDrawable bitmapDrawable = mMemoryCache.get(url);
+        BitmapDrawable bitmapDrawable = getMemoryCache(url);
         if (bitmapDrawable != null) {
             imageView.setImageDrawable(bitmapDrawable);
             return;
@@ -157,6 +161,8 @@ public class AdImageManager {
 
     private void removeCleaner(String url){
 
+        DebugUtil.debug(TAG, "removeCleaner url " + url);
+
         mImageUrlCleaner.remove(url);
         if (imageAllReady()) {
             Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_AD_IMAGE_READY, null, 0, 0);
@@ -164,7 +170,16 @@ public class AdImageManager {
         }
     }
 
+    private BitmapDrawable getMemoryCache(String url) {
+
+        return mMemoryCache.get(url);
+    }
+
+
     private void putMemoryCache(String url, BitmapDrawable bitmapDrawable) {
+
+        DebugUtil.debug(TAG, "putMemoryCache url " + url);
+
         mMemoryCache.put(url, bitmapDrawable);
     }
 
@@ -175,12 +190,14 @@ public class AdImageManager {
 
 
     private BitmapDrawable decodeFile(File imageFile) {
+
+        DebugUtil.debug(TAG, "decodeFile");
+
         FileInputStream fileInputStream = null;
-        FileDescriptor fileDescriptor = null;
         BitmapDrawable bitmapDrawable = null;
         try {
             fileInputStream = new FileInputStream(imageFile);
-            fileDescriptor = fileInputStream.getFD();
+            FileDescriptor fileDescriptor = fileInputStream.getFD();
             if (fileDescriptor != null) {
                 Bitmap bitmap = ImageResizer.decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth,
                         mImageHeight, null);
@@ -245,10 +262,8 @@ public class AdImageManager {
             try {
 
                 File imageFile = getImageFile(mUrl);
-                BitmapDrawable bitmapDrawable = decodeDiskCacheFile(imageFile);
-                if (bitmapDrawable != null) {
-                    putMemoryCache(mUrl, bitmapDrawable);
-                    removeCleaner(mUrl);
+                if(processDiskCacheFile(imageFile)){
+                    DebugUtil.debug(TAG, "run processDiskCacheFile succeed");
                     return;
                 }
 
@@ -256,11 +271,8 @@ public class AdImageManager {
                 boolean isSucceed = downloadUrlToStream(mUrl, fileOutputStream);
 
                 if (isSucceed) {
-                    bitmapDrawable = decodeDiskCacheFile(imageFile);
-                    if(bitmapDrawable != null){
-                        putMemoryCache(mUrl, bitmapDrawable);
-                        removeCleaner(mUrl);
-                    }
+                    DebugUtil.debug(TAG, "run downloadUrlToStream succeed");
+                    processDiskCacheFile(imageFile);
                 } else {
                     deleteDirtyFile(imageFile);
                 }
@@ -277,17 +289,34 @@ public class AdImageManager {
                         e.printStackTrace();
                     }
                 }
-
             }
         }
 
+        private boolean processDiskCacheFile(File imageFile){
+
+            DebugUtil.debug(TAG, "processDiskCacheFile");
+
+            BitmapDrawable bitmapDrawable = decodeDiskCacheFile(imageFile);
+            if (bitmapDrawable != null) {
+                putMemoryCache(mUrl, bitmapDrawable);
+                removeCleaner(mUrl);
+                return true;
+            }
+            return false;
+        }
+
         public void deleteDirtyFile(File dirtyFile) {
+
+            DebugUtil.debug(TAG, "deleteDirtyFile");
+
             if (dirtyFile.exists()) {
                 dirtyFile.delete();
             }
         }
 
         public BitmapDrawable decodeDiskCacheFile(File imageFile) {
+
+            DebugUtil.debug(TAG, "decodeDiskCacheFile imageFile " + imageFile.getPath());
 
             if (!imageFile.exists()) {
                 return null;
@@ -298,6 +327,8 @@ public class AdImageManager {
 
 
     public boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
+
+        DebugUtil.debug(TAG, "downloadUrlToStream");
 
         HttpURLConnection urlConnection = null;
         BufferedOutputStream out = null;
