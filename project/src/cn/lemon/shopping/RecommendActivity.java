@@ -112,6 +112,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         int adDataSize = adDataList.size();
 
         if (adDataSize > 0) {
+            DebugUtil.debug(TAG, "initAdIndicator size " + adDataSize);
             mAdIndicator.setItemCount(adDataSize);
             mAdIndicator.setSelectedPos(0);
         }
@@ -263,12 +264,11 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     }
 
     private void IncAdPos() {
+
         mCurrentAdPos++;
     }
 
     private void switchAdView(String imageUrl, int pos) {
-
-        DebugUtil.debug(TAG, "switchAdView imageUrl " + imageUrl + " pos " + pos);
 
         if (imageUrl != null) {
             ImageView imageView = (ImageView) mAdImageSwitcher.getNextView();
@@ -278,8 +278,10 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         }
     }
 
-    private void invokeNextAdChange(){
+    private void invokeNextAdChange() {
+
         if (isAdCanMove()) {
+
             mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
         }
     }
@@ -378,7 +380,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void addObserver() {
-
+        mMesssageManager.addOberver(MessageConstants.MSG_NET_WORK_ERROR, this);
         mMesssageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
         mMesssageManager.addOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
         mMesssageManager.addOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
@@ -387,6 +389,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void deleteObserver() {
+        mMesssageManager.deleteOberver(MessageConstants.MSG_NET_WORK_ERROR, this);
         mMesssageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
         mMesssageManager.deleteOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
         mMesssageManager.deleteOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
@@ -401,6 +404,10 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         DebugUtil.debug(TAG, "update what 0x" + Integer.toHexString(what));
 
         switch (what) {
+            case MessageConstants.MSG_NET_WORK_ERROR:
+                DebugUtil.debug(TAG, "MSG_NET_WORK_ERROR");
+                Utils.showToast(this, R.string.str_net_error);
+                break;
             case MessageConstants.MSG_MALL_DATA_RETURN:
                 DebugUtil.debug(TAG, "MSG_MALL_DATA_RETURN");
                 // QiYun<LeiYong><2014-01-11> modify for CR00000004 begin

@@ -17,31 +17,31 @@ import cn.lemon.utils.DebugUtil;
 public class ShoppingMoreDomainDataManager {
 
     private static final String TAG = "ShoppingMoreDomainDataManager";
-	private Context mContext;
-	private LocalSqliteOperator mLocalSqliteOperator;
+    private Context mContext;
+    private LocalSqliteOperator mLocalSqliteOperator;
 
     public static final long AD_REQUEST_TIMER = 24 * 3600 * 1000;
     private static final String COMMON_USER_INFO_FILE = "common_user_info";
     private static final String KEY_MALL_VERSION = "mall_version";
 
-	private ShoppingMoreDomainDataManager() {
+    private ShoppingMoreDomainDataManager() {
 
-	}
+    }
 
-	private static class ShoppingMoreDomainDataManagerHolder {
+    private static class ShoppingMoreDomainDataManagerHolder {
 
-		static ShoppingMoreDomainDataManager sInstance = new ShoppingMoreDomainDataManager();
-	}
+        static ShoppingMoreDomainDataManager sInstance = new ShoppingMoreDomainDataManager();
+    }
 
-	public static ShoppingMoreDomainDataManager getInstance() {
-		return ShoppingMoreDomainDataManagerHolder.sInstance;
-	}
+    public static ShoppingMoreDomainDataManager getInstance() {
+        return ShoppingMoreDomainDataManagerHolder.sInstance;
+    }
 
-	public void initialize(Context context) {
+    public void initialize(Context context) {
 
-		mContext = context;
-		mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
-	}
+        mContext = context;
+        mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
+    }
 
     public MallTotalInfo getMallTotalInfo() {
 
@@ -56,22 +56,22 @@ public class ShoppingMoreDomainDataManager {
     }
 
 
-    private boolean isAdInfoExpired(AdInfo adInfo){
+    private boolean isAdInfoExpired(AdInfo adInfo) {
 
         long thisTime = System.currentTimeMillis();
         long pastTime = thisTime - adInfo.mRequestTime;
         return pastTime > AD_REQUEST_TIMER;
     }
 
-    public AdInfo getAdInfo(){
+    public AdInfo getAdInfo() {
 
         AdInfo adInfo = ModelUtils.readAdInfo();
 
         DebugUtil.debug(TAG, "getAdInfo adInfo " + adInfo);
 
-        if(adInfo != null){
+        if (adInfo != null) {
 
-            if (!isAdInfoExpired(adInfo)){
+            if (!isAdInfoExpired(adInfo)) {
                 return adInfo;
             }
             ModelUtils.sendAdRequest(null);
@@ -81,7 +81,7 @@ public class ShoppingMoreDomainDataManager {
         return null;
     }
 
-    private void localizeMallTotalInfo(MallTotalInfo mallTotalInfo){
+    private void localizeMallTotalInfo(MallTotalInfo mallTotalInfo) {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -95,6 +95,9 @@ public class ShoppingMoreDomainDataManager {
 
         @Override
         public void onHandleReceiveError() {
+            DebugUtil.debug(TAG, "MallInfoHandler onHandleReceiveError");
+            Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
+            MessageManager.getInstance().sendNotifyMessage(msg);
 
         }
 
@@ -118,7 +121,9 @@ public class ShoppingMoreDomainDataManager {
 
         @Override
         public void onHandleReceiveError() {
-
+            DebugUtil.debug(TAG, "AdInfoHandler onHandleReceiveError");
+            Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
+            MessageManager.getInstance().sendNotifyMessage(msg);
         }
 
         @Override
@@ -138,14 +143,14 @@ public class ShoppingMoreDomainDataManager {
     };
 
 
-    private String getMallServerVersion(){
+    private String getMallServerVersion() {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
         return sharedPreferences.getString("mall_version", "0");
     }
 
     private MallTotalInfo getDataFromDatabase(
-            Map<String,CategoryEntryInfo> categoryInfosMap) {
+            Map<String, CategoryEntryInfo> categoryInfosMap) {
 
         MallTotalInfo mallTotalInfo = new MallTotalInfo();
         List<MallEntryInfo> mallInfos = mLocalSqliteOperator.getMallInfo();
@@ -158,7 +163,7 @@ public class ShoppingMoreDomainDataManager {
                 categoryEntryInfo.mMallEntryInfoList.add(mallEntryInfo);
             }
 
-            for(Map.Entry<String, CategoryEntryInfo> entry: categoryInfosMap.entrySet()){
+            for (Map.Entry<String, CategoryEntryInfo> entry : categoryInfosMap.entrySet()) {
                 categoryEntryInfoArrayList.add(entry.getValue());
             }
 
@@ -170,7 +175,7 @@ public class ShoppingMoreDomainDataManager {
             });
 
             mallTotalInfo.mCategoryList = categoryEntryInfoArrayList;
-            mallTotalInfo.mVersion =  getMallServerVersion();
+            mallTotalInfo.mVersion = getMallServerVersion();
         }
 
         return mallTotalInfo;

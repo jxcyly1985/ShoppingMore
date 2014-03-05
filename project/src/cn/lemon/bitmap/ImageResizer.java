@@ -25,6 +25,7 @@ import android.os.Build;
 import android.util.Log;
 
 import cn.lemon.bitmap.BuildConfig;
+import cn.lemon.utils.DebugUtil;
 
 import java.io.FileDescriptor;
 
@@ -179,6 +180,7 @@ public class ImageResizer extends ImageWorker {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
+
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
 
@@ -189,9 +191,14 @@ public class ImageResizer extends ImageWorker {
         options.inJustDecodeBounds = false;
 
         // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 begin
+//        if (Utils.hasHoneycomb()) {
+//            addInBitmapOptions(options, cache);
+//        }
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 end
+
+
 
         return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
     }

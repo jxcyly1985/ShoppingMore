@@ -15,13 +15,6 @@ public class NetworkUtils {
 		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
 			return true;
-		} else {
-			if (toSetting) {
-				Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				context.startActivity(intent);
-			}
 		}
 		return false;
 	}

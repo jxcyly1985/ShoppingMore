@@ -194,36 +194,36 @@ public class ModelUtils {
 
 
     public static AdInfo jsonToAdInfoObject(String json){
-        AdInfo adInfo = new AdInfo();
+        AdInfo adInfo = null;
 
         try {
             JSONObject root = new JSONObject(json);
-
+            adInfo = new AdInfo();
             if(!root.isNull(JSON_LAST_MODIFY_KEY)) {
                 adInfo.mRequestTime = root.getLong(JSON_LAST_MODIFY_KEY);
             }
-            boolean isSuccess = root.getBoolean("success");
+            boolean isSuccess = root.getBoolean(JSON_KEY_SUCCESS);
             adInfo.mIsSuccess = isSuccess;
             if(isSuccess) {
                 List<AdInfo.AdData> adDatas = new ArrayList<AdInfo.AdData>();
-                JSONObject data = root.getJSONObject("data");
-                JSONArray list = data.getJSONArray("list");
+                JSONObject data = root.getJSONObject(JSON_KEY_DATA);
+                JSONArray list = data.getJSONArray(JSON_KEY_LIST);
                 AdInfo.AdData adData;
                 for(int i=0; i < list.length(); ++i){
                     adData = new AdInfo.AdData();
                     JSONObject info = (JSONObject)list.get(i);
-                    adData.mTitle = info.getString("title");
-                    adData.mImageURL = info.getString("img");
-                    adData.mLinkURL = info.getString("link");
+                    adData.mTitle = info.getString(JSON_KEY_TITLE);
+                    adData.mImageURL = info.getString(JSON_KEY_IMG);
+                    adData.mLinkURL = info.getString(JSON_KEY_LINK);
                     adDatas.add(adData);
                 }
-                String version = data.getString("version");
+                String version = data.getString(JSON_KEY_VERSION);
 
                 adInfo.mDatas = adDatas;
                 adInfo.mVersion = version;
 
             }else {
-                adInfo.mMessage = root.getString("msg");
+                adInfo.mMessage = root.getString(JSON_KEY_MSG);
             }
 
         } catch (JSONException e) {

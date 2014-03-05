@@ -51,6 +51,7 @@ public class ImageFetcherManager {
         int width = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_mall_item_image_width);
         int height = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_mall_item_image_height);
         ImageFetcher imageFetcher = new ImageFetcher(mContext,width, height);
+        imageFetcher.setLoadingImage(R.drawable.default_mall_icon);
         ImageCache.ImageCacheParams imageCacheParams = new ImageCache.ImageCacheParams(mContext, MALL_DIR_NAME);
         // QiYun<LeiYong><2014-01-11> modify for CR00000003 begin
         // imageCacheParams.setMemCacheSizePercent(0.2f);

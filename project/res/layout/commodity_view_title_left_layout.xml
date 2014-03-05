@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="@dimen/dimen_commodity_title_height">
+
+    <TextView
+            android:id="@+id/id_commodity_name"
+            android:layout_width="@dimen/dimen_commodity_title_name_width"
+            android:layout_height="fill_parent">
+    </TextView>
+
+    <ImageView
+            android:id="@+id/id_commodity_icon"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:layout_weight="1">
+    </ImageView>
+
+</LinearLayout>

@@ -1,12 +1,19 @@
-CR00000001
-修改存在内部卡的时候依然可能是卸载状态，这个判断存在BUG
-CR00000002
-修改广告图片缓存目录没有创建导致保存广告图片失败
-CR00000003
-修改图片内存使用图片内存太大的问题，不使用setMemCacheSizePercent
-CR00000004
-消息循环返回的消息的obj没有赋值给成员变量，导致没有数据源可加载
-CR00000005
-修改BitmapFun第一次加载第一个位置图片会显示不了的问题，文件流读取失败没有加载出来
-CR00000006
-PosIndicator共用同一个drawable对象导致状态切换出问题
+已解决：
+
+    CR00000001(ImageCache.java)
+    修改存在内部卡的时候依然可能是卸载状态，这个判断存在BUG
+    CR00000002(AdImageManager)
+    修改广告图片缓存目录没有创建导致保存广告图片失败
+    CR00000003(ImageFetcherManager.java)
+    修改图片内存使用图片内存太大的问题，不使用setMemCacheSizePercent
+    CR00000004(RecommendActivity.java)
+    消息循环返回的消息的obj没有赋值给成员变量，导致没有数据源可加载
+    CR00000006(PosIndicator.java)
+    PosIndicator共用同一个drawable对象导致状态切换出问题
+
+未解决：
+
+    CR00000005(ImageResizer.java)
+    修改BitmapFun第一次加载第一个位置图片会显示不了的问题，文件流读取失败没有加载出来
+    CR00000007
+    广告界面刷新消息出问题，每次发送两个消息，导致切换出错

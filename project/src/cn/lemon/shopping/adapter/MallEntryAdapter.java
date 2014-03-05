@@ -11,10 +11,13 @@ import android.widget.*;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.shopping.R;
 import cn.lemon.shopping.model.MallEntryInfo;
+import cn.lemon.utils.DebugUtil;
 
 import java.util.List;
 
 public class MallEntryAdapter extends BaseAdapter {
+
+    private static final String TAG = "MallEntryAdapter";
 
     private Context mContext;
     private List<MallEntryInfo> mMallEntryInfos;
@@ -68,6 +71,9 @@ public class MallEntryAdapter extends BaseAdapter {
         viewHolder = (ViewHolder) convertView.getTag();
 
         viewHolder.mTextView.setText(mallEntryInfo.mName);
+
+        DebugUtil.debug(TAG, "adapter 0x" + Integer.toHexString(hashCode()) + " getView position " + position + " url " + mallEntryInfo.mImageUrl);
+
         mImageFetcher.loadImage(mallEntryInfo.mImageUrl, viewHolder.mImageView);
 
         return convertView;

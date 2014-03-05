@@ -60,6 +60,8 @@ public class PosIndicator extends ViewGroup {
         if (count != mItemCount) {
             mItemCount = count;
             createLayout();
+            // do measure and layout
+            requestLayout();
         }
     }
 
@@ -168,7 +170,6 @@ public class PosIndicator extends ViewGroup {
             ImageView imageView = new ImageView(getContext());
             // QiYun<LeiYong><2014-01-14> modify for CR00000006 begin
             Drawable drawable = getResources().getDrawable(mIndicatorDrawableRes);
-            //imageView.setPadding(4, 4, 4, 4);
             imageView.setImageDrawable(drawable);
             // QiYun<LeiYong><2014-01-14> modify for CR00000006 end
             ViewGroup.LayoutParams p = new ViewGroup.LayoutParams(

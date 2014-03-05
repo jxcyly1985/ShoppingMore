@@ -19,8 +19,8 @@ public class LemonHttpRequest {
 	private LemonNetWorkRequest mLemonNetWorkRequest;
 	private LemonNetWorkHandler mLemonNetWorkHandler;
 
-	public static final int CONNECT_TIMEOUT = 15 * 1000;
-	public static final int SO_TIMEOUT = 15 * 1000;
+	public static final int CONNECT_TIMEOUT = 10 * 1000;
+	public static final int SO_TIMEOUT = 10 * 1000;
 	public static final String CHARSET_NAME = "utf-8";
 
 	public LemonHttpRequest(LemonNetWorkRequest request,

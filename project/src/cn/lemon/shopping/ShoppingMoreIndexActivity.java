@@ -7,6 +7,7 @@ import java.util.Observable;
 import android.graphics.drawable.StateListDrawable;
 import android.widget.*;
 import cn.lemon.framework.BaseActivityGroup;
+import cn.lemon.network.NetworkUtils;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
 import cn.lemon.shopping.adapter.SettingViewAdapter;
 import cn.lemon.utils.DebugUtil;
@@ -68,6 +69,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
         setContentView(R.layout.activity_shopping_more_index);
         initRes();
         initView();
+
     }
 
     @SuppressWarnings("deprecation")
@@ -155,7 +157,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
     }
 
-    private void onActivityPageChanged(){
+    private void onActivityPageChanged() {
 
         // send resume, pause and stop state
 

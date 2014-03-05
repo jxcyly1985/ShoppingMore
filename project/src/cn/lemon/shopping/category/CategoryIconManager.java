@@ -76,23 +76,18 @@ public class CategoryIconManager {
             mUrl = params[0];
             File imageFile = getImageFile(mUrl);
             FileOutputStream fileOutputStream = null;
-            FileInputStream fileInputStream = null;
+
             try {
+                if (imageFile.exists()) {
+                    return decodeBitmapFromFile(imageFile);
+                }
                 fileOutputStream = new FileOutputStream(imageFile);
                 boolean isSucceed = Utils.downloadUrlToStream(mUrl, fileOutputStream);
                 if (isSucceed) {
-                    fileInputStream = new FileInputStream(imageFile);
-                    FileDescriptor fileDescriptor = fileInputStream.getFD();
-                    if (fileDescriptor != null) {
-                        Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                        return new BitmapDrawable(mContext.getResources(), bitmap);
-                    }
+                    return decodeBitmapFromFile(imageFile);
                 } else {
-                    if (imageFile.exists()) {
-                        imageFile.delete();
-                    }
+                    deleteDirtyFile(imageFile);
                 }
-
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -115,6 +110,22 @@ public class CategoryIconManager {
 
         private ImageView getAttachedImageView() {
             return mImageViewReference.get();
+        }
+
+        private BitmapDrawable decodeBitmapFromFile(File imageFile) throws IOException {
+            FileInputStream fileInputStream = new FileInputStream(imageFile);
+            FileDescriptor fileDescriptor = fileInputStream.getFD();
+            if (fileDescriptor != null) {
+                Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                return new BitmapDrawable(mContext.getResources(), bitmap);
+            }
+            return null;
+        }
+
+        private void deleteDirtyFile(File imageFile) {
+            if (imageFile.exists()) {
+                imageFile.delete();
+            }
         }
     }
 }

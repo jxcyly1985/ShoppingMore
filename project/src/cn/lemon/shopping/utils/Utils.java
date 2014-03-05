@@ -1,12 +1,13 @@
 package cn.lemon.shopping.utils;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.*;
 import cn.lemon.shopping.R;
 import cn.lemon.utils.DebugUtil;
 
@@ -72,7 +73,25 @@ public class Utils {
         gridView.setLayoutParams(params);
     }
 
-    public static  boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
+
+    public static AlertDialog getAlertDialog(Context context, String title, String message) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View dialogTitleView = LayoutInflater.from(context).inflate(R.layout.custom_dialog_title, null, false);
+        TextView titleTextView = (TextView) dialogTitleView.findViewById(R.id.id_custom_dialog_title);
+        titleTextView.setText(title);
+        builder.setMessage(message);
+        return builder.create();
+    }
+
+    public static void showToast(Context context, int resId) {
+
+
+
+        Toast.makeText(context, resId, Toast.LENGTH_LONG).show();
+    }
+
+    public static boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
 
         DebugUtil.debug(TAG, "downloadUrlToStream");
 

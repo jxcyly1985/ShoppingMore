@@ -315,7 +315,7 @@ public abstract class ImageWorker {
             }
 
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "doInBackground - finished work");
+                Log.d(TAG, "doInBackground - finished work " + data);
             }
 
             return drawable;

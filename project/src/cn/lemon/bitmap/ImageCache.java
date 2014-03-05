@@ -154,6 +154,8 @@ public class ImageCache {
                     } else {
                         // The removed entry is a standard BitmapDrawable
 
+                        DebugUtil.debug(TAG, "entryRemoved key " + key);
+
                         if (Utils.hasHoneycomb()) {
                             // We're running on Honeycomb or later, so add the bitmap
                             // to a SoftRefrence set for possible use with inBitmap later
@@ -518,11 +520,11 @@ public class ImageCache {
 
         boolean isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
 
-        // QiYun<LeiYong><2013-12-29> modify for CR000000001 begin
+        // QiYun<LeiYong><2013-12-29> modify for CR00000001 begin
 //        final String cachePath =
 //                isMounted || !isExternalStorageRemovable() ? getExternalCacheDir(context).getPath() :
 //                                context.getCacheDir().getPath();
-        // QiYun<LeiYong><2013-12-29> modify for CR000000001 end
+        // QiYun<LeiYong><2013-12-29> modify for CR00000001 end
 
         final String cachePath = isMounted ? getExternalCacheDir(context).getPath() :
                 context.getCacheDir().getPath();

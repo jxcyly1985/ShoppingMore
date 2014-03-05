@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+import cn.lemon.utils.DebugUtil;
 
 
 import java.io.BufferedInputStream;
@@ -86,7 +87,7 @@ public class ImageFetcher extends ImageResizer {
 
     private void initHttpDiskCache() {
 
-        Log.d(TAG, "initHttpDiskCache", new Exception());
+        Log.d(TAG, "initHttpDiskCache");
 
         if (!mHttpCacheDir.exists()) {
             mHttpCacheDir.mkdirs();
