@@ -49,8 +49,19 @@
 
     <dimen name="dimen_custom_toast_margin_horizontal">10dp</dimen>
 
+    <dimen name="dimen_commodity_margin_horizontal">12dp</dimen>
+    <dimen name="dimen_commodity_icon_width">222dp</dimen>
+    <dimen name="dimen_commodity_icon_height">111dp</dimen>
     <dimen name="dimen_commodity_title_height">111dp</dimen>
     <dimen name="dimen_commodity_title_name_width">111dp</dimen>
+    <dimen name="dimen_commodity_item_name_height">22dp</dimen>
+    <dimen name="dimen_commodity_item_text_size">12dp</dimen>
+    <dimen name="dimen_commodity_item_h_spacing">3dp</dimen>
+    <dimen name="dimen_commodity_item_v_spacing">3dp</dimen>
+    <dimen name="dimen_commodity_item_h_padding_min">10dp</dimen>
+    <dimen name="dimen_commodity_item_v_padding_min">5dp</dimen>
+    <dimen name="dimen_commodity_h_padding">10dp</dimen>
+    <dimen name="dimen_commodity_v_padding">10dp</dimen>
 
 
     <!-- Integer -->

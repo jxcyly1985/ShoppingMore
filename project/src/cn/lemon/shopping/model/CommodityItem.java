@@ -15,7 +15,9 @@ public class CommodityItem {
     public static final int IMAGE_RIGHT_POS = 1;
 
     public int mImagePos;
-    public String mCommdityName;
-    public List<CommodityCategory> mCommdityCategoryList;
+    public String mCommodityName;
+    public String mCommodityIconUrl;
+    public boolean mHasTopSide = true;
+    public List<CommodityCategory> mCommodityCategoryList;
 
 }

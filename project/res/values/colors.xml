@@ -2,18 +2,21 @@
 <resources>
 
 
-    <color name="white">#ffffffff</color>
+    <color name="white">#FFFFFFFF</color>
 
-    <color name="title_color">#ffffff</color>
-    <color name="tab_text_selected_color">#ff4fdfbd</color>
-    <color name="tab_text_normal_color">#ff787878</color>
-    <color name="setting_text_color">#ff787878</color>
+    <color name="title_color">#FFFFFF</color>
+    <color name="tab_text_selected_color">#FF4FDFBD</color>
+    <color name="tab_text_normal_color">#FF787878</color>
+    <color name="setting_text_color">#FF787878</color>
 
-    <color name="ad_flag_selected_color">#ff5ee0c0</color>
-    <color name="ad_flag_normal_color">#fff3f3f5</color>
+    <color name="ad_flag_selected_color">#FF5EE0C0</color>
+    <color name="ad_flag_normal_color">#FFF3F3F5</color>
 
-    <color name="mall_text_color">#ff7a7a7a</color>
-    <color name="mall_grid_bg_color">#fff3f1f2</color>
-    <color name="page_color">#ffdce2e2</color>
+    <color name="mall_text_color">#FF7A7A7A</color>
+    <color name="mall_grid_bg_color">#FFF3F1F2</color>
+    <color name="page_color">#FFDCE2E2</color>
+
+    <color name="commodity_item_name_color">#FF7A7A7A</color>
+    <color name="commodity_item_select_bounds_color">#FF50DFBD</color>
 
 </resources>

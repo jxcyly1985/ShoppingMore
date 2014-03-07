@@ -57,7 +57,7 @@
             android:scrollbars="none"
             android:gravity="center_horizontal"
             android:stretchMode="columnWidth"
-            android:scrollingCache="false"
+            android:scrollingCache="true"
             android:fadingEdge="none"
             android:cacheColorHint="@android:color/transparent">
 

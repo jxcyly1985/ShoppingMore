@@ -15,16 +15,22 @@ public class ActivityUtils {
     private static final String TAG = "ActivityUtils";
 
 
-
-    public static void toAdHostActivity(Context context, String url){
+    public static void toAdHostActivity(Context context, String url) {
 
         DebugUtil.debug(TAG, "toAdHostActivity url " + url);
 
     }
 
-    public static void toMallHostActivity(Context context, String url){
+    public static void toMallHostActivity(Context context, String url) {
 
         DebugUtil.debug(TAG, "toMallHostActivity url " + url);
     }
+
+    public static void toCommodityCategoryActivity(Context context, String name, String uri) {
+
+        DebugUtil.debug(TAG, "toCommodityCategoryActivity");
+
+    }
+
 
 }

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import android.graphics.drawable.StateListDrawable;
 import android.widget.*;
 import cn.lemon.framework.BaseActivityGroup;
-import cn.lemon.network.NetworkUtils;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
 import cn.lemon.shopping.adapter.SettingViewAdapter;
 import cn.lemon.utils.DebugUtil;
@@ -15,10 +13,7 @@ import android.os.Bundle;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Pair;
@@ -145,7 +140,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
                 mRecommendString, recommendIntent);
         mViews.add(recommendWindow.getDecorView());
 
-        Intent cashDeliveryIntent = new Intent(this, ExternalWebActivity.class);
+        Intent cashDeliveryIntent = new Intent(this, CashDeliveryActivity.class);
         Window cashDeliveryWindow = mLocalActivityManager.startActivity(
                 mCashDeliveryString, cashDeliveryIntent);
         mViews.add(cashDeliveryWindow.getDecorView());

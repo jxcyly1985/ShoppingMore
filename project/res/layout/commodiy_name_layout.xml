@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="wrap_content"
+          android:layout_height="@dimen/dimen_commodity_item_name_height"
+          android:textSize="@dimen/dimen_commodity_item_text_size"
+          android:textColor="@color/commodity_item_name_color"
+          android:background="@android:color/white">
+
+</TextView>
