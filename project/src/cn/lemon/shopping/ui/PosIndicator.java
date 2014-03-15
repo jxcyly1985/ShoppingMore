@@ -86,12 +86,13 @@ public class PosIndicator extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int specWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int specHeight = MeasureSpec.getSize(heightMeasureSpec);
-        int specModeWidth = MeasureSpec.getMode(widthMeasureSpec);
-        int specModeHeight = MeasureSpec.getMode(heightMeasureSpec);
-        DebugUtil.debug(TAG, "onMeasure specWidth " + specWidth + " specHeight " + specHeight
-                + " specModeWidth " + specModeWidth + " specModeHeight " + specModeHeight);
+
+        int widthSpec = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpec = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        DebugUtil.debug(TAG, "onMeasure widthSpec " + widthSpec + " heightSpec " + heightSpec
+                + " widthSpecMode " + widthSpecMode + " heightSpecMode " + heightSpecMode);
 
         DebugUtil.debug(TAG, "onMeasure drawableWidth " + mDrawableWidth + " drawableHeight " + mDrawableHeight);
 

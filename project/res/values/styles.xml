@@ -27,4 +27,10 @@
         <item name="android:windowExitAnimation">@anim/y_leave_anim</item>
     </style>
 
+    <style name="commodity_name_text_style">
+        <item name="android:typeface">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/dimen_commodity_name_size</item>
+    </style>
+
 </resources>

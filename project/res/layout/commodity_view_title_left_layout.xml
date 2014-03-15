@@ -2,12 +2,17 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:paddingTop="@dimen/dimen_commodity_first_padding_v"
+              android:paddingLeft="@dimen/dimen_commodity_h_padding"
+              android:paddingRight="@dimen/dimen_commodity_h_padding">
 
     <TextView
             android:id="@+id/id_commodity_name"
             android:layout_width="@dimen/dimen_commodity_title_name_width"
-            android:layout_height="@dimen/dimen_commodity_title_height">
+            android:layout_height="@dimen/dimen_commodity_title_height"
+            android:gravity="center"
+            style="@style/commodity_name_text_style">
     </TextView>
 
     <ImageView

@@ -1,15 +1,19 @@
 package cn.lemon.shopping;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.adapter.CommodityItemAdapter;
 import cn.lemon.shopping.model.CommodityItem;
+import cn.lemon.shopping.model.CommodityItems;
+import cn.lemon.shopping.model.ShoppingMoreDomainDataManager;
 import cn.lemon.shopping.ui.CommodityView;
 import cn.lemon.utils.DebugUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
@@ -17,20 +21,33 @@ public class CashDeliveryActivity extends BaseActivity {
 
     public static final String TAG = "CashDeliveryActivity";
 
+    private CommodityItems mCommodityItems;
     private ListView mCommodityListView;
+    private BaseAdapter mCommodityAdapter;
+    private List<CommodityItem> mCommodityItemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DebugUtil.debug(TAG, "onCreate");
         setContentView(R.layout.cash_delivery_layout);
+        initData();
         initView();
+    }
+
+    private void initData() {
+        mCommodityItemList = new ArrayList<CommodityItem>();
+        mCommodityItems = ShoppingMoreDomainDataManager.getInstance().getCommodityItems();
+        if (mCommodityItems != null) {
+            mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
+        }
     }
 
     private void initView() {
 
         mCommodityListView = (ListView) findViewById(R.id.id_commodity_list_view);
-        mCommodityListView.setAdapter(getCommodityAdapter());
+        mCommodityAdapter = getCommodityAdapter();
+        mCommodityListView.setAdapter(mCommodityAdapter);
     }
 
 
@@ -55,7 +72,7 @@ public class CashDeliveryActivity extends BaseActivity {
 
     private List<CommodityItem> getCommodityData() {
 
-        return null;
+        return mCommodityItemList;
     }
 
     private ImageFetcher getImageFetcher() {
@@ -71,16 +88,31 @@ public class CashDeliveryActivity extends BaseActivity {
 
     @Override
     public void addObserver() {
+        mMesssageManager.addOberver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
 
     }
 
     @Override
     public void deleteObserver() {
 
+        mMesssageManager.deleteOberver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
     }
 
     @Override
     public void update(Observable observable, Object data) {
+
+        Message message = (Message) data;
+        int what = message.what;
+        switch (what) {
+            case MessageConstants.MSG_COMMODITY_DATA_RETURN:
+                DebugUtil.debug(TAG, "MSG_COMMODITY_DATA_RETURN");
+                mCommodityItems = (CommodityItems) message.obj;
+                mCommodityItemList.clear();
+                mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
+                mCommodityAdapter.notifyDataSetChanged();
+
+                break;
+        }
 
     }
 

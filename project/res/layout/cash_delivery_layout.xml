@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/page_padding_h"
+                android:paddingRight="@dimen/page_padding_h"
+                android:background="@color/white">
 
     <ListView
             android:id="@+id/id_commodity_list_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:overScrollMode="never"
-            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="none"
             android:scrollingCache="true"
-            android:divider="@null"
-            android:fadeScrollbars="true"
+            android:divider="@android:color/transparent"
             android:fadingEdge="none"
-            android:cacheColorHint="@android:color/transparent">
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:background="@color/page_color"
+            android:paddingBottom="@dimen/dimen_cash_scroll_padding_bottom">
 
     </ListView>
 

@@ -4,8 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import cn.lemon.shopping.model.ModelUtils;
+import org.apache.commons.io.IOUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class StaticUtils {
 
@@ -30,6 +34,32 @@ public class StaticUtils {
         File adFile = new File(adFilePath);
         return adFile;
     }
+
+    public File getCommodityFile() {
+
+        File appFileDir = mAppContext.getFilesDir();
+        String commodityFilePath = appFileDir.getAbsolutePath() + ModelUtils.CommodityFile;
+        File commodityFile = new File(commodityFilePath);
+        return commodityFile;
+
+    }
+
+
+    public static String getFileString(File file) {
+
+        try {
+            FileReader fileReader = new FileReader(file);
+            return IOUtil.toString(fileReader, 4096);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+
+        }
+
+        return null;
+
+    }
+
 
     public int getColor(String hexColor) {
         String colorString = hexColor.substring(1);

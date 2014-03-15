@@ -16,7 +16,9 @@ public class CommodityItem {
 
     public int mImagePos;
     public String mCommodityName;
+    public String mCommodityLink;
     public String mCommodityIconUrl;
+    public String mCommodityNameColor;
     public boolean mHasTopSide = true;
     public List<CommodityCategory> mCommodityCategoryList;
 

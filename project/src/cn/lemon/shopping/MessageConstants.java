@@ -6,5 +6,6 @@ public class MessageConstants {
     public static final int MSG_MALL_DATA_RETURN = 0x100001;
     public static final int MSG_AD_DATA_RETURN = 0x100002;
     public static final int MSG_AD_IMAGE_READY = 0x100003;
+    public static final int MSG_COMMODITY_DATA_RETURN = 0x100004;
 
 }

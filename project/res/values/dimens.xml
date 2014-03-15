@@ -4,6 +4,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="page_padding_h">1px</dimen>
+
     <dimen name="dimen_custom_dialog_title_width">180dp</dimen>
     <dimen name="dimen_custom_dialog_title_height">20dp</dimen>
     <dimen name="dimen_custom_dialog_title_size">16sp</dimen>
@@ -49,19 +51,26 @@
 
     <dimen name="dimen_custom_toast_margin_horizontal">10dp</dimen>
 
-    <dimen name="dimen_commodity_margin_horizontal">12dp</dimen>
     <dimen name="dimen_commodity_icon_width">222dp</dimen>
     <dimen name="dimen_commodity_icon_height">111dp</dimen>
+    <dimen name="dimen_commodity_name_size">18dp</dimen>
     <dimen name="dimen_commodity_title_height">111dp</dimen>
     <dimen name="dimen_commodity_title_name_width">111dp</dimen>
-    <dimen name="dimen_commodity_item_name_height">22dp</dimen>
+    <dimen name="dimen_commodity_item_name_height">26dp</dimen>
     <dimen name="dimen_commodity_item_text_size">12dp</dimen>
-    <dimen name="dimen_commodity_item_h_spacing">3dp</dimen>
-    <dimen name="dimen_commodity_item_v_spacing">3dp</dimen>
-    <dimen name="dimen_commodity_item_h_padding_min">10dp</dimen>
+    <dimen name="dimen_commodity_item_h_spacing">5dp</dimen>
+    <dimen name="dimen_commodity_item_v_spacing">5dp</dimen>
+    <dimen name="dimen_commodity_item_h_padding_min">20dp</dimen>
     <dimen name="dimen_commodity_item_v_padding_min">5dp</dimen>
-    <dimen name="dimen_commodity_h_padding">10dp</dimen>
-    <dimen name="dimen_commodity_v_padding">10dp</dimen>
+    <dimen name="dimen_commodity_h_padding">9dp</dimen>
+    <dimen name="dimen_commodity_v_padding">5dp</dimen>
+    <dimen name="dimen_commodity_first_padding_v">8dp</dimen>
+    <dimen name="dimen_commodity_category_name_margin_top_v">5dp</dimen>
+    <dimen name="dimen_commodity_category_name_margin_bottom_v">18dp</dimen>
+    <dimen name="dimen_commodity_category_name_margin_h">9dp</dimen>
+    <dimen name="dimen_commodity_stroke_width">1dp</dimen>
+
+    <dimen name="dimen_cash_scroll_padding_bottom">70dp</dimen>
 
 
     <!-- Integer -->

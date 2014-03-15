@@ -5,10 +5,8 @@ import java.util.*;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Message;
-import android.util.SparseArray;
 import cn.lemon.framework.FramewokUtils;
 import cn.lemon.framework.MessageManager;
-import cn.lemon.network.LemonHttpRequest;
 import cn.lemon.network.LemonNetWorkHandler;
 import cn.lemon.shopping.MessageConstants;
 import cn.lemon.shopping.db.LocalSqliteOperator;
@@ -17,6 +15,7 @@ import cn.lemon.utils.DebugUtil;
 public class ShoppingMoreDomainDataManager {
 
     private static final String TAG = "ShoppingMoreDomainDataManager";
+    public static final String MALL_VERSION = "mall_version";
     private Context mContext;
     private LocalSqliteOperator mLocalSqliteOperator;
 
@@ -78,6 +77,17 @@ public class ShoppingMoreDomainDataManager {
             return adInfo;
         }
         ModelUtils.sendAdRequest(mAdInfoHandler);
+        return null;
+    }
+
+    public CommodityItems getCommodityItems() {
+
+        CommodityItems commodityItems = ModelUtils.readCommodityInfo();
+        if (commodityItems != null) {
+            DebugUtil.debug(TAG, "getCommodityItems size " + commodityItems.mCommodityItemList.size());
+            return commodityItems;
+        }
+        ModelUtils.sendCommodityRequest(mCommodityHandler);
         return null;
     }
 
@@ -143,10 +153,33 @@ public class ShoppingMoreDomainDataManager {
     };
 
 
+    private LemonNetWorkHandler mCommodityHandler = new LemonNetWorkHandler() {
+        @Override
+        public void onHandleReceiveError() {
+
+        }
+
+        @Override
+        public void onHandleReceiveSuccess(String result) {
+
+            DebugUtil.debug(TAG, "CommodityHandler onHandleReceiveSuccess result " + result);
+
+            ModelUtils.localizeCommodityInfo(result);
+            CommodityItems commodityItems = ModelUtils.jsonToCommodityItems(result);
+
+            DebugUtil.debug(TAG, " mCommodityItemList size " + commodityItems.mCommodityItemList.size());
+
+            Message msg = FramewokUtils.makeMessage(
+                    MessageConstants.MSG_COMMODITY_DATA_RETURN, commodityItems, 0,
+                    0);
+            MessageManager.getInstance().sendNotifyMessage(msg);
+        }
+    };
+
     private String getMallServerVersion() {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
-        return sharedPreferences.getString("mall_version", "0");
+        return sharedPreferences.getString(MALL_VERSION, "0");
     }
 
     private MallTotalInfo getDataFromDatabase(

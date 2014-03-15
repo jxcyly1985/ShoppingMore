@@ -9,6 +9,7 @@ import android.widget.TextView;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.shopping.model.CommodityItem;
 import cn.lemon.shopping.ui.CommodityView;
+import cn.lemon.utils.DebugUtil;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
  */
 public class CommodityItemAdapter extends BaseAdapter {
 
+    private static final String TAG = "CommodityItemAdapter";
     private Context mContext;
     private ImageFetcher mImageFetcher;
     private List<CommodityItem> mCommodityItems;
@@ -36,6 +38,9 @@ public class CommodityItemAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+
+        DebugUtil.debug(TAG, "mCommodityItems.size " + mCommodityItems.size());
+
         return mCommodityItems.size();
     }
 
@@ -52,18 +57,20 @@ public class CommodityItemAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        DebugUtil.debug(TAG, "getView position " + position);
+
         CommodityView commodityView = null;
         CommodityItem item = mCommodityItems.get(position);
         if (convertView == null) {
             commodityView = new CommodityView(mContext);
+            commodityView.creator(item);
             commodityView.setCommodityNameClickListener(mCommodityNameClickListener);
         } else {
             commodityView = (CommodityView) convertView;
+            commodityView.reset(item);
         }
-        commodityView.getCommodityNameCtrl().setText(item.mCommodityName);
-        commodityView.getCommodityIconCtrl().setImageDrawable(null);
-        commodityView.creator(item);
 
+        DebugUtil.debug(TAG, "CommodityIconUrl " + item.mCommodityIconUrl);
         mImageFetcher.loadImage(item.mCommodityIconUrl, commodityView.getCommodityIconCtrl());
 
         return commodityView;

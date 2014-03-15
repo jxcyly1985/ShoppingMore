@@ -11,5 +11,5 @@ public class CommodityCategory {
 
     public String mCommodityCategoryName;
     public String mCommodityCategoryLink;
-    public int mCommodityColor;
+    public String mCommodityColor;
 }

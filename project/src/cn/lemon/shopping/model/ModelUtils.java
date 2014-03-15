@@ -1,6 +1,5 @@
 package cn.lemon.shopping.model;
 
-import android.content.Context;
 import cn.lemon.network.LemonHttpRequest;
 import cn.lemon.network.LemonNetWorkHandler;
 import cn.lemon.network.LemonNetWorkRequest;
@@ -23,9 +22,12 @@ public class ModelUtils {
     public static final String UPGRADE_URL = BASE_URL + "";
     public static final String MALL_DATA_URL = BASE_URL + "/client_index/channel";
     public static final String AD_DATA_URL = BASE_URL + "/client_index/ad";
-    public static final String AdFile = "/Ad";
-    public static final String JSON_LAST_MODIFY_KEY = "last_modify";
+    public static final String COMMODITY_DATA_URL = BASE_URL + "/client_cod/index";
 
+    public static final String AdFile = "/Ad";
+    public static final String CommodityFile = "/Commodity";
+
+    public static final String JSON_LAST_MODIFY_KEY = "last_modify";
     private static final String JSON_KEY_DATA = "data";
     private static final String JSON_KEY_SUCCESS = "success";
     private static final String JSON_KEY_MSG = "msg";
@@ -41,8 +43,12 @@ public class ModelUtils {
     private static final String JSON_KEY_LINK = "link";
     private static final String JSON_KEY_HAS_NEXT_PAGE = "hasnext";
     private static final String JSON_KEY_CUR_PAGE = "curpage";
+    private static final String JSON_KEY_TYPE_DIR = "type_dir";
+    private static final String JSON_KEY_TYPE_NAME = "type_name";
+    private static final String JSON_KEY_COLOR = "color";
+    private static final String JSON_KEY_TAGS = "tags";
 
-    private static ThreadPoolExecutor sRequestExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(2);
+    private static ThreadPoolExecutor sRequestExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
 
     public static void sendMallRequest(final LemonNetWorkHandler handler) {
@@ -62,7 +68,7 @@ public class ModelUtils {
 
     }
 
-    public static void sendAdRequest(final LemonNetWorkHandler handler){
+    public static void sendAdRequest(final LemonNetWorkHandler handler) {
 
         sRequestExecutor.submit(new Runnable() {
             @Override
@@ -77,7 +83,22 @@ public class ModelUtils {
 
     }
 
-    public static void localizeAdInfo(String jsonString){
+    public static void sendCommodityRequest(final LemonNetWorkHandler handler) {
+        sRequestExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+
+                LemonNetWorkRequest request = new LemonNetWorkRequest();
+                request.mUrl = COMMODITY_DATA_URL;
+
+                LemonHttpRequest httpRequest = new LemonHttpRequest(request, handler);
+                httpRequest.get();
+
+            }
+        });
+    }
+
+    public static void localizeAdInfo(String jsonString) {
         File adFile = StaticUtils.getInstance().getAdFile();
         try {
             try {
@@ -88,7 +109,7 @@ public class ModelUtils {
                 long lastModify = System.currentTimeMillis();
                 jsonObject.put(JSON_LAST_MODIFY_KEY, lastModify);
                 FileOutputStream fileOutputStream = new FileOutputStream(adFile);
-                fileOutputStream.write(jsonString.getBytes());
+                fileOutputStream.write(jsonObject.toString().getBytes());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,37 +119,15 @@ public class ModelUtils {
         }
     }
 
-    public static AdInfo readAdInfo(){
+    public static AdInfo readAdInfo() {
 
         File adFile = StaticUtils.getInstance().getAdFile();
-        AdInfo adInfo = null;
-
-        try {
-            if (adFile.exists()) {
-                FileReader fileReader = new FileReader(adFile);
-                int i = 0;
-                char[] buffer = new char[1024];
-                StringBuffer stringBuffer = new StringBuffer();
-                while((i = fileReader.read(buffer)) != -1){
-                    stringBuffer.append(buffer, 0, i);
-                }
-
-                try {
-                    String jsonString = stringBuffer.toString();
-                    JSONObject jsonObject = new JSONObject(jsonString);
-                    adInfo = jsonToAdInfoObject(jsonString);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String jsonString = StaticUtils.getFileString(adFile);
+        if (jsonString != null) {
+            return jsonToAdInfoObject(jsonString);
         }
 
-        return  adInfo;
+        return null;
 
     }
 
@@ -160,10 +159,10 @@ public class ModelUtils {
 
                     mallItemsArray = categoryJsonObject.getJSONArray(JSON_KEY_ITEM);
                     mallList = new ArrayList<MallEntryInfo>();
-                    for(int j=0; j < mallItemsArray.length(); ++j){
+                    for (int j = 0; j < mallItemsArray.length(); ++j) {
 
                         mallEntryInfo = new MallEntryInfo();
-                        mallJsonObject = (JSONObject)mallItemsArray.opt(j);
+                        mallJsonObject = (JSONObject) mallItemsArray.opt(j);
                         mallEntryInfo.mCategoryId = categoryEntryInfo.mServerId;
                         mallEntryInfo.mName = mallJsonObject.getString(JSON_KEY_NAME);
                         mallEntryInfo.mImageUrl = mallJsonObject.getString(JSON_KEY_IMG);
@@ -183,7 +182,6 @@ public class ModelUtils {
                 mallTotalInfo.mMsg = root.getString(JSON_KEY_MSG);
             }
 
-            
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -193,25 +191,25 @@ public class ModelUtils {
     }
 
 
-    public static AdInfo jsonToAdInfoObject(String json){
+    public static AdInfo jsonToAdInfoObject(String json) {
         AdInfo adInfo = null;
 
         try {
             JSONObject root = new JSONObject(json);
             adInfo = new AdInfo();
-            if(!root.isNull(JSON_LAST_MODIFY_KEY)) {
+            if (!root.isNull(JSON_LAST_MODIFY_KEY)) {
                 adInfo.mRequestTime = root.getLong(JSON_LAST_MODIFY_KEY);
             }
             boolean isSuccess = root.getBoolean(JSON_KEY_SUCCESS);
             adInfo.mIsSuccess = isSuccess;
-            if(isSuccess) {
+            if (isSuccess) {
                 List<AdInfo.AdData> adDatas = new ArrayList<AdInfo.AdData>();
                 JSONObject data = root.getJSONObject(JSON_KEY_DATA);
                 JSONArray list = data.getJSONArray(JSON_KEY_LIST);
                 AdInfo.AdData adData;
-                for(int i=0; i < list.length(); ++i){
+                for (int i = 0; i < list.length(); ++i) {
                     adData = new AdInfo.AdData();
-                    JSONObject info = (JSONObject)list.get(i);
+                    JSONObject info = (JSONObject) list.get(i);
                     adData.mTitle = info.getString(JSON_KEY_TITLE);
                     adData.mImageURL = info.getString(JSON_KEY_IMG);
                     adData.mLinkURL = info.getString(JSON_KEY_LINK);
@@ -222,7 +220,7 @@ public class ModelUtils {
                 adInfo.mDatas = adDatas;
                 adInfo.mVersion = version;
 
-            }else {
+            } else {
                 adInfo.mMessage = root.getString(JSON_KEY_MSG);
             }
 
@@ -234,4 +232,96 @@ public class ModelUtils {
 
         return adInfo;
     }
+
+    public static CommodityItems readCommodityInfo() {
+
+        File commodityFile = StaticUtils.getInstance().getCommodityFile();
+        if (commodityFile.exists()) {
+            String jsonString = StaticUtils.getFileString(commodityFile);
+            if (jsonString != null) {
+                return jsonToCommodityItems(jsonString);
+            }
+        }
+
+        return null;
+    }
+
+    public static void localizeCommodityInfo(String jsonString) {
+
+        File commodityFile = StaticUtils.getInstance().getCommodityFile();
+        try {
+
+            try {
+                if (!commodityFile.exists()) {
+                    commodityFile.createNewFile();
+                }
+                FileOutputStream fileOutputStream = new FileOutputStream(commodityFile);
+                JSONObject jsonObject = new JSONObject(jsonString);
+                long lastModify = System.currentTimeMillis();
+                jsonObject.put(JSON_LAST_MODIFY_KEY, lastModify);
+                fileOutputStream.write(jsonObject.toString().getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static CommodityItems jsonToCommodityItems(String jsonString) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            boolean isSucceed = jsonObject.getBoolean(JSON_KEY_SUCCESS);
+            CommodityItems commodityItems = new CommodityItems();
+            if (!jsonObject.isNull(JSON_LAST_MODIFY_KEY)) {
+                commodityItems.mRequestTime = jsonObject.getLong(JSON_LAST_MODIFY_KEY);
+            }
+            if (isSucceed) {
+                List<CommodityItem> commodityItemList = new ArrayList<CommodityItem>();
+                JSONObject data = (JSONObject) jsonObject.get(JSON_KEY_DATA);
+                JSONArray list = data.getJSONArray(JSON_KEY_LIST);
+                for (int i = 0; i < list.length(); ++i) {
+                    CommodityItem commodityItem = new CommodityItem();
+                    JSONObject item = (JSONObject) list.get(i);
+                    commodityItem.mHasTopSide = (i == 0 ? false : true);
+                    commodityItem.mImagePos = item.getInt(JSON_KEY_TYPE_DIR);
+                    commodityItem.mCommodityLink = item.getString(JSON_KEY_LINK);
+                    commodityItem.mCommodityIconUrl = item.getString(JSON_KEY_IMG);
+                    commodityItem.mCommodityName = item.getString(JSON_KEY_TYPE_NAME);
+                    commodityItem.mCommodityNameColor = item.getString(JSON_KEY_COLOR);
+                    JSONArray tagArray = item.getJSONArray(JSON_KEY_TAGS);
+                    List<CommodityCategory> commodityCategoryList = new ArrayList<CommodityCategory>();
+                    for (int j = 0; j < tagArray.length(); ++j) {
+                        CommodityCategory category = new CommodityCategory();
+                        JSONObject tag = (JSONObject) tagArray.get(j);
+                        category.mCommodityCategoryLink = tag.getString(JSON_KEY_LINK);
+                        category.mCommodityCategoryName = tag.getString(JSON_KEY_NAME);
+                        category.mCommodityColor = (String) tag.opt(JSON_KEY_COLOR);
+                        commodityCategoryList.add(category);
+                    }
+                    commodityItem.mCommodityCategoryList = commodityCategoryList;
+                    commodityItemList.add(commodityItem);
+                }
+                commodityItems.mIsSucceed = true;
+                commodityItems.mHasNext = data.getBoolean(JSON_KEY_HAS_NEXT_PAGE);
+                commodityItems.mPageIndex = data.getInt(JSON_KEY_CUR_PAGE);
+                commodityItems.mVersionCode = data.getString(JSON_KEY_VERSION);
+                commodityItems.mCommodityItemList = commodityItemList;
+                return commodityItems;
+            } else {
+
+                commodityItems.mIsSucceed = false;
+                commodityItems.mMsg = jsonObject.getString(JSON_KEY_MSG);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 }
