@@ -124,10 +124,13 @@ public class ImageResizer extends ImageWorker {
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
+
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 begin
         // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+//        if (Utils.hasHoneycomb()) {
+//            addInBitmapOptions(options, cache);
+//        }
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 end
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
@@ -155,10 +158,12 @@ public class ImageResizer extends ImageWorker {
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 begin
         // If we're running on Honeycomb or newer, try to use inBitmap
-        if (Utils.hasHoneycomb()) {
-            addInBitmapOptions(options, cache);
-        }
+//        if (Utils.hasHoneycomb()) {
+//            addInBitmapOptions(options, cache);
+//        }
+        // QiYun<LeiYong><2014-01-22>modify for CR00000005 end
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;

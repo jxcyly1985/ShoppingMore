@@ -70,6 +70,12 @@ public class CashDeliveryActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        DebugUtil.debug(TAG, "onSaveInstanceState");
+    }
+
     private List<CommodityItem> getCommodityData() {
 
         return mCommodityItemList;

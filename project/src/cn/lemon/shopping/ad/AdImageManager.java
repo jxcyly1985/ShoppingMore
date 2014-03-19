@@ -203,7 +203,12 @@ public class AdImageManager {
             if (fileDescriptor != null) {
                 Bitmap bitmap = ImageResizer.decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth,
                         mImageHeight, null);
-                bitmapDrawable = new BitmapDrawable(mContext.getResources(), bitmap);
+
+                // QiYun<LeiYong><2014-03-18> modify for CR00000011 begin
+                if(bitmap != null){
+                    bitmapDrawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                }
+                // QiYun<LeiYong><2014-03-18> modify for CR00000011 end
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -243,6 +248,9 @@ public class AdImageManager {
             if (bitmapDrawable != null) {
                 putMemoryCache(mUrl, bitmapDrawable);
                 if (getAttachedImageView() != null) {
+
+                    DebugUtil.debug(TAG, "mUrl " + mUrl + " Tag " + getAttachedImageView().getTag());
+
                     if (getAttachedImageView().getTag().equals(mUrl)) {
                         getAttachedImageView().setImageDrawable(bitmapDrawable);
                     }

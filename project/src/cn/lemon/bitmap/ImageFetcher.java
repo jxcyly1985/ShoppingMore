@@ -58,9 +58,9 @@ public class ImageFetcher extends ImageResizer {
      * @param imageWidth
      * @param imageHeight
      */
-    public ImageFetcher(Context context, int imageWidth, int imageHeight) {
+    public ImageFetcher(Context context, int imageWidth, int imageHeight, String httpCacheDir) {
         super(context, imageWidth, imageHeight);
-        init(context);
+        init(context, httpCacheDir);
     }
 
     /**
@@ -69,14 +69,14 @@ public class ImageFetcher extends ImageResizer {
      * @param context
      * @param imageSize
      */
-    public ImageFetcher(Context context, int imageSize) {
+    public ImageFetcher(Context context, int imageSize, String httpCacheDir) {
         super(context, imageSize);
-        init(context);
+        init(context, httpCacheDir);
     }
 
-    private void init(Context context) {
+    private void init(Context context, String httpCacheDir) {
         checkConnection(context);
-        mHttpCacheDir = ImageCache.getDiskCacheDir(context, HTTP_CACHE_DIR);
+        mHttpCacheDir = ImageCache.getDiskCacheDir(context, httpCacheDir);
     }
 
     @Override
@@ -250,6 +250,8 @@ public class ImageFetcher extends ImageResizer {
                 fileInputStream.close();
             } catch (IOException e) {}
         }
+
+        DebugUtil.debug(TAG , "processBitmap end");
         return bitmap;
     }
 

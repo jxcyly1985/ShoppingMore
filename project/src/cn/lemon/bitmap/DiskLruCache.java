@@ -16,6 +16,8 @@
 
 package cn.lemon.bitmap;
 
+import cn.lemon.utils.DebugUtil;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -98,6 +100,9 @@ import java.util.concurrent.TimeUnit;
  * responding appropriately.
  */
 public final class DiskLruCache implements Closeable {
+
+    private static final String TAG = "DiskLruCache";
+
     static final String JOURNAL_FILE = "journal";
     static final String JOURNAL_FILE_TMP = "journal.tmp";
     static final String MAGIC = "libcore.io.DiskLruCache";
@@ -323,8 +328,6 @@ public final class DiskLruCache implements Closeable {
                         IO_BUFFER_SIZE);
                 return cache;
             } catch (IOException journalIsCorrupt) {
-//                System.logW("DiskLruCache " + directory + " is corrupt: "
-//                        + journalIsCorrupt.getMessage() + ", removing");
                 cache.delete();
             }
         }
@@ -453,13 +456,9 @@ public final class DiskLruCache implements Closeable {
     }
 
     private static void deleteIfExists(File file) throws IOException {
-//        try {
-//            Libcore.os.remove(file.getPath());
-//        } catch (ErrnoException errnoException) {
-//            if (errnoException.errno != OsConstants.ENOENT) {
-//                throw errnoException.rethrowAsIOException();
-//            }
-//        }
+
+        DebugUtil.debug(TAG , "deleteIfExists path " + file.getAbsolutePath());
+
         if (file.exists() && !file.delete()) {
             throw new IOException();
         }
@@ -474,6 +473,8 @@ public final class DiskLruCache implements Closeable {
         checkNotClosed();
         validateKey(key);
         Entry entry = lruEntries.get(key);
+
+        DebugUtil.debug(TAG, "get hashCode "  + this.hashCode() +  " key " + key + " entry " + entry);
         if (entry == null) {
             return null;
         }
@@ -499,6 +500,7 @@ public final class DiskLruCache implements Closeable {
 
         redundantOpCount++;
         journalWriter.append(READ + ' ' + key + '\n');
+
         if (journalRebuildRequired()) {
             executorService.submit(cleanupCallable);
         }
@@ -563,8 +565,12 @@ public final class DiskLruCache implements Closeable {
     }
 
     private synchronized void completeEdit(Editor editor, boolean success) throws IOException {
+
+        DebugUtil.debug(TAG, "completeEdit success " + success + " key " + editor.entry.key + " readable " + editor.entry.readable);
+
         Entry entry = editor.entry;
         if (entry.currentEditor != editor) {
+
             throw new IllegalStateException();
         }
 
@@ -599,12 +605,18 @@ public final class DiskLruCache implements Closeable {
         if (entry.readable | success) {
             entry.readable = true;
             journalWriter.write(CLEAN + ' ' + entry.key + entry.getLengths() + '\n');
+            // QiYun<LeiYong><2014-03-19> modify for CR00000009 begin
+            // journalWriter.flush();
+            // QiYun<LeiYong><2014-03-19> modify for CR00000009 end
             if (success) {
                 entry.sequenceNumber = nextSequenceNumber++;
             }
         } else {
             lruEntries.remove(entry.key);
             journalWriter.write(REMOVE + ' ' + entry.key + '\n');
+            // QiYun<LeiYong><2014-03-19> modify for CR00000009 begin
+            // journalWriter.flush();
+            // QiYun<LeiYong><2014-03-19> modify for CR00000009 end
         }
 
         if (size > maxSize || journalRebuildRequired()) {
@@ -697,7 +709,6 @@ public final class DiskLruCache implements Closeable {
 
     private void trimToSize() throws IOException {
         while (size > maxSize) {
-//            Map.Entry<String, Entry> toEvict = lruEntries.eldest();
             final Map.Entry<String, Entry> toEvict = lruEntries.entrySet().iterator().next();
             remove(toEvict.getKey());
         }
@@ -812,8 +823,15 @@ public final class DiskLruCache implements Closeable {
          * IOExceptions.
          */
         public OutputStream newOutputStream(int index) throws IOException {
+
+            DebugUtil.debug(TAG, "newOutputStream index " + index);
+
             synchronized (DiskLruCache.this) {
                 if (entry.currentEditor != this) {
+
+                    if(entry.key.equals("6267f371f627f7504bc3f2c64184d8c2")){
+                        DebugUtil.debug(TAG, "newOutputStream IllegalStateException");
+                    }
                     throw new IllegalStateException();
                 }
                 return new FaultHidingOutputStream(new FileOutputStream(entry.getDirtyFile(index)));
@@ -851,6 +869,9 @@ public final class DiskLruCache implements Closeable {
          * started on the same key.
          */
         public void abort() throws IOException {
+
+            DebugUtil.debug(TAG, "abort");
+
             completeEdit(this, false);
         }
 
@@ -863,6 +884,7 @@ public final class DiskLruCache implements Closeable {
                 try {
                     out.write(oneByte);
                 } catch (IOException e) {
+                    DebugUtil.debug(TAG, "FaultHidingOutputStream IOException 1");
                     hasErrors = true;
                 }
             }
@@ -871,6 +893,8 @@ public final class DiskLruCache implements Closeable {
                 try {
                     out.write(buffer, offset, length);
                 } catch (IOException e) {
+
+                    DebugUtil.debug(TAG, "FaultHidingOutputStream IOException 2");
                     hasErrors = true;
                 }
             }
@@ -879,6 +903,8 @@ public final class DiskLruCache implements Closeable {
                 try {
                     out.close();
                 } catch (IOException e) {
+
+                    DebugUtil.debug(TAG, "FaultHidingOutputStream IOException 3");
                     hasErrors = true;
                 }
             }
@@ -887,6 +913,7 @@ public final class DiskLruCache implements Closeable {
                 try {
                     out.flush();
                 } catch (IOException e) {
+                    DebugUtil.debug(TAG, "FaultHidingOutputStream IOException 4");
                     hasErrors = true;
                 }
             }
@@ -947,6 +974,8 @@ public final class DiskLruCache implements Closeable {
         }
 
         public File getDirtyFile(int i) {
+            File dirtyFile = new File(directory, key + "." + i + ".tmp");
+            DebugUtil.debug(TAG, "getDirtyFile path " + dirtyFile.getAbsolutePath());
             return new File(directory, key + "." + i + ".tmp");
         }
     }

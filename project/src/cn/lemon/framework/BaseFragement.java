@@ -9,7 +9,7 @@ public abstract class BaseFragement extends Fragment implements INotifyInterface
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+
         super.onCreate(savedInstanceState);
         mMesssageManager = MessageManager.getInstance();
         addObserver();
@@ -17,7 +17,7 @@ public abstract class BaseFragement extends Fragment implements INotifyInterface
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
+
         super.onDestroy();
         deleteObserver();
     }

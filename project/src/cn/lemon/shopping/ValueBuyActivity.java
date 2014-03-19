@@ -13,7 +13,7 @@ public class ValueBuyActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+
         super.onCreate(savedInstanceState);
 
         DebugUtil.debug(TAG, "onCreate");
@@ -22,41 +22,48 @@ public class ValueBuyActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
+
         super.onPause();
         DebugUtil.debug(TAG, "onPause");
     }
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
+
         super.onResume();
         DebugUtil.debug(TAG, "onResume");
     }
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
+
         super.onDestroy();
 
         DebugUtil.debug(TAG, "onDestroy");
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        DebugUtil.debug(TAG, "onSaveInstanceState");
+    }
+
     @Override
     public void addObserver() {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public void deleteObserver() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void update(Observable observable, Object data) {
-        // TODO Auto-generated method stub
+
 
     }
 

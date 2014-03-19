@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import android.app.Activity;
 import android.widget.*;
 import cn.lemon.framework.BaseActivityGroup;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
@@ -57,23 +58,63 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
     private int[] mTabIconRes;
     private int[] mTabTextRes;
 
+    private ImageFetcherManager mImageFetcherManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_shopping_more_index);
+
+        initManager(savedInstanceState);
         initRes();
         initView();
 
+        DebugUtil.debug(TAG, "onCreate");
+    }
+
+
+    private void initManager(Bundle savedInstanceState) {
+        mLocalActivityManager = new LocalActivityManager(this, false);
+        Bundle states = savedInstanceState != null
+                ? (Bundle) savedInstanceState.getBundle("android:states") : null;
+        mLocalActivityManager.dispatchCreate(states);
+
+        mImageFetcherManager = ImageFetcherManager.getInstance();
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
-
         mLocalActivityManager.dispatchDestroy(true);
+        // QiYun<LeiYong><2014-03-19> modify for CR00000012 begin
+        mImageFetcherManager.clear();
+        // QiYun<LeiYong><2014-03-19> modify for CR00000012 end
+        DebugUtil.debug(TAG, "onDestroy");
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLocalActivityManager.dispatchPause(false);
+        DebugUtil.debug(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mLocalActivityManager.dispatchStop();
+        mImageFetcherManager.flush();
+        DebugUtil.debug(TAG, "onStop");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocalActivityManager.dispatchResume();
+        DebugUtil.debug(TAG, "onResume");
     }
 
     private void initRes() {
@@ -93,7 +134,6 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
     private void initView() {
 
-        mLocalActivityManager = getLocalActivityManager();
         buildContentViews();
 
         int tabWidgetHeight = 0;
@@ -152,13 +192,17 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
     }
 
+
     private void onActivityPageChanged() {
 
         // send resume, pause and stop state
+        // QiYun<LeiYong><2014-03-15> modify for CR00000011 begin
+//        mLocalActivityManager.dispatchPause(false);
+//        mLocalActivityManager.dispatchStop();
 
-        mLocalActivityManager.dispatchPause(false);
-        mLocalActivityManager.dispatchStop();
+        Activity currentActivity = mLocalActivityManager.getCurrentActivity();
 
+        // QiYun<LeiYong><2014-03-15> modify for CR00000011 end
     }
 
     private void initViewPager() {

@@ -30,17 +30,20 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     public static final String TAG = "RecommendActivity";
 
+    private final int AD_WAIT_TIME = 50;
+    private final int AD_CHANGE_TIMER = 3 * 1000;
+
     // Data
     private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private AdImageManager mAdImageManager;
     private CategoryIconManager mCategoryIconManager;
     private AdInfo mAdInfo;
     private MallTotalInfo mMallTotalInfo;
-    private boolean mAdCanMove = true;
-    private final int AD_WAIT_TIME = 50;
-    private final int AD_CHANGE_TIMER = 3 * 1000;
 
     private int mCurrentAdPos = 0;
+
+    private boolean mAdCanMove = true;
+    private boolean mAdReady = false;
 
     // UI
     private LinearLayout mRecommendContainer;
@@ -62,6 +65,13 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         initView();
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        DebugUtil.debug(TAG, "onSaveInstanceState");
+    }
+
 
     private void initData() {
 
@@ -116,6 +126,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
             mAdIndicator.setItemCount(adDataSize);
             mAdIndicator.setSelectedPos(0);
         }
+
     }
 
     private void initAdResource() {
@@ -159,6 +170,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private void initCategoryIcon(View categoryView, String iconUrl) {
 
         ImageView categoryIcon = (ImageView) categoryView.findViewById(R.id.id_category_icon);
+
+        //todo 需要替换默认的图标
         categoryIcon.setImageResource(R.drawable.icon);
         mCategoryIconManager.getIcon(iconUrl, categoryIcon);
     }
@@ -272,6 +285,9 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         if (imageUrl != null) {
             ImageView imageView = (ImageView) mAdImageSwitcher.getNextView();
+            // QiYun<LeiYong><2014-03-18> modify for CR00000011 begin
+            imageView.setTag(imageUrl);
+            // QiYun<LeiYong><2014-03-18> modify for CR00000011 end
             mAdImageManager.getDrawable(imageView, imageUrl);
             mAdImageSwitcher.showNext();
             mAdIndicator.setSelectedPos(pos);
@@ -340,9 +356,11 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     }
 
     private void resumeAd() {
-        setAdCanMove(true);
-        mAdImageManager.onResume();
-        mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+        if (mAdReady) {
+            setAdCanMove(true);
+            mAdImageManager.onResume();
+            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
+        }
     }
 
     @Override
@@ -425,6 +443,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
                 DebugUtil.debug(TAG, "MSG_AD_IMAGE_READY");
                 mAdChangeHandler.sendEmptyMessageDelayed(0, AD_WAIT_TIME);
                 initAdIndicator(mAdInfo);
+                mAdReady = true;
                 break;
             default:
                 break;

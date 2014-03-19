@@ -24,8 +24,8 @@ public class ModelUtils {
     public static final String AD_DATA_URL = BASE_URL + "/client_index/ad";
     public static final String COMMODITY_DATA_URL = BASE_URL + "/client_cod/index";
 
-    public static final String AdFile = "/Ad";
-    public static final String CommodityFile = "/Commodity";
+    public static final String AD_FILE = "/Ad";
+    public static final String COMMOFITY_File = "/Commodity";
 
     public static final String JSON_LAST_MODIFY_KEY = "last_modify";
     private static final String JSON_KEY_DATA = "data";

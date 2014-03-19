@@ -58,8 +58,12 @@ public class LocalSqliteOperator {
             }
 
         }
+    }
+
+    public void deleteExpiredMallTotalInfo() {
 
     }
+
 
     public void insertCategory(CategoryEntryInfo categoryInfo) {
 

@@ -24,13 +24,13 @@ public class ContentViewPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        // TODO Auto-generated method stub
+
         return view == object;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        // TODO Auto-generated method stub
+
         View view = mViews.get(position);
         container.addView(view);
         return view;

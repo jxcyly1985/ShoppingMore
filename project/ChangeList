@@ -2,20 +2,45 @@
 
     CR00000001(ImageCache.java)
     修改存在内部卡的时候依然可能是卸载状态，这个判断存在BUG
+
     CR00000002(AdImageManager)
     修改广告图片缓存目录没有创建导致保存广告图片失败
+
     CR00000003(ImageFetcherManager.java)
     修改图片内存使用图片内存太大的问题，不使用setMemCacheSizePercent
+
     CR00000004(RecommendActivity.java)
     消息循环返回的消息的obj没有赋值给成员变量，导致没有数据源可加载
+
     CR00000006(PosIndicator.java)
     PosIndicator共用同一个drawable对象导致状态切换出问题
 
+    CR00000008(CommodityView.java)
+    处理CommodityItem移动时候，能刷新按钮,处理action_cancel消息
+
+    CR00000005(ImageResizer.java, ImageCache.java)
+    修改因为inBitmap属性导致图标被其他图标替换
+
+    CR00000011(ShoppingMoreIndexActivity.java)
+    修改因为调用dispatchStop导致按返回键盘报错问题
+
+    CR00000011(RecommendActivity.java, AdImageManager.java)
+    修改获取广告图片关联TAG错误导致页面刷新图片失败
+
+    CR00000009(DiskLruCache.java, ImageFetcherManager.java)
+    已经下载的图片，离线加载不出来
+
+    CR0000012(ShoppingMoreIndexActivity.java)
+    关闭DiskLruCache,防止内存泄露,ImageFectcher和ImageCache有锁，可以立即调用closeCache方法
+
 未解决：
 
-    CR00000005(ImageResizer.java)
-    修改BitmapFun第一次加载第一个位置图片会显示不了的问题，文件流读取失败没有加载出来
     CR00000007
     广告界面刷新消息出问题，每次发送两个消息，导致切换出错
-    CR00000008
-    处理CommodityItem移动时候，能刷新按钮
+
+
+
+    CR00000010(ImageResizer.java)
+    修改BitmapFun第一次加载第一个位置图片会显示不了的问题，文件流读取失败没有加载出来
+
+

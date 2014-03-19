@@ -1,6 +1,5 @@
 package cn.lemon.utils;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import cn.lemon.shopping.model.ModelUtils;
@@ -30,7 +29,7 @@ public class StaticUtils {
 
     public File getAdFile() {
         File appFileDir = mAppContext.getFilesDir();
-        String adFilePath = appFileDir.getAbsolutePath() + ModelUtils.AdFile;
+        String adFilePath = appFileDir.getAbsolutePath() + ModelUtils.AD_FILE;
         File adFile = new File(adFilePath);
         return adFile;
     }
@@ -38,7 +37,7 @@ public class StaticUtils {
     public File getCommodityFile() {
 
         File appFileDir = mAppContext.getFilesDir();
-        String commodityFilePath = appFileDir.getAbsolutePath() + ModelUtils.CommodityFile;
+        String commodityFilePath = appFileDir.getAbsolutePath() + ModelUtils.COMMOFITY_File;
         File commodityFile = new File(commodityFilePath);
         return commodityFile;
 

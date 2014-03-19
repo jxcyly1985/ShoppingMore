@@ -42,6 +42,7 @@ public class ShoppingMoreDomainDataManager {
         mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
     }
 
+
     public MallTotalInfo getMallTotalInfo() {
 
         Map<String, CategoryEntryInfo> categoryInfosMap = mLocalSqliteOperator.getMallCategory();
@@ -53,7 +54,6 @@ public class ShoppingMoreDomainDataManager {
         return null;
 
     }
-
 
     private boolean isAdInfoExpired(AdInfo adInfo) {
 
