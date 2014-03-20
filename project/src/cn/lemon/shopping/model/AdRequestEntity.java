@@ -33,10 +33,8 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
     public static final long AD_REQUEST_TIMER = 24 * 3600 * 1000;
 
     private Context mContext;
-
     private AdInfo mAdInfo;
-    private boolean mIsSucceed = false;
-    private String mServerData;
+    private long mLastRequestTime;
 
     public AdRequestEntity(Context context) {
         mContext = context;
@@ -51,7 +49,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
 
         if (adInfo != null) {
 
-            if (!isAdInfoExpired(adInfo)) {
+            if (!shouldNewRequest()) {
                 return adInfo;
             }
             sendRequest();
@@ -105,7 +103,6 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
     @Override
     protected AdInfo deSerialization() {
 
-
         try {
             JSONObject root = new JSONObject(mServerData);
             mAdInfo = new AdInfo();
@@ -115,7 +112,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
             boolean isSuccess = root.getBoolean(JSON_KEY_SUCCESS);
             mAdInfo.mIsSuccess = isSuccess;
             if (isSuccess) {
-                List<AdInfo.AdData> adDatas = new ArrayList<AdInfo.AdData>();
+                List<AdInfo.AdData> datas = new ArrayList<AdInfo.AdData>();
                 JSONObject data = root.getJSONObject(JSON_KEY_DATA);
                 JSONArray list = data.getJSONArray(JSON_KEY_LIST);
                 AdInfo.AdData adData;
@@ -125,11 +122,11 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
                     adData.mTitle = info.getString(JSON_KEY_TITLE);
                     adData.mImageURL = info.getString(JSON_KEY_IMG);
                     adData.mLinkURL = info.getString(JSON_KEY_LINK);
-                    adDatas.add(adData);
+                    datas.add(adData);
                 }
                 String version = data.getString(JSON_KEY_VERSION);
 
-                mAdInfo.mDatas = adDatas;
+                mAdInfo.mDatas = datas;
                 mAdInfo.mVersion = version;
 
             } else {
@@ -160,6 +157,18 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
             MessageManager.getInstance().sendNotifyMessage(msg);
         }
 
+    }
+
+    @Override
+    protected boolean shouldNewRequest() {
+        long thisTime = System.currentTimeMillis();
+        long pastTime = thisTime - mAdInfo.mRequestTime;
+        return pastTime > AD_REQUEST_TIMER;
+    }
+
+    @Override
+    protected boolean isExpired() {
+        return false;
     }
 
     private LemonNetWorkHandler mAdInfoHandler = new LemonNetWorkHandler() {
@@ -194,15 +203,4 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
 
     }
 
-    private void setServerData(String result) {
-        mIsSucceed = true;
-        mServerData = result;
-    }
-
-    private boolean isAdInfoExpired(AdInfo adInfo) {
-
-        long thisTime = System.currentTimeMillis();
-        long pastTime = thisTime - adInfo.mRequestTime;
-        return pastTime > AD_REQUEST_TIMER;
-    }
 }

@@ -51,8 +51,17 @@ public abstract class BaseRequestEntity<T> {
 
     protected static ThreadPoolExecutor sRequestExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
+    protected boolean mIsSucceed = false;
+    protected String mServerData;
+
+
     protected BaseRequestEntity(){
 
+    }
+
+    protected void setServerData(String result) {
+        mIsSucceed = true;
+        mServerData = result;
     }
 
     public abstract T getRequestEntity();
@@ -64,5 +73,9 @@ public abstract class BaseRequestEntity<T> {
     protected abstract T deSerialization();
 
     protected abstract void sendMessage();
+
+    protected abstract boolean shouldNewRequest();
+
+    protected abstract boolean isExpired();
 
 }

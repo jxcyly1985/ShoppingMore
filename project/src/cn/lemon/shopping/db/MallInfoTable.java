@@ -19,14 +19,14 @@ public class MallInfoTable implements BaseColumns {
     public static final int MALL_CATEGORY_ID_INDEX = 3;
     public static final int MALL_WEIGHT_INDEX = 4;
 
-    public static String[] COLUMNS = new String[] {MALL_NAME, MALL_ICON_URL, MALL_URL, MALL_CATEGORY_ID,
+    public static String[] COLUMNS = new String[]{MALL_NAME, MALL_ICON_URL, MALL_URL, MALL_CATEGORY_ID,
             MALL_WEIGHT};
 
     public static String getCreateSQL() {
 
         String CREATE_SQL = "CREATE TABLE" + SP
                 + TABLE_NAME + SP
-                + "(" + MallInfoTable._ID + SP +"INTEGER PRIMARY KEY,"
+                + "(" + MallInfoTable._ID + SP + "INTEGER PRIMARY KEY,"
                 + MALL_NAME + SP + "TEXT," + SP
                 + MALL_ICON_URL + SP + "TEXT,"
                 + MALL_URL + SP + "TEXT,"
@@ -37,8 +37,7 @@ public class MallInfoTable implements BaseColumns {
     }
 
     public static String getDropSQL() {
-        String DROP_SQL = "";
-        return DROP_SQL;
+        return "DROP TABLE IF EXISTS mall_infos";
 
     }
 }

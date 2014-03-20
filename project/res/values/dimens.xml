@@ -72,7 +72,6 @@
 
     <dimen name="dimen_cash_scroll_padding_bottom">70dp</dimen>
 
-
     <!-- Integer -->
     <integer name="tab_text_size">14</integer>
     <integer name="tab_vertical">20</integer>
@@ -82,7 +81,7 @@
     <integer name="integer_pos_indicator_orientation_horizontal">0</integer>
     <integer name="integer_pos_indicator_orientation_vertical">1</integer>
 
-
+    <integer name="integer_value_buy_grid_column_number">2</integer>
 
 
 </resources>

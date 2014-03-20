@@ -5,6 +5,7 @@ import android.util.SparseArray;
 
 public class MallTotalInfo {
 
+    public long mRequestTime;
     public String mVersion;
     public String mMsg;
     public List<CategoryEntryInfo> mCategoryList;

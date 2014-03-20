@@ -9,7 +9,7 @@ import cn.lemon.network.LemonHttpRequest;
 import cn.lemon.network.LemonNetWorkHandler;
 import cn.lemon.network.LemonNetWorkRequest;
 import cn.lemon.shopping.MessageConstants;
-import cn.lemon.shopping.db.LocalSqliteOperator;
+import cn.lemon.shopping.db.LocalSQLiteOperator;
 import cn.lemon.utils.DebugUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,28 +28,34 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
 
     private static final String TAG = "MallCategoryRequestEntity";
 
+    private final int MALL_REQUEST_TIMER = 7 * 24 * 3600 * 1000;
+    private final String DEFAULT_MALL_VERSION = "0";
+
     public static final String MALL_VERSION = "mall_version";
-    private static final String KEY_MALL_VERSION = "mall_version";
+    private final String KEY_MALL_VERSION = "mall_version";
+    private final String KEY_LAST_REQUEST_TIME = "request_time";
 
     private Context mContext;
-    private LocalSqliteOperator mLocalSqliteOperator;
-    private String mServerData;
+    private LocalSQLiteOperator mLocalSQLiteOperator;
     private MallTotalInfo mMallTotalInfo;
-    private boolean mIsSucceed = false;
-
 
     public MallCategoryRequestEntity(Context context) {
         mContext = context;
-        mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
+        mLocalSQLiteOperator = LocalSQLiteOperator.getInstance(mContext);
     }
 
     @Override
     public MallTotalInfo getRequestEntity() {
 
-        Map<String, CategoryEntryInfo> categoryInfosMap = mLocalSqliteOperator.getMallCategory();
-        if (categoryInfosMap != null) {
-            MallTotalInfo mallTotalInfo = getDataFromDatabase(categoryInfosMap);
+        Map<String, CategoryEntryInfo> categoryInfoMap = mLocalSQLiteOperator.getMallCategory();
+        if (categoryInfoMap != null) {
+            MallTotalInfo mallTotalInfo = getDataFromDatabase(categoryInfoMap);
+            if (!shouldNewRequest()) {
+                return mallTotalInfo;
+            }
+            sendRequest();
             return mallTotalInfo;
+
         }
         sendRequest();
         return null;
@@ -77,12 +83,13 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_MALL_VERSION, mMallTotalInfo.mVersion);
+        editor.putLong(KEY_LAST_REQUEST_TIME, System.currentTimeMillis());
         editor.commit();
         // SQL
-        if(isExpired()){
-            mLocalSqliteOperator.deleteExpiredMallTotalInfo();
+        if (isExpired()) {
+            mLocalSQLiteOperator.deleteExpiredMallTotalInfo();
         }
-        mLocalSqliteOperator.insertMallTotalInfo(mMallTotalInfo);
+        mLocalSQLiteOperator.insertMallTotalInfo(mMallTotalInfo);
     }
 
     @Override
@@ -159,6 +166,20 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
 
     }
 
+    @Override
+    protected boolean shouldNewRequest() {
+
+        long thisTime = System.currentTimeMillis();
+        long pastTime = thisTime - mMallTotalInfo.mRequestTime;
+        return pastTime > MALL_REQUEST_TIMER;
+    }
+
+    @Override
+    protected boolean isExpired() {
+
+        return false;
+    }
+
     private LemonNetWorkHandler mMallInfoHandler = new LemonNetWorkHandler() {
 
         @Override
@@ -182,7 +203,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
     private MallTotalInfo getDataFromDatabase(Map<String, CategoryEntryInfo> categoryInfosMap) {
 
         MallTotalInfo mallTotalInfo = new MallTotalInfo();
-        List<MallEntryInfo> mallInfos = mLocalSqliteOperator.getMallInfo();
+        List<MallEntryInfo> mallInfos = mLocalSQLiteOperator.getMallInfo();
         if (mallInfos != null) {
 
             CategoryEntryInfo categoryEntryInfo = null;
@@ -205,6 +226,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
 
             mallTotalInfo.mCategoryList = categoryEntryInfoArrayList;
             mallTotalInfo.mVersion = getMallServerVersion();
+            mallTotalInfo.mRequestTime = getLastRequestTime();
         }
 
         return mallTotalInfo;
@@ -213,17 +235,14 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
     private String getMallServerVersion() {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
-        return sharedPreferences.getString(MALL_VERSION, "0");
+        return sharedPreferences.getString(MALL_VERSION, DEFAULT_MALL_VERSION);
     }
 
-    private boolean isExpired() {
+    private long getLastRequestTime() {
 
-        return false;
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
+        return sharedPreferences.getLong(KEY_LAST_REQUEST_TIME, 0);
     }
 
 
-    private void setServerData(String result) {
-        mIsSucceed = true;
-        mServerData = result;
-    }
 }

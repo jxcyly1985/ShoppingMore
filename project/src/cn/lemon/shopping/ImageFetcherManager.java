@@ -29,10 +29,10 @@ public class ImageFetcherManager {
     private Context mContext;
 
     private final String COMMON_HTTP_DIR = "http";
-    // QiYun<LeiYong><2014-03-19> modify for CR00000009 begin
+    // QiYun<LeiYong><2014-03-19> modify for CR00000010 begin
     private final String MALL_HTTP_DIR = "mall_http";
     private final String COMMODITY_HTTP_DIR = "commodity_http";
-    // QiYun<LeiYong><2014-03-19> modify for CR00000009 end
+    // QiYun<LeiYong><2014-03-19> modify for CR00000010 end
     private final String MALL_DIR_NAME = "MALL";
     private final String COMMODITY_DIR_NAME = "COMMODITY";
     private final int MALL_DEFAULT_MEM_CACHE = 10 * 1024 * 1024;

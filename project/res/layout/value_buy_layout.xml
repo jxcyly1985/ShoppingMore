@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-    
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/beauty_r" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <cn.lemon.shopping.ui.HorizontalListView
+            android:id="@+id/id_value_buy_type_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+    </cn.lemon.shopping.ui.HorizontalListView>
+
+
+    <GridView
+            android:id="@+id/id_concrete_commodity_grid"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/id_value_buy_type_list_view"
+            android:numColumns="@integer/integer_value_buy_grid_column_number"
+            android:cacheColorHint="@android:color/transparent"
+            android:fadingEdge="none"
+            android:listSelector="@android:color/transparent"
+            android:scrollbars="none">
+
+    </GridView>
 
 </RelativeLayout>

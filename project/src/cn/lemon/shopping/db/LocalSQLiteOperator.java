@@ -13,24 +13,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LocalSqliteOperator {
+public class LocalSQLiteOperator {
 
-    public static final String TAG = "LocalSqliteOperator";
+    public static final String TAG = "LocalSQLiteOperator";
 
-    private static LocalSqliteOperator sInstance;
-    private LocalSqliteOpenHelper mLocalSqliteOpenHelper;
+    private static LocalSQLiteOperator sInstance;
+    private LocalSQLiteOpenHelper mLocalSqliteOpenHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
-    public synchronized static LocalSqliteOperator getInstance(Context context) {
+    public synchronized static LocalSQLiteOperator getInstance(Context context) {
 
         if (sInstance == null) {
-            sInstance = new LocalSqliteOperator(context);
+            sInstance = new LocalSQLiteOperator(context);
         }
         return sInstance;
     }
 
-    private LocalSqliteOperator(Context context) {
-        mLocalSqliteOpenHelper = LocalSqliteOpenHelper.getInstance(context);
+    private LocalSQLiteOperator(Context context) {
+        mLocalSqliteOpenHelper = LocalSQLiteOpenHelper.getInstance(context);
         mSQLiteDatabase = mLocalSqliteOpenHelper.getWritableDatabase();
     }
 
@@ -42,18 +42,18 @@ public class LocalSqliteOperator {
     public void insertMallTotalInfo(MallTotalInfo mallTotalInfo) {
         if (mallTotalInfo != null) {
             List<CategoryEntryInfo> categoryEntryInfos = mallTotalInfo.mCategoryList;
-            try{
+            try {
                 mSQLiteDatabase.beginTransaction();
-                for(CategoryEntryInfo categoryEntryInfo : categoryEntryInfos){
+                for (CategoryEntryInfo categoryEntryInfo : categoryEntryInfos) {
                     insertCategory(categoryEntryInfo);
-                    for(MallEntryInfo mallEntryInfo : categoryEntryInfo.mMallEntryInfoList)  {
+                    for (MallEntryInfo mallEntryInfo : categoryEntryInfo.mMallEntryInfoList) {
                         insertMallInfo(mallEntryInfo);
                     }
                 }
                 mSQLiteDatabase.setTransactionSuccessful();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 mSQLiteDatabase.endTransaction();
             }
 
@@ -62,6 +62,8 @@ public class LocalSqliteOperator {
 
     public void deleteExpiredMallTotalInfo() {
 
+        mSQLiteDatabase.execSQL(MallCategoryTable.getDropSQL());
+        mSQLiteDatabase.execSQL(MallInfoTable.getDropSQL());
     }
 
 
@@ -126,9 +128,9 @@ public class LocalSqliteOperator {
 
     }
 
-    public Map<String,CategoryEntryInfo> getMallCategory() {
+    public Map<String, CategoryEntryInfo> getMallCategory() {
 
-        Map<String,CategoryEntryInfo> categoryInfosMap = null;
+        Map<String, CategoryEntryInfo> categoryInfosMap = null;
         Cursor cursor = null;
         try {
             cursor = mSQLiteDatabase.query(MallCategoryTable.TABLE_NAME, MallCategoryTable.COLUMNS, null,
@@ -137,7 +139,7 @@ public class LocalSqliteOperator {
             CategoryEntryInfo categoryEntryInfo = null;
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                categoryInfosMap = new HashMap<String,CategoryEntryInfo>();
+                categoryInfosMap = new HashMap<String, CategoryEntryInfo>();
                 do {
                     categoryEntryInfo = new CategoryEntryInfo();
                     categoryEntryInfo.mServerId = cursor.getString(MallCategoryTable.CATEGORY_ID_INDEX);
@@ -196,7 +198,7 @@ public class LocalSqliteOperator {
 
         String selection = MallInfoTable.MALL_CATEGORY_ID + "=?";
         String categoryIdString = String.valueOf(categoryId);
-        String[] selectionArgs = new String[] {categoryIdString};
+        String[] selectionArgs = new String[]{categoryIdString};
 
         Cursor cursor = null;
         List<MallEntryInfo> mallInfos = null;

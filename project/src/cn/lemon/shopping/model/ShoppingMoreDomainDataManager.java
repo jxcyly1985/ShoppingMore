@@ -9,7 +9,7 @@ import cn.lemon.framework.FramewokUtils;
 import cn.lemon.framework.MessageManager;
 import cn.lemon.network.LemonNetWorkHandler;
 import cn.lemon.shopping.MessageConstants;
-import cn.lemon.shopping.db.LocalSqliteOperator;
+import cn.lemon.shopping.db.LocalSQLiteOperator;
 import cn.lemon.utils.DebugUtil;
 
 public class ShoppingMoreDomainDataManager {
@@ -17,7 +17,7 @@ public class ShoppingMoreDomainDataManager {
     private static final String TAG = "ShoppingMoreDomainDataManager";
     public static final String MALL_VERSION = "mall_version";
     private Context mContext;
-    private LocalSqliteOperator mLocalSqliteOperator;
+    private LocalSQLiteOperator mLocalSqliteOperator;
 
     public static final long AD_REQUEST_TIMER = 24 * 3600 * 1000;
     private static final String COMMON_USER_INFO_FILE = "common_user_info";
@@ -39,7 +39,7 @@ public class ShoppingMoreDomainDataManager {
     public void initialize(Context context) {
 
         mContext = context;
-        mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
+        mLocalSqliteOperator = LocalSQLiteOperator.getInstance(mContext);
     }
 
 

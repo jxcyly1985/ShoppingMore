@@ -33,9 +33,7 @@ public class MallCategoryTable implements BaseColumns {
     }
 
     public static String getDropSQL() {
-
-        String DROP_SQL = "";
-        return DROP_SQL;
+        return "DROP TABLE IF EXISTS mall_category";
 
     }
 

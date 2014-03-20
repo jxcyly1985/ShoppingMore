@@ -30,8 +30,11 @@
     CR00000009(DiskLruCache.java, ImageFetcherManager.java)
     已经下载的图片，离线加载不出来
 
+    CR00000010(ImageFetcherManager.java)
+    修改BitmapFun第一次加载第一个位置图片会显示不了的问题，同时处理同一个journal文件，导致正在下载的临时图片被删除
+
     CR0000012(ShoppingMoreIndexActivity.java)
-    关闭DiskLruCache,防止内存泄露,ImageFectcher和ImageCache有锁，可以立即调用closeCache方法
+    关闭DiskLruCache,防止内存泄露,ImageFetcher和ImageCache有锁，可以立即调用closeCache方法
 
 未解决：
 
@@ -39,8 +42,5 @@
     广告界面刷新消息出问题，每次发送两个消息，导致切换出错
 
 
-
-    CR00000010(ImageResizer.java)
-    修改BitmapFun第一次加载第一个位置图片会显示不了的问题，文件流读取失败没有加载出来
 
 

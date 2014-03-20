@@ -10,16 +10,16 @@ import cn.lemon.framework.MessageManager;
 import cn.lemon.shopping.MessageConstants;
 import cn.lemon.shopping.model.MallTotalInfo;
 
-public class LocalSqliteOperatorManager implements INotifyInterface {
+public class LocalSQLiteOperatorManager implements INotifyInterface {
 
     private Context mContext;
     private MessageManager mMessageManager;
-    private LocalSqliteOperator mLocalSqliteOperator;
+    private LocalSQLiteOperator mLocalSqliteOperator;
 
-    public LocalSqliteOperatorManager(Context context) {
+    public LocalSQLiteOperatorManager(Context context) {
         mContext = context;
         mMessageManager = MessageManager.getInstance();
-        mLocalSqliteOperator = LocalSqliteOperator.getInstance(mContext);
+        mLocalSqliteOperator = LocalSQLiteOperator.getInstance(mContext);
     }
 
     @Override

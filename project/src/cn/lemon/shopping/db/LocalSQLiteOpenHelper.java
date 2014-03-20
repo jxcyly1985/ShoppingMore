@@ -4,23 +4,23 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class LocalSqliteOpenHelper extends SQLiteOpenHelper {
+public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "shopping_more.db";
 
-    private static LocalSqliteOpenHelper sInstance;
+    private static LocalSQLiteOpenHelper sInstance;
 
-    public synchronized static LocalSqliteOpenHelper getInstance(Context context) {
+    public synchronized static LocalSQLiteOpenHelper getInstance(Context context) {
 
         if (sInstance == null) {
-            sInstance = new LocalSqliteOpenHelper(context);
+            sInstance = new LocalSQLiteOpenHelper(context);
         }
 
         return sInstance;
     }
 
-    private LocalSqliteOpenHelper(Context context) {
+    private LocalSQLiteOpenHelper(Context context) {
 
         super(context, DB_NAME, null, DB_VERSION);
     }

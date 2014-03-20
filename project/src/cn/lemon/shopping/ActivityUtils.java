@@ -32,5 +32,7 @@ public class ActivityUtils {
 
     }
 
+    public static void toSearchActivity(Context context, String )
+
 
 }
