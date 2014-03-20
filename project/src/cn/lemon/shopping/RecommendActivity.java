@@ -34,7 +34,6 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private final int AD_CHANGE_TIMER = 3 * 1000;
 
     // Data
-    private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private AdImageManager mAdImageManager;
     private CategoryIconManager mCategoryIconManager;
     private AdInfo mAdInfo;
@@ -75,7 +74,6 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     private void initData() {
 
-        mShoppingMoreDomainDataManager = ShoppingMoreDomainDataManager.getInstance();
 
         mAdImageManager = AdImageManager.getInstance();
         mAdImageManager.init(this);
@@ -83,8 +81,10 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         mCategoryIconManager.init(this);
         mMallImageFetcher = ImageFetcherManager.getInstance().getMallImageFetcher(RecommendActivity.this);
 
-        mAdInfo = mShoppingMoreDomainDataManager.getAdInfo();
-        mMallTotalInfo = mShoppingMoreDomainDataManager.getMallTotalInfo();
+        RequestEntityDelegator<AdInfo> adInfoRequestEntityDelegator = new RequestEntityDelegator<AdInfo>();
+        RequestEntityDelegator<MallTotalInfo> mallTotalInfoRequestEntityDelegator = new RequestEntityDelegator<MallTotalInfo>();
+        mAdInfo = adInfoRequestEntityDelegator.getRequestEntity(this, RequestEntityDelegator.REQUEST_TYPE_AD);
+        mMallTotalInfo = mallTotalInfoRequestEntityDelegator.getRequestEntity(this, RequestEntityDelegator.REQUEST_TYPE_MALL);
 
         mAdChangeHandler = new AdChangeHandler();
 

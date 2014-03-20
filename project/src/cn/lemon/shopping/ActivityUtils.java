@@ -32,7 +32,11 @@ public class ActivityUtils {
 
     }
 
-    public static void toSearchActivity(Context context, String )
+    public static void toSearchActivity(Context context, String keyWord) {
+
+        DebugUtil.debug(TAG, "toSearchActivity keyWord " + keyWord);
+
+    }
 
 
 }

@@ -200,20 +200,20 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
         }
     };
 
-    private MallTotalInfo getDataFromDatabase(Map<String, CategoryEntryInfo> categoryInfosMap) {
+    private MallTotalInfo getDataFromDatabase(Map<String, CategoryEntryInfo> categoryInfoMap) {
 
-        MallTotalInfo mallTotalInfo = new MallTotalInfo();
-        List<MallEntryInfo> mallInfos = mLocalSQLiteOperator.getMallInfo();
-        if (mallInfos != null) {
+        mMallTotalInfo = new MallTotalInfo();
+        List<MallEntryInfo> mallInfoList = mLocalSQLiteOperator.getMallInfo();
+        if (mallInfoList != null) {
 
             CategoryEntryInfo categoryEntryInfo = null;
             ArrayList<CategoryEntryInfo> categoryEntryInfoArrayList = new ArrayList<CategoryEntryInfo>();
-            for (MallEntryInfo mallEntryInfo : mallInfos) {
-                categoryEntryInfo = categoryInfosMap.get(mallEntryInfo.mCategoryId);
+            for (MallEntryInfo mallEntryInfo : mallInfoList) {
+                categoryEntryInfo = categoryInfoMap.get(mallEntryInfo.mCategoryId);
                 categoryEntryInfo.mMallEntryInfoList.add(mallEntryInfo);
             }
 
-            for (Map.Entry<String, CategoryEntryInfo> entry : categoryInfosMap.entrySet()) {
+            for (Map.Entry<String, CategoryEntryInfo> entry : categoryInfoMap.entrySet()) {
                 categoryEntryInfoArrayList.add(entry.getValue());
             }
 
@@ -224,12 +224,12 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
                 }
             });
 
-            mallTotalInfo.mCategoryList = categoryEntryInfoArrayList;
-            mallTotalInfo.mVersion = getMallServerVersion();
-            mallTotalInfo.mRequestTime = getLastRequestTime();
+            mMallTotalInfo.mCategoryList = categoryEntryInfoArrayList;
+            mMallTotalInfo.mVersion = getMallServerVersion();
+            mMallTotalInfo.mRequestTime = getLastRequestTime();
         }
 
-        return mallTotalInfo;
+        return mMallTotalInfo;
     }
 
     private String getMallServerVersion() {

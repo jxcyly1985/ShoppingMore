@@ -186,6 +186,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
             setServerData(result);
             deSerialization();
             localize();
+            sendMessage();
         }
 
     };

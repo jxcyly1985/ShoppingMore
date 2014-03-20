@@ -9,7 +9,7 @@ import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.adapter.CommodityItemAdapter;
 import cn.lemon.shopping.model.CommodityItem;
 import cn.lemon.shopping.model.CommodityItems;
-import cn.lemon.shopping.model.ShoppingMoreDomainDataManager;
+import cn.lemon.shopping.model.RequestEntityDelegator;
 import cn.lemon.shopping.ui.CommodityView;
 import cn.lemon.utils.DebugUtil;
 
@@ -37,7 +37,8 @@ public class CashDeliveryActivity extends BaseActivity {
 
     private void initData() {
         mCommodityItemList = new ArrayList<CommodityItem>();
-        mCommodityItems = ShoppingMoreDomainDataManager.getInstance().getCommodityItems();
+        RequestEntityDelegator<CommodityItems> requestEntityDelegator = new RequestEntityDelegator<CommodityItems>();
+        mCommodityItems = requestEntityDelegator.getRequestEntity(this, RequestEntityDelegator.REQUEST_TYPE_COMMODITY);
         if (mCommodityItems != null) {
             mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
         }
