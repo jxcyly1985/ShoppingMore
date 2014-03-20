@@ -7,9 +7,7 @@ import android.widget.ListView;
 import cn.lemon.bitmap.ImageFetcher;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.adapter.CommodityItemAdapter;
-import cn.lemon.shopping.model.CommodityItem;
-import cn.lemon.shopping.model.CommodityItems;
-import cn.lemon.shopping.model.RequestEntityDelegator;
+import cn.lemon.shopping.model.*;
 import cn.lemon.shopping.ui.CommodityView;
 import cn.lemon.utils.DebugUtil;
 
@@ -21,6 +19,7 @@ public class CashDeliveryActivity extends BaseActivity {
 
     public static final String TAG = "CashDeliveryActivity";
 
+    private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private CommodityItems mCommodityItems;
     private ListView mCommodityListView;
     private BaseAdapter mCommodityAdapter;
@@ -37,8 +36,11 @@ public class CashDeliveryActivity extends BaseActivity {
 
     private void initData() {
         mCommodityItemList = new ArrayList<CommodityItem>();
+        mShoppingMoreDomainDataManager = ShoppingMoreDomainDataManager.getInstance();
+        BaseRequestEntity<CommodityItems> requestEntity =
+                mShoppingMoreDomainDataManager.getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_COMMODITY);
         RequestEntityDelegator<CommodityItems> requestEntityDelegator = new RequestEntityDelegator<CommodityItems>();
-        mCommodityItems = requestEntityDelegator.getRequestEntity(this, RequestEntityDelegator.REQUEST_TYPE_COMMODITY);
+        mCommodityItems = requestEntityDelegator.getRequestEntity(requestEntity);
         if (mCommodityItems != null) {
             mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
         }

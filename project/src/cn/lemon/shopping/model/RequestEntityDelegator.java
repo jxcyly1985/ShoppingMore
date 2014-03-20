@@ -11,30 +11,17 @@ import android.content.Context;
  */
 public class RequestEntityDelegator<T> {
 
-    public static final int REQUEST_TYPE_MALL = 0;
-    public static final int REQUEST_TYPE_AD = 1;
+    public static final int REQUEST_TYPE_AD = 0;
+    public static final int REQUEST_TYPE_MALL = 1;
     public static final int REQUEST_TYPE_COMMODITY = 2;
 
-    public T getRequestEntity(Context context, int type) {
+    public RequestEntityDelegator() {
 
-        BaseRequestEntity<?> baseRequestEntity;
-        switch (type) {
+    }
 
-            case REQUEST_TYPE_MALL:
-                baseRequestEntity = new MallCategoryRequestEntity(context);
-                break;
-            case REQUEST_TYPE_AD:
-                baseRequestEntity = new AdRequestEntity(context);
-                break;
-            case REQUEST_TYPE_COMMODITY:
-                baseRequestEntity = new CommodityRequestEntity(context);
-                break;
+    public T getRequestEntity(BaseRequestEntity<T> BaseRequestEntity) {
 
-            default:
-                throw new IllegalArgumentException("not support type " + type);
-        }
-
-        return (T) baseRequestEntity.getRequestEntity();
+        return BaseRequestEntity.getRequestEntity();
 
     }
 }

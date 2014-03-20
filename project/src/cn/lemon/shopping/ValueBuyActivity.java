@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.widget.GridView;
 import cn.lemon.framework.BaseActivity;
+import cn.lemon.shopping.model.ShoppingMoreDomainDataManager;
 import cn.lemon.shopping.ui.HorizontalListView;
 import cn.lemon.utils.DebugUtil;
 
@@ -13,6 +14,7 @@ public class ValueBuyActivity extends BaseActivity {
 
     public static final String TAG = "ValueBuyActivity";
 
+    private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private HorizontalListView mHorizontalListView;
     private GridView mGridView;
 
@@ -28,6 +30,8 @@ public class ValueBuyActivity extends BaseActivity {
     }
 
     private void initData() {
+
+        mShoppingMoreDomainDataManager = ShoppingMoreDomainDataManager.getInstance();
     }
 
     private void initView() {
