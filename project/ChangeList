@@ -36,6 +36,9 @@
     CR0000012(ShoppingMoreIndexActivity.java)
     关闭DiskLruCache,防止内存泄露,ImageFetcher和ImageCache有锁，可以立即调用closeCache方法
 
+    CR0000013(RecommendActivity.java, CashDeliveryActivity.java)
+    处理返回数据不成功的情况
+
 未解决：
 
     CR00000007

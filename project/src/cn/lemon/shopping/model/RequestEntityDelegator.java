@@ -11,10 +11,6 @@ import android.content.Context;
  */
 public class RequestEntityDelegator<T> {
 
-    public static final int REQUEST_TYPE_AD = 0;
-    public static final int REQUEST_TYPE_MALL = 1;
-    public static final int REQUEST_TYPE_COMMODITY = 2;
-
     public RequestEntityDelegator() {
 
     }

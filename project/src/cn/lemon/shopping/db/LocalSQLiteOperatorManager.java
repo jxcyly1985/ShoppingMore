@@ -59,12 +59,12 @@ public class LocalSQLiteOperatorManager implements INotifyInterface {
 
     @Override
     public void addObserver() {
-        mMessageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMessageManager.addObserver(MessageConstants.MSG_MALL_DATA_RETURN, this);
     }
 
     @Override
     public void deleteObserver() {
-        mMessageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMessageManager.deleteObserver(MessageConstants.MSG_MALL_DATA_RETURN, this);
     }
 
 }

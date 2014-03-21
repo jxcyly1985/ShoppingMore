@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import android.os.Bundle;
 
+import android.os.Message;
 import android.widget.GridView;
 import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.model.ShoppingMoreDomainDataManager;
@@ -36,6 +37,8 @@ public class ValueBuyActivity extends BaseActivity {
 
     private void initView() {
 
+        mHorizontalListView = (HorizontalListView) findViewById(R.id.id_value_buy_type_list_view);
+        mGridView = (GridView) findViewById(R.id.id_value_buy_concrete_commodity_grid);
     }
 
     @Override
@@ -71,18 +74,31 @@ public class ValueBuyActivity extends BaseActivity {
     @Override
     public void addObserver() {
 
+        mMesssageManager.addObserver(MessageConstants.MSG_VALUE_BUY_TYPE, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_VALUE_BUY_LIST, this);
 
     }
 
     @Override
     public void deleteObserver() {
 
+        mMesssageManager.deleteObserver(MessageConstants.MSG_VALUE_BUY_TYPE, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_VALUE_BUY_LIST, this);
+
     }
 
     @Override
     public void update(Observable observable, Object data) {
 
+        Message message = (Message) data;
+        int what = message.what;
 
+        switch (what) {
+            case MessageConstants.MSG_VALUE_BUY_TYPE:
+                break;
+            case MessageConstants.MSG_VALUE_BUY_LIST:
+                break;
+        }
     }
 
 }

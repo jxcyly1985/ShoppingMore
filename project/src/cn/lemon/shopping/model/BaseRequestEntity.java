@@ -22,9 +22,12 @@ public abstract class BaseRequestEntity<T> {
     protected static final String MALL_DATA_URL = BASE_URL + "/client_index/channel";
     protected static final String AD_DATA_URL = BASE_URL + "/client_index/ad";
     protected static final String COMMODITY_DATA_URL = BASE_URL + "/client_cod/index";
+    protected static final String VALUE_BUY_TYPE_URL = BASE_URL + "/client_zdm/type";
+    protected static final String VALUE_BUY_LIST_URL = BASE_URL + "/client_zdm/list";
 
-    protected static final String AdFile = "/Ad";
-    protected static final String CommodityFile = "/Commodity";
+    protected static final String AD_FILE = "/Ad";
+    protected static final String COMMODITY_FILE = "/Commodity";
+    protected static final String VALUE_BUY_TYPE_FILE = "/ValueBuyType";
 
     protected static final String COMMON_USER_INFO_FILE = "common_user_info";
 
@@ -55,13 +58,22 @@ public abstract class BaseRequestEntity<T> {
     protected String mServerData;
 
 
-    protected BaseRequestEntity(){
+    protected BaseRequestEntity() {
 
     }
 
     protected void setServerData(String result) {
         mIsSucceed = true;
         mServerData = result;
+    }
+
+    protected void handleReceiveSuccess(String result) {
+
+        setServerData(result);
+        deSerialization();
+        localize();
+        sendMessage();
+
     }
 
     public abstract T getRequestEntity();

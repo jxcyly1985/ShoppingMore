@@ -39,7 +39,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
     private LocalSQLiteOperator mLocalSQLiteOperator;
     private MallTotalInfo mMallTotalInfo;
 
-    public MallCategoryRequestEntity(Context context) {
+    protected MallCategoryRequestEntity(Context context) {
         mContext = context;
         mLocalSQLiteOperator = LocalSQLiteOperator.getInstance(mContext);
     }
@@ -50,10 +50,9 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
         Map<String, CategoryEntryInfo> categoryInfoMap = mLocalSQLiteOperator.getMallCategory();
         if (categoryInfoMap != null) {
             MallTotalInfo mallTotalInfo = getDataFromDatabase(categoryInfoMap);
-            if (!shouldNewRequest()) {
-                return mallTotalInfo;
+            if (shouldNewRequest()) {
+                sendRequest();
             }
-            sendRequest();
             return mallTotalInfo;
 
         }
@@ -155,8 +154,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
 
         if (mIsSucceed) {
             Message msg = FramewokUtils.makeMessage(
-                    MessageConstants.MSG_MALL_DATA_RETURN, mMallTotalInfo, 0,
-                    0);
+                    MessageConstants.MSG_MALL_DATA_RETURN, mMallTotalInfo, 0, 0);
             MessageManager.getInstance().sendNotifyMessage(msg);
         } else {
             Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
@@ -192,10 +190,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
         public void onHandleReceiveSuccess(String result) {
 
             DebugUtil.debug(TAG, "MallInfoHandler result " + result);
-            setServerData(result);
-            deSerialization();
-            localize();
-            sendMessage();
+            handleReceiveSuccess(result);
 
         }
     };

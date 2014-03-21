@@ -19,4 +19,6 @@
     <color name="commodity_item_name_color">#FF7A7A7A</color>
     <color name="commodity_item_select_bounds_color">#FF50DFBD</color>
 
+    <color name="value_buy_item_price_color">#FF000000</color>
+
 </resources>

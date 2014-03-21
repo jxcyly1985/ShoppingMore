@@ -30,13 +30,12 @@ import java.util.List;
 public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
 
     private static final String TAG = "AdRequestEntity";
-    public static final long AD_REQUEST_TIMER = 24 * 3600 * 1000;
+    private final long AD_REQUEST_TIMER = 24 * 3600 * 1000;
 
     private Context mContext;
     private AdInfo mAdInfo;
-    private long mLastRequestTime;
 
-    public AdRequestEntity(Context context) {
+    protected AdRequestEntity(Context context) {
         mContext = context;
     }
 
@@ -49,10 +48,9 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
 
         if (adInfo != null) {
 
-            if (!shouldNewRequest()) {
-                return adInfo;
+            if (shouldNewRequest()) {
+                sendRequest();
             }
-            sendRequest();
             return adInfo;
         }
         sendRequest();
@@ -79,7 +77,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
     @Override
     protected void localize() {
 
-        File adFile = StaticUtils.getInstance().getAdFile();
+        File adFile = getAdFile();
         try {
             try {
                 if (!adFile.exists()) {
@@ -148,8 +146,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
         if (mIsSucceed) {
 
             Message msg = FramewokUtils.makeMessage(
-                    MessageConstants.MSG_AD_DATA_RETURN, mAdInfo, 0,
-                    0);
+                    MessageConstants.MSG_AD_DATA_RETURN, mAdInfo, 0, 0);
             MessageManager.getInstance().sendNotifyMessage(msg);
 
         } else {
@@ -183,17 +180,20 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
         public void onHandleReceiveSuccess(String result) {
 
             DebugUtil.debug(TAG, "AdInfoHandler onHandleReceiveSuccess result " + result);
-            setServerData(result);
-            deSerialization();
-            localize();
-            sendMessage();
+            handleReceiveSuccess(result);
         }
 
     };
 
+    private File getAdFile() {
+        File appFileDir = mContext.getFilesDir();
+        String adFilePath = appFileDir.getAbsolutePath() + AD_FILE;
+        return new File(adFilePath);
+    }
+
     private AdInfo readAdInfo() {
 
-        File adFile = StaticUtils.getInstance().getAdFile();
+        File adFile = getAdFile();
         String jsonString = StaticUtils.getFileString(adFile);
         if (jsonString != null) {
             setServerData(jsonString);

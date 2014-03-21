@@ -9,16 +9,13 @@ import java.util.Set;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.SparseArray;
 
 /**
- * 
  * @author leiyong
- * 
  */
 public class MessageManager {
 
-    private Hashtable<Integer, MessageObservable> mMapObervable;
+    private Hashtable<Integer, MessageObservable> mMapObservable;
 
     private Handler mMainHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -29,41 +26,41 @@ public class MessageManager {
 
     protected MessageManager() {
 
-        mMapObervable = new Hashtable<Integer, MessageObservable>();
+        mMapObservable = new Hashtable<Integer, MessageObservable>();
     }
 
     private static class MessageManagerInner {
 
-        static MessageManager mInstance = new MessageManager();
+        static MessageManager sInstance = new MessageManager();
     }
 
     public static MessageManager getInstance() {
-        return MessageManagerInner.mInstance;
+        return MessageManagerInner.sInstance;
     }
 
     /**
-     * addOberver must called by ui thread if not may cause ConcurrentModificationException Observable
+     * addObserver must called by ui thread if not may cause ConcurrentModificationException Observable
      * addObserver method is not implement by iterator
-     * 
+     *
      * @param what
      * @param observer
      */
-    public void addOberver(Integer what, Observer observer) {
+    public void addObserver(Integer what, Observer observer) {
         MessageObservable observable;
-        if (mMapObervable.containsKey(what)) {
-            observable = mMapObervable.get(what);
+        if (mMapObservable.containsKey(what)) {
+            observable = mMapObservable.get(what);
         } else {
             observable = new MessageObservable();
         }
         observable.addObserver(observer);
-        mMapObervable.put(what, observable);
+        mMapObservable.put(what, observable);
     }
 
-    public void deleteAllOberver() {
+    public void deleteAllObserver() {
 
-        int mapSize = mMapObervable.size();
+        int mapSize = mMapObservable.size();
         for (int i = 0; i < mapSize; ++i) {
-            MessageObservable observable = mMapObervable.get(i);
+            MessageObservable observable = mMapObservable.get(i);
             observable.deleteObservers();
         }
     }
@@ -71,20 +68,20 @@ public class MessageManager {
     /**
      * delete observer must called by ui thread if not may cause ConcurrentModificationException Observable
      * deleteObserver method is not implement by iterator
-     * 
+     *
      * @param what
      * @param observer
      */
-    public void deleteOberver(Integer what, Observer observer) {
-        if (mMapObervable.containsKey(what)) {
-            Observable observable = mMapObervable.get(what);
+    public void deleteObserver(Integer what, Observer observer) {
+        if (mMapObservable.containsKey(what)) {
+            Observable observable = mMapObservable.get(what);
             observable.deleteObserver(observer);
         }
     }
 
-    public void deleteOberver(Observer observer) {
+    public void deleteObserver(Observer observer) {
 
-        Set<Entry<Integer, MessageObservable>> observableEntrys = mMapObervable.entrySet();
+        Set<Entry<Integer, MessageObservable>> observableEntrys = mMapObservable.entrySet();
 
         for (Entry<Integer, MessageObservable> entry : observableEntrys) {
             MessageObservable observable = entry.getValue();
@@ -94,7 +91,7 @@ public class MessageManager {
 
     public void notify(Message msg) {
         int what = msg.what;
-        Set<Entry<Integer, MessageObservable>> observableEntrys = mMapObervable.entrySet();
+        Set<Entry<Integer, MessageObservable>> observableEntrys = mMapObservable.entrySet();
         for (Entry<Integer, MessageObservable> entry : observableEntrys) {
             int key = entry.getKey();
             if (key == what) {
@@ -114,10 +111,8 @@ public class MessageManager {
 
     /**
      * Name: Description:
-     * 
+     *
      * @return
-     * @return
-     * 
      */
     public Handler getHandler() {
 
@@ -135,15 +130,6 @@ public class MessageManager {
             setChanged();
             super.notifyObservers(data);
         }
-    }
-
-    public class MainHandler extends Handler {
-
-        @Override
-        public void handleMessage(Message msg) {
-            MessageManager.this.notify(msg);
-        }
-
     }
 
 }

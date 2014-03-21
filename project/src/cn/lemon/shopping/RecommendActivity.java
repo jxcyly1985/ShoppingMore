@@ -1,6 +1,5 @@
 package cn.lemon.shopping;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,10 +19,7 @@ import cn.lemon.shopping.utils.Utils;
 import cn.lemon.utils.DebugUtil;
 import cn.lemon.utils.StaticUtils;
 
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 
 public class RecommendActivity extends BaseActivity implements OnClickListener {
@@ -139,10 +135,12 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     private void initAdResource() {
 
-        if (mAdInfo != null) {
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 begin
+        if (mAdInfo != null && mAdInfo.mIsSuccess) {
             submitAdTask(mAdInfo);
             initImageSwitch();
         }
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 end
     }
 
     private void initImageSwitch() {
@@ -246,6 +244,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     private void initCategory() {
 
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 begin
         if (mMallTotalInfo != null && mMallTotalInfo.mCategoryList.size() > 0) {
             int pos = 0;
             CategoryEntryInfo categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
@@ -258,6 +257,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
                 pos++;
             }
         }
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 end
 
     }
 
@@ -406,19 +406,19 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void addObserver() {
-        mMesssageManager.addOberver(MessageConstants.MSG_NET_WORK_ERROR, this);
-        mMesssageManager.addOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
-        mMesssageManager.addOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
-        mMesssageManager.addOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_NET_WORK_ERROR, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_AD_IMAGE_READY, this);
 
     }
 
     @Override
     public void deleteObserver() {
-        mMesssageManager.deleteOberver(MessageConstants.MSG_NET_WORK_ERROR, this);
-        mMesssageManager.deleteOberver(MessageConstants.MSG_MALL_DATA_RETURN, this);
-        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_DATA_RETURN, this);
-        mMesssageManager.deleteOberver(MessageConstants.MSG_AD_IMAGE_READY, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_NET_WORK_ERROR, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_MALL_DATA_RETURN, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_AD_DATA_RETURN, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_AD_IMAGE_READY, this);
     }
 
     @Override

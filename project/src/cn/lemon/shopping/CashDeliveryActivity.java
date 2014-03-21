@@ -97,14 +97,14 @@ public class CashDeliveryActivity extends BaseActivity {
 
     @Override
     public void addObserver() {
-        mMesssageManager.addOberver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
+        mMesssageManager.addObserver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
 
     }
 
     @Override
     public void deleteObserver() {
 
-        mMesssageManager.deleteOberver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
+        mMesssageManager.deleteObserver(MessageConstants.MSG_COMMODITY_DATA_RETURN, this);
     }
 
     @Override
@@ -116,13 +116,24 @@ public class CashDeliveryActivity extends BaseActivity {
             case MessageConstants.MSG_COMMODITY_DATA_RETURN:
                 DebugUtil.debug(TAG, "MSG_COMMODITY_DATA_RETURN");
                 mCommodityItems = (CommodityItems) message.obj;
-                mCommodityItemList.clear();
-                mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
-                mCommodityAdapter.notifyDataSetChanged();
+                handleCommodityDataReturn()
 
                 break;
         }
 
+    }
+
+    private void handleCommodityDataReturn() {
+
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 begin
+        if (mCommodityItems.mIsSucceed) {
+            mCommodityItemList.clear();
+            mCommodityItemList.addAll(mCommodityItems.mCommodityItemList);
+            mCommodityAdapter.notifyDataSetChanged();
+        } else {
+            // TODO
+        }
+        // QiYun<LeiYong><2014-03-20> modify for CR00000012 end
     }
 
     private CommodityView.CommodityNameClickListener mCommodityNameClickListener

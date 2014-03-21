@@ -34,7 +34,7 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
     private Context mContext;
     private CommodityItems mCommodityItems;
 
-    public CommodityRequestEntity(Context context) {
+    protected CommodityRequestEntity(Context context) {
         mContext = context;
     }
 
@@ -73,7 +73,7 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
     @Override
     protected void localize() {
 
-        File commodityFile = StaticUtils.getInstance().getCommodityFile();
+        File commodityFile = getCommodityFile();
         try {
 
             try {
@@ -105,6 +105,7 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
             if (!jsonObject.isNull(JSON_LAST_MODIFY_KEY)) {
                 mCommodityItems.mRequestTime = jsonObject.getLong(JSON_LAST_MODIFY_KEY);
             }
+            mCommodityItems.mIsSucceed = isSucceed;
             if (isSucceed) {
                 List<CommodityItem> commodityItemList = new ArrayList<CommodityItem>();
                 JSONObject data = (JSONObject) jsonObject.get(JSON_KEY_DATA);
@@ -131,7 +132,6 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
                     commodityItem.mCommodityCategoryList = commodityCategoryList;
                     commodityItemList.add(commodityItem);
                 }
-                mCommodityItems.mIsSucceed = true;
                 mCommodityItems.mHasNext = data.getBoolean(JSON_KEY_HAS_NEXT_PAGE);
                 mCommodityItems.mPageIndex = data.getInt(JSON_KEY_CUR_PAGE);
                 mCommodityItems.mVersionCode = data.getString(JSON_KEY_VERSION);
@@ -139,7 +139,6 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
                 return mCommodityItems;
 
             } else {
-                mCommodityItems.mIsSucceed = false;
                 mCommodityItems.mMsg = jsonObject.getString(JSON_KEY_MSG);
             }
         } catch (JSONException e) {
@@ -154,8 +153,7 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
 
         if (mIsSucceed) {
             Message msg = FramewokUtils.makeMessage(
-                    MessageConstants.MSG_COMMODITY_DATA_RETURN, mCommodityItems, 0,
-                    0);
+                    MessageConstants.MSG_COMMODITY_DATA_RETURN, mCommodityItems, 0, 0);
             MessageManager.getInstance().sendNotifyMessage(msg);
         } else {
             Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
@@ -187,17 +185,21 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
         public void onHandleReceiveSuccess(String result) {
 
             DebugUtil.debug(TAG, "CommodityHandler onHandleReceiveSuccess result " + result);
-
-            setServerData(result);
-            deSerialization();
-            localize();
-            sendMessage();
+            handleReceiveSuccess(result);
         }
     };
 
+    private File getCommodityFile() {
+
+        File appFileDir = mContext.getFilesDir();
+        String commodityFilePath = appFileDir.getAbsolutePath() + COMMODITY_FILE;
+        return new File(commodityFilePath);
+
+    }
+
     private CommodityItems readCommodityInfo() {
 
-        File commodityFile = StaticUtils.getInstance().getCommodityFile();
+        File commodityFile = getCommodityFile();
         if (commodityFile.exists()) {
             String jsonString = StaticUtils.getFileString(commodityFile);
 

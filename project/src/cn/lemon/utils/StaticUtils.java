@@ -27,22 +27,6 @@ public class StaticUtils {
 
     private Context mAppContext;
 
-    public File getAdFile() {
-        File appFileDir = mAppContext.getFilesDir();
-        String adFilePath = appFileDir.getAbsolutePath() + ModelUtils.AD_FILE;
-        File adFile = new File(adFilePath);
-        return adFile;
-    }
-
-    public File getCommodityFile() {
-
-        File appFileDir = mAppContext.getFilesDir();
-        String commodityFilePath = appFileDir.getAbsolutePath() + ModelUtils.COMMOFITY_File;
-        File commodityFile = new File(commodityFilePath);
-        return commodityFile;
-
-    }
-
 
     public static String getFileString(File file) {
 
