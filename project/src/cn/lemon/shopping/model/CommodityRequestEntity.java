@@ -40,7 +40,9 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
 
     @Override
     public CommodityItems getRequestEntity() {
-        CommodityItems commodityItems = ModelUtils.readCommodityInfo();
+        CommodityItems commodityItems = readCommodityInfo();
+        DebugUtil.debug(TAG, "getCommodityItems commodityItems " + commodityItems);
+
         if (commodityItems != null) {
             DebugUtil.debug(TAG, "getCommodityItems size " + commodityItems.mCommodityItemList.size());
             return commodityItems;
@@ -188,9 +190,27 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
 
             setServerData(result);
             deSerialization();
+            localize();
             sendMessage();
         }
     };
+
+    private CommodityItems readCommodityInfo() {
+
+        File commodityFile = StaticUtils.getInstance().getCommodityFile();
+        if (commodityFile.exists()) {
+            String jsonString = StaticUtils.getFileString(commodityFile);
+
+            DebugUtil.debug(TAG, "readCommodityInfo jsonString " + jsonString);
+
+            if (jsonString != null) {
+                setServerData(jsonString);
+                return deSerialization();
+            }
+        }
+
+        return null;
+    }
 
 
 }
