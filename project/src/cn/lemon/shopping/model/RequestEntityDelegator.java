@@ -1,7 +1,5 @@
 package cn.lemon.shopping.model;
 
-import android.content.Context;
-
 /**
  * Created with IntelliJ IDEA.
  * User: leiyong

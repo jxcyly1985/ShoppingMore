@@ -32,11 +32,14 @@ public class ImageFetcherManager {
     // QiYun<LeiYong><2014-03-19> modify for CR00000010 begin
     private final String MALL_HTTP_DIR = "mall_http";
     private final String COMMODITY_HTTP_DIR = "commodity_http";
+    private final String VALUE_BUY_HTTP_DIR = "value_buy_http";
     // QiYun<LeiYong><2014-03-19> modify for CR00000010 end
     private final String MALL_DIR_NAME = "MALL";
     private final String COMMODITY_DIR_NAME = "COMMODITY";
+    private final String VALUE_BUY_DIR_NAME = "VALUE_BUY";
     private final int MALL_DEFAULT_MEM_CACHE = 10 * 1024 * 1024;
     private final int COMMODITY_ICON_MEM_CACHE = 5 * 1024 * 1024;
+    private final int VALUE_BUY_MEM_CACHE = 10 * 1024 * 1024;
 
     private Map<String, ImageFetcher> mImageFetcherMap;
 
@@ -80,12 +83,28 @@ public class ImageFetcherManager {
         int width = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_commodity_icon_width);
         int height = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_commodity_icon_height);
         ImageFetcher imageFetcher = new ImageFetcher(mContext, width, height, COMMODITY_HTTP_DIR);
+        //TODO set commodity default icon
         imageFetcher.setLoadingImage(R.drawable.default_mall_icon);
         ImageCache.ImageCacheParams imageCacheParams = new ImageCache.ImageCacheParams(mContext, COMMODITY_DIR_NAME);
         imageCacheParams.memCacheSize = COMMODITY_ICON_MEM_CACHE;
         imageFetcher.addImageCache(fragmentActivity.getSupportFragmentManager(), imageCacheParams);
         mImageFetcherMap.put(COMMODITY_DIR_NAME, imageFetcher);
         return imageFetcher;
+    }
+
+    public ImageFetcher getValueBuyImageFetcher(FragmentActivity fragmentActivity) {
+
+        int width = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_value_buy_item_image_width);
+        int height = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_value_buy_item_image_height);
+        ImageFetcher imageFetcher = new ImageFetcher(mContext, width, height, VALUE_BUY_HTTP_DIR);
+        //TODO set value buy item default icon
+        imageFetcher.setLoadingImage(R.drawable.default_mall_icon);
+        ImageCache.ImageCacheParams imageCacheParams = new ImageCache.ImageCacheParams(mContext, VALUE_BUY_DIR_NAME);
+        imageCacheParams.memCacheSize = VALUE_BUY_MEM_CACHE;
+        imageFetcher.addImageCache(fragmentActivity.getSupportFragmentManager(), imageCacheParams);
+        mImageFetcherMap.put(VALUE_BUY_DIR_NAME, imageFetcher);
+        return imageFetcher;
+
     }
 
     // QiYun<LeiYong><2014-03-19> modify for CR00000009 begin

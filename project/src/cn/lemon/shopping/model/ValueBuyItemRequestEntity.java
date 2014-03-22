@@ -23,36 +23,35 @@ import java.util.List;
 /**
  * Created with IntelliJ IDEA.
  * User: leiyong
- * Date: 14-3-21
- * Time: 下午8:21
+ * Date: 14-3-22
+ * Time: 下午2:22
  * To change this template use File | Settings | File Templates.
  */
-public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTypes> {
+public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTotalInfo> {
 
-    private static final String TAG = "ValueBuyTypeRequestEntity";
-    private final long TYPE_REQUEST_TIMER = 7 * 24 * 3600 * 1000;
+    private static final String TAG = "ValueBuyItemRequestEntity";
+    private final long VALUE_BUY_ITEM_REQUEST_TIMER = 6 * 3600 * 1000;
+
 
     private Context mContext;
-    private ValueBuyTotalTypes mValueBuyTotalTypes;
+    private ValueBuyItemTotalInfo mValueBuyTotalInfo;
 
-    protected ValueBuyTypeRequestEntity(Context context) {
+
+    protected ValueBuyItemRequestEntity(Context context) {
         mContext = context;
     }
 
     @Override
-    protected ValueBuyTotalTypes getRequestEntity() {
-
-        ValueBuyTotalTypes valueBuyTotalTypes = getValueBuyTotalTypes();
-        if (valueBuyTotalTypes != null) {
-            if (shouldNewRequest()) {
+    protected ValueBuyItemTotalInfo getRequestEntity() {
+        ValueBuyItemTotalInfo valueBuyItemTotalInfo = getValueBuyTotalTypes();
+        if (valueBuyItemTotalInfo != null) {
+            if (isExpired()) {
                 sendRequest();
             }
-            return valueBuyTotalTypes;
+            return valueBuyItemTotalInfo;
         }
-
         sendRequest();
         return null;
-
     }
 
     @Override
@@ -63,9 +62,9 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
             public void run() {
 
                 LemonNetWorkRequest request = new LemonNetWorkRequest();
-                request.mUrl = VALUE_BUY_TYPE_URL;
+                request.mUrl = VALUE_BUY_LIST_URL;
 
-                LemonHttpRequest httpRequest = new LemonHttpRequest(request, mTypeHandler);
+                LemonHttpRequest httpRequest = new LemonHttpRequest(request, mValueBuyItemHandler);
                 httpRequest.get();
 
             }
@@ -76,7 +75,7 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
     @Override
     protected void localize() {
 
-        File typeFile = getValueBuyTypeFile();
+        File typeFile = getValueBuyItemFile();
         try {
             if (!typeFile.exists()) {
                 typeFile.createNewFile();
@@ -97,43 +96,45 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
     }
 
     @Override
-    protected ValueBuyTotalTypes deSerialization() {
+    protected ValueBuyItemTotalInfo deSerialization() {
 
         try {
+
             JSONObject jsonObject = new JSONObject(mServerData);
-            mValueBuyTotalTypes = new ValueBuyTotalTypes();
+            mValueBuyTotalInfo = new ValueBuyItemTotalInfo();
             if (!jsonObject.isNull(JSON_LAST_MODIFY_KEY)) {
-                mValueBuyTotalTypes.mRequestTime = jsonObject.getLong(JSON_LAST_MODIFY_KEY);
+                mValueBuyTotalInfo.mRequestTime = jsonObject.getLong(JSON_LAST_MODIFY_KEY);
             }
             boolean isSucceed = jsonObject.getBoolean(JSON_KEY_SUCCESS);
-            mValueBuyTotalTypes.mIsSucceed = jsonObject.getBoolean(JSON_KEY_SUCCESS);
+            mValueBuyTotalInfo.mIsSucceed = isSucceed;
             if (isSucceed) {
-                List<ValueBuyTypeInfo> valueBuyTypeInfoList = new ArrayList<ValueBuyTypeInfo>();
                 JSONObject data = jsonObject.getJSONObject(JSON_KEY_DATA);
                 JSONArray list = data.getJSONArray(JSON_KEY_LIST);
-
+                List<ValueBuyItemInfo> valueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
                 for (int i = 0; i < list.length(); ++i) {
+                    ValueBuyItemInfo valueBuyItemInfo = new ValueBuyItemInfo();
                     JSONObject item = list.getJSONObject(i);
-                    ValueBuyTypeInfo valueBuyTypeInfo = new ValueBuyTypeInfo();
-                    valueBuyTypeInfo.mTypeId = item.getString(JSON_KEY_ID);
-                    valueBuyTypeInfo.mTypeName = item.getString(JSON_KEY_NAME);
-                    valueBuyTypeInfoList.add(valueBuyTypeInfo);
-                }
+                    valueBuyItemInfo.mTitle = item.getString(JSON_KEY_TITLE);
+                    valueBuyItemInfo.mImageUrl = item.getString(JSON_KEY_IMG);
+                    valueBuyItemInfo.mItemLink = item.getString(JSON_KEY_LINK);
+                    valueBuyItemInfo.mPrice = item.getString(JSON_KEY_PRICE);
+                    valueBuyItemInfoList.add(valueBuyItemInfo);
 
+                }
+                mValueBuyTotalInfo.mValueBuyItemInfoList = valueBuyItemInfoList;
+                mValueBuyTotalInfo.mHasNext = data.getBoolean(JSON_KEY_HAS_NEXT_PAGE);
+                mValueBuyTotalInfo.mCurrentPage = data.getInt(JSON_KEY_CUR_PAGE);
                 //TODO Server should Add Version
-                //mValueBuyTotalTypes.mVersion = jsonObject.getString(JSON_KEY_VERSION);
-                mValueBuyTotalTypes.mValueBuyTypeInfoList = valueBuyTypeInfoList;
+                //mValueBuyTotalInfo.mVersion = jsonObject.getString(JSON_KEY_VERSION);
 
             } else {
-                mValueBuyTotalTypes.mMsg = jsonObject.getString(JSON_KEY_MSG);
+                mValueBuyTotalInfo.mMsg = jsonObject.getString(JSON_KEY_MSG);
             }
 
-            return mValueBuyTotalTypes;
+            return mValueBuyTotalInfo;
 
         } catch (JSONException e) {
-
             DebugUtil.debug(TAG, "JSONException");
-
             //TODO handle receive error json example CMCC Login page
             //QiYun<LeiYong><2014-03-22> modify for CR0000014 begin
             mIsSucceed = false;
@@ -149,7 +150,7 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
 
         if (mIsSucceed) {
             Message msg = FramewokUtils.makeMessage(
-                    MessageConstants.MSG_VALUE_BUY_TYPE, mValueBuyTotalTypes, 0, 0);
+                    MessageConstants.MSG_VALUE_BUY_LIST, mValueBuyTotalInfo, 0, 0);
             MessageManager.getInstance().sendNotifyMessage(msg);
         } else {
             Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
@@ -161,10 +162,9 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
 
     @Override
     protected boolean shouldNewRequest() {
-
         long thisTime = System.currentTimeMillis();
-        long pastTime = thisTime - mValueBuyTotalTypes.mRequestTime;
-        return pastTime > TYPE_REQUEST_TIMER;
+        long pastTime = thisTime - mValueBuyTotalInfo.mRequestTime;
+        return pastTime > VALUE_BUY_ITEM_REQUEST_TIMER;
     }
 
     @Override
@@ -172,8 +172,7 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
         return false;
     }
 
-
-    private LemonNetWorkHandler mTypeHandler = new LemonNetWorkHandler() {
+    private LemonNetWorkHandler mValueBuyItemHandler = new LemonNetWorkHandler() {
         @Override
         public void onHandleReceiveError() {
             DebugUtil.debug(TAG, "onHandleReceiveError");
@@ -182,28 +181,25 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
 
         @Override
         public void onHandleReceiveSuccess(String result) {
-
             DebugUtil.debug(TAG, "onHandleReceiveSuccess result " + result);
             handleReceiveSuccess(result);
-
         }
     };
 
-    private File getValueBuyTypeFile() {
-        File appFileDir = mContext.getFilesDir();
-        String typeFilePath = appFileDir.getAbsolutePath() + VALUE_BUY_TYPE_FILE;
-        return new File(typeFilePath);
+    private File getValueBuyItemFile() {
 
+        File appDirFile = mContext.getFilesDir();
+        String valueBuyItemFilePath = appDirFile.getAbsolutePath() + VALUE_BUY_LIST_FILE;
+        return new File(valueBuyItemFilePath);
     }
 
-    private ValueBuyTotalTypes getValueBuyTotalTypes() {
-        File typeFile = getValueBuyTypeFile();
-        String jsonString = StaticUtils.getFileString(typeFile);
+    private ValueBuyItemTotalInfo getValueBuyTotalTypes() {
+        File valueBuyItemFile = getValueBuyItemFile();
+        String jsonString = StaticUtils.getFileString(valueBuyItemFile);
         if (jsonString != null) {
             setServerData(jsonString);
             return deSerialization();
         }
         return null;
-
     }
 }

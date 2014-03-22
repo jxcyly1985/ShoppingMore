@@ -116,7 +116,7 @@ public class CashDeliveryActivity extends BaseActivity {
             case MessageConstants.MSG_COMMODITY_DATA_RETURN:
                 DebugUtil.debug(TAG, "MSG_COMMODITY_DATA_RETURN");
                 mCommodityItems = (CommodityItems) message.obj;
-                handleCommodityDataReturn()
+                handleCommodityDataReturn();
 
                 break;
         }

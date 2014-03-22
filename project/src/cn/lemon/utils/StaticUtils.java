@@ -2,7 +2,6 @@ package cn.lemon.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import cn.lemon.shopping.model.ModelUtils;
 import org.apache.commons.io.IOUtil;
 
 import java.io.File;
@@ -14,11 +13,11 @@ public class StaticUtils {
 
 
     public static class StaticUtilsHolder {
-        protected static StaticUtils mInstance = new StaticUtils();
+        protected static StaticUtils sInstance = new StaticUtils();
     }
 
     public static StaticUtils getInstance() {
-        return StaticUtilsHolder.mInstance;
+        return StaticUtilsHolder.sInstance;
     }
 
     public void init(Context context) {

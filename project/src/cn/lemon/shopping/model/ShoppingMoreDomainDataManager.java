@@ -12,6 +12,7 @@ public class ShoppingMoreDomainDataManager {
     public static final int TYPE_MALL = 1;
     public static final int TYPE_COMMODITY = 2;
     public static final int TYPE_VALUE_BUY_TYPE = 3;
+    public static final int TYPE_VALUE_BUY_ITEM = 4;
 
     private ShoppingMoreDomainDataManager() {
 
@@ -41,6 +42,8 @@ public class ShoppingMoreDomainDataManager {
                 return new CommodityRequestEntity(mContext);
             case TYPE_VALUE_BUY_TYPE:
                 return new ValueBuyTypeRequestEntity(mContext);
+            case TYPE_VALUE_BUY_ITEM:
+                return new ValueBuyItemRequestEntity(mContext);
             default:
                 throw new IllegalArgumentException("ShoppingMoreDomainDataManager not support type " + type);
         }

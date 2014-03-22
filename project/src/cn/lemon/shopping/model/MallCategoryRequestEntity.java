@@ -45,7 +45,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
     }
 
     @Override
-    public MallTotalInfo getRequestEntity() {
+    protected MallTotalInfo getRequestEntity() {
 
         Map<String, CategoryEntryInfo> categoryInfoMap = mLocalSQLiteOperator.getMallCategory();
         if (categoryInfoMap != null) {

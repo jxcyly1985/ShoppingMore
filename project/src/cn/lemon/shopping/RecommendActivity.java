@@ -26,7 +26,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     public static final String TAG = "RecommendActivity";
 
-    private final int AD_WAIT_TIME = 50;
+    private final int AD_WAIT_TIME = 1000;
     private final int AD_CHANGE_TIMER = 3 * 1000;
 
     // Data

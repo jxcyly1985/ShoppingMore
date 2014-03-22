@@ -265,9 +265,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
     private void PopupSettingDialog() {
 
         mSettingWindow.setAnimationStyle(R.style.popup_window_anim);
-
         mSettingWindow.showAtLocation(mTabHost, Gravity.BOTTOM, 0, 0);
-
     }
 
     private void initSettingPopupWindow() {

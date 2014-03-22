@@ -39,7 +39,7 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
     }
 
     @Override
-    public CommodityItems getRequestEntity() {
+    protected CommodityItems getRequestEntity() {
         CommodityItems commodityItems = readCommodityInfo();
         DebugUtil.debug(TAG, "getCommodityItems commodityItems " + commodityItems);
 

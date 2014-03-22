@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/page_bg">
 
     <cn.lemon.shopping.ui.HorizontalListView
             android:id="@+id/id_value_buy_type_list_view"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_value_buy_type_margin_top"
+            android:layout_marginLeft="@dimen/dimen_value_buy_margin_h"
+            android:layout_marginRight="@dimen/dimen_value_buy_margin_h">
     </cn.lemon.shopping.ui.HorizontalListView>
 
 
@@ -16,6 +19,9 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/id_value_buy_type_list_view"
+            android:layout_marginTop="@dimen/dimen_value_buy_grid_margin_top"
+            android:layout_marginLeft="@dimen/dimen_value_buy_margin_h"
+            android:layout_marginRight="@dimen/dimen_value_buy_margin_h"
             android:horizontalSpacing="@dimen/dimen_value_buy_grid_view_h_spacing"
             android:verticalSpacing="@dimen/dimen_value_buy_grid_view_v_spacing"
             android:numColumns="@integer/integer_value_buy_grid_column_number"

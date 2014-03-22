@@ -39,6 +39,11 @@
     CR0000013(RecommendActivity.java, CashDeliveryActivity.java)
     处理返回数据不成功的情况
 
+    CR0000014
+    (AdRequestEntity.java, CommodityRequestEntity.java, ValueBuyTypeRequestEntity.java,
+    MallCategoryRequestEntity.java,ValueBuyItemRequestEntity.java)
+    处理返回数据操作，无法解析为json数据格式，例如返回CMCC的登录页面
+
 未解决：
 
     CR00000007

@@ -40,7 +40,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
     }
 
     @Override
-    public AdInfo getRequestEntity() {
+    protected AdInfo getRequestEntity() {
 
         AdInfo adInfo = readAdInfo();
 

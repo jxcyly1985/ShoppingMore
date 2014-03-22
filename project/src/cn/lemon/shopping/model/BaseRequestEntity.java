@@ -28,6 +28,7 @@ public abstract class BaseRequestEntity<T> {
     protected static final String AD_FILE = "/Ad";
     protected static final String COMMODITY_FILE = "/Commodity";
     protected static final String VALUE_BUY_TYPE_FILE = "/ValueBuyType";
+    protected static final String VALUE_BUY_LIST_FILE = "/ValueBuyList";
 
     protected static final String COMMON_USER_INFO_FILE = "common_user_info";
 
@@ -51,6 +52,7 @@ public abstract class BaseRequestEntity<T> {
     protected static final String JSON_KEY_TYPE_NAME = "type_name";
     protected static final String JSON_KEY_COLOR = "color";
     protected static final String JSON_KEY_TAGS = "tags";
+    protected static final String JSON_KEY_PRICE = "price";
 
     protected static ThreadPoolExecutor sRequestExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
@@ -76,7 +78,9 @@ public abstract class BaseRequestEntity<T> {
 
     }
 
-    public abstract T getRequestEntity();
+
+    //TODO change signature
+    protected abstract T getRequestEntity();
 
     protected abstract void sendRequest();
 

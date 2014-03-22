@@ -1,24 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="@dimen/dimen_value_buy_item_width"
+                android:layout_height="@dimen/dimen_value_buy_item_height">
 
     <ImageView
             android:id="@+id/id_value_buy_item_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY">
+            android:layout_width="@dimen/dimen_value_buy_item_image_width"
+            android:layout_height="@dimen/dimen_value_buy_item_image_height"
+            android:scaleType="fitXY"
+            android:layout_alignParentTop="true">
     </ImageView>
 
-    <TextView
-            android:id="@+id/id_value_buy_item_price"
+    <ImageView
+            android:id="@+id/id_value_buy_item_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/dimen_value_buy_item_price_text_size"
-            android:textColor="@color/value_buy_item_price_color">
+            android:background="@drawable/favorite"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true">
+    </ImageView>
 
-    </TextView>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true">
 
-</LinearLayout>
+        <TextView
+                android:id="@+id/id_value_buy_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/dimen_value_buy_item_price_text_size"
+                android:textColor="@color/value_buy_item_price_color"
+                android:gravity="center">
+        </TextView>
+
+
+        <TextView
+                android:id="@+id/id_value_buy_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/dimen_value_buy_item_name_text_size"
+                android:textColor="@color/value_buy_item_name_color"
+                android:gravity="center">
+        </TextView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
