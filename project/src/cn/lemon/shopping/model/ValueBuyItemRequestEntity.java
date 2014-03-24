@@ -196,6 +196,9 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
     private ValueBuyItemTotalInfo getValueBuyTotalTypes() {
         File valueBuyItemFile = getValueBuyItemFile();
         String jsonString = StaticUtils.getFileString(valueBuyItemFile);
+
+        DebugUtil.debug(TAG, "getValueBuyTotalTypes jsonString " + jsonString);
+
         if (jsonString != null) {
             setServerData(jsonString);
             return deSerialization();

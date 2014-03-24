@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ public class ValueBuyItemAdapter extends BaseAdapter {
     private Context mContext;
     private List<ValueBuyItemInfo> mValueBuyItemInfos;
     private ImageFetcher mImageFetcher;
+    private int mItemWidth;
+    private int mItemHeight;
 
     private class ViewHolder {
 
@@ -43,6 +46,8 @@ public class ValueBuyItemAdapter extends BaseAdapter {
         mContext = context;
         mValueBuyItemInfos = list;
         mImageFetcher = imageFetcher;
+        mItemWidth = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_value_buy_item_width);
+        mItemHeight = mContext.getResources().getDimensionPixelOffset(R.dimen.dimen_value_buy_item_height);
     }
 
     @Override
@@ -74,6 +79,9 @@ public class ValueBuyItemAdapter extends BaseAdapter {
         if (convertView == null) {
 
             itemView = LayoutInflater.from(mContext).inflate(R.layout.value_buy_commodity_item_layout, null);
+            AbsListView.LayoutParams layoutParams =
+                    new AbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, mItemHeight);
+            itemView.setLayoutParams(layoutParams);
             viewHolder = new ViewHolder();
             viewHolder.mItemImage = (ImageView) itemView.findViewById(R.id.id_value_buy_item_image);
             viewHolder.mFavorite = (ImageView) itemView.findViewById(R.id.id_value_buy_item_favorite);

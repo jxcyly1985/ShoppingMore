@@ -78,8 +78,6 @@ public abstract class BaseRequestEntity<T> {
 
     }
 
-
-    //TODO change signature
     protected abstract T getRequestEntity();
 
     protected abstract void sendRequest();

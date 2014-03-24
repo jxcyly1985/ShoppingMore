@@ -1,0 +1,378 @@
+ ViewGroup.java
+
+ public static int getChildMeasureSpec(int spec, int padding, int childDimension) {
+        int specMode = MeasureSpec.getMode(spec);
+        int specSize = MeasureSpec.getSize(spec);
+
+        int size = Math.max(0, specSize - padding);
+
+        int resultSize = 0;
+        int resultMode = 0;
+
+        switch (specMode) {
+        // Parent has imposed an exact size on us
+        case MeasureSpec.EXACTLY:
+            if (childDimension >= 0) {
+                resultSize = childDimension;
+                resultMode = MeasureSpec.EXACTLY;
+            } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                // Child wants to be our size. So be it.
+                resultSize = size;
+                resultMode = MeasureSpec.EXACTLY;
+            } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                // Child wants to determine its own size. It can't be
+                // bigger than us.
+                resultSize = size;
+                resultMode = MeasureSpec.AT_MOST;
+            }
+            break;
+
+        // Parent has imposed a maximum size on us
+        case MeasureSpec.AT_MOST:
+            if (childDimension >= 0) {
+                // Child wants a specific size... so be it
+                resultSize = childDimension;
+                resultMode = MeasureSpec.EXACTLY;
+            } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                // Child wants to be our size, but our size is not fixed.
+                // Constrain child to not be bigger than us.
+                resultSize = size;
+                resultMode = MeasureSpec.AT_MOST;
+            } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                // Child wants to determine its own size. It can't be
+                // bigger than us.
+                resultSize = size;
+                resultMode = MeasureSpec.AT_MOST;
+            }
+            break;
+
+        // Parent asked to see how big we want to be
+        case MeasureSpec.UNSPECIFIED:
+            if (childDimension >= 0) {
+                // Child wants a specific size... let him have it
+                resultSize = childDimension;
+                resultMode = MeasureSpec.EXACTLY;
+            } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                // Child wants to be our size... find out how big it should
+                // be
+                resultSize = 0;
+                resultMode = MeasureSpec.UNSPECIFIED;
+            } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                // Child wants to determine its own size.... find out how
+                // big it should be
+                resultSize = 0;
+                resultMode = MeasureSpec.UNSPECIFIED;
+            }
+            break;
+        }
+        return MeasureSpec.makeMeasureSpec(resultSize, resultMode);
+    }
+
+RelativeLayout.java
+
+    private void measureChild(View child, LayoutParams params, int myWidth, int myHeight) {
+        int childWidthMeasureSpec = getChildMeasureSpec(params.mLeft,
+                params.mRight, params.width,
+                params.leftMargin, params.rightMargin,
+                mPaddingLeft, mPaddingRight,
+                myWidth);
+        int childHeightMeasureSpec = getChildMeasureSpec(params.mTop,
+                params.mBottom, params.height,
+                params.topMargin, params.bottomMargin,
+                mPaddingTop, mPaddingBottom,
+                myHeight);
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    }
+
+     private int getChildMeasureSpec(int childStart, int childEnd,
+                int childSize, int startMargin, int endMargin, int startPadding,
+                int endPadding, int mySize) {
+            if (mySize < 0 && !mAllowBrokenMeasureSpecs) {
+                if (childSize >= 0) {
+                    return MeasureSpec.makeMeasureSpec(childSize, MeasureSpec.EXACTLY);
+                }
+                // Negative values in a mySize/myWidth/myWidth value in RelativeLayout measurement
+                // is code for, "we got an unspecified mode in the RelativeLayout's measurespec."
+                // Carry it forward.
+                return MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+            }
+
+            int childSpecMode = 0;
+            int childSpecSize = 0;
+
+            // Figure out start and end bounds.
+            int tempStart = childStart;
+            int tempEnd = childEnd;
+
+            // If the view did not express a layout constraint for an edge, use
+            // view's margins and our padding
+            if (tempStart < 0) {
+                tempStart = startPadding + startMargin;
+            }
+            if (tempEnd < 0) {
+                tempEnd = mySize - endPadding - endMargin;
+            }
+
+            // Figure out maximum size available to this view
+            int maxAvailable = tempEnd - tempStart;
+
+            if (childStart >= 0 && childEnd >= 0) {
+                // Constraints fixed both edges, so child must be an exact size
+                childSpecMode = MeasureSpec.EXACTLY;
+                childSpecSize = maxAvailable;
+            } else {
+                if (childSize >= 0) {
+                    // Child wanted an exact size. Give as much as possible
+                    childSpecMode = MeasureSpec.EXACTLY;
+
+                    if (maxAvailable >= 0) {
+                        // We have a maxmum size in this dimension.
+                        childSpecSize = Math.min(maxAvailable, childSize);
+                    } else {
+                        // We can grow in this dimension.
+                        childSpecSize = childSize;
+                    }
+                } else if (childSize == LayoutParams.MATCH_PARENT) {
+                    // Child wanted to be as big as possible. Give all available
+                    // space
+                    childSpecMode = MeasureSpec.EXACTLY;
+                    childSpecSize = maxAvailable;
+                } else if (childSize == LayoutParams.WRAP_CONTENT) {
+                    // Child wants to wrap content. Use AT_MOST
+                    // to communicate available space if we know
+                    // our max size
+                    if (maxAvailable >= 0) {
+                        // We have a maximum size in this dimension.
+                        childSpecMode = MeasureSpec.AT_MOST;
+                        childSpecSize = maxAvailable;
+                    } else {
+                        // We can grow in this dimension. Child can be as big as it
+                        // wants
+                        childSpecMode = MeasureSpec.UNSPECIFIED;
+                        childSpecSize = 0;
+                    }
+                }
+            }
+
+            return MeasureSpec.makeMeasureSpec(childSpecSize, childSpecMode);
+        }
+
+
+    画childer使用dispatcherDraw
+
+ /**
+     * Manually render this view (and all of its children) to the given Canvas.
+     * The view must have already done a full layout before this function is
+     * called.  When implementing a view, implement
+     * {@link #onDraw(android.graphics.Canvas)} instead of overriding this method.
+     * If you do need to override this method, call the superclass version.
+     *
+     * @param canvas The Canvas to which the View is rendered.
+     */
+    public void draw(Canvas canvas) {
+        if (mClipBounds != null) {
+            canvas.clipRect(mClipBounds);
+        }
+        final int privateFlags = mPrivateFlags;
+        final boolean dirtyOpaque = (privateFlags & PFLAG_DIRTY_MASK) == PFLAG_DIRTY_OPAQUE &&
+                (mAttachInfo == null || !mAttachInfo.mIgnoreDirtyState);
+        mPrivateFlags = (privateFlags & ~PFLAG_DIRTY_MASK) | PFLAG_DRAWN;
+
+        /*
+         * Draw traversal performs several drawing steps which must be executed
+         * in the appropriate order:
+         *
+         *      1. Draw the background
+         *      2. If necessary, save the canvas' layers to prepare for fading
+         *      3. Draw view's content
+         *      4. Draw children
+         *      5. If necessary, draw the fading edges and restore layers
+         *      6. Draw decorations (scrollbars for instance)
+         */
+
+        // Step 1, draw the background, if needed
+        int saveCount;
+
+        if (!dirtyOpaque) {
+            final Drawable background = mBackground;
+            if (background != null) {
+                final int scrollX = mScrollX;
+                final int scrollY = mScrollY;
+
+                if (mBackgroundSizeChanged) {
+                    background.setBounds(0, 0,  mRight - mLeft, mBottom - mTop);
+                    mBackgroundSizeChanged = false;
+                }
+
+                if ((scrollX | scrollY) == 0) {
+                    background.draw(canvas);
+                } else {
+                    canvas.translate(scrollX, scrollY);
+                    background.draw(canvas);
+                    canvas.translate(-scrollX, -scrollY);
+                }
+            }
+        }
+
+        // skip step 2 & 5 if possible (common case)
+        final int viewFlags = mViewFlags;
+        boolean horizontalEdges = (viewFlags & FADING_EDGE_HORIZONTAL) != 0;
+        boolean verticalEdges = (viewFlags & FADING_EDGE_VERTICAL) != 0;
+        if (!verticalEdges && !horizontalEdges) {
+            // Step 3, draw the content
+            if (!dirtyOpaque) onDraw(canvas);
+
+            // Step 4, draw the children
+            dispatchDraw(canvas);
+
+            // Step 6, draw decorations (scrollbars)
+            onDrawScrollBars(canvas);
+
+            if (mOverlay != null && !mOverlay.isEmpty()) {
+                mOverlay.getOverlayView().dispatchDraw(canvas);
+            }
+
+            // we're done...
+            return;
+        }
+
+        /*
+         * Here we do the full fledged routine...
+         * (this is an uncommon case where speed matters less,
+         * this is why we repeat some of the tests that have been
+         * done above)
+         */
+
+        boolean drawTop = false;
+        boolean drawBottom = false;
+        boolean drawLeft = false;
+        boolean drawRight = false;
+
+        float topFadeStrength = 0.0f;
+        float bottomFadeStrength = 0.0f;
+        float leftFadeStrength = 0.0f;
+        float rightFadeStrength = 0.0f;
+
+        // Step 2, save the canvas' layers
+        int paddingLeft = mPaddingLeft;
+
+        final boolean offsetRequired = isPaddingOffsetRequired();
+        if (offsetRequired) {
+            paddingLeft += getLeftPaddingOffset();
+        }
+
+        int left = mScrollX + paddingLeft;
+        int right = left + mRight - mLeft - mPaddingRight - paddingLeft;
+        int top = mScrollY + getFadeTop(offsetRequired);
+        int bottom = top + getFadeHeight(offsetRequired);
+
+        if (offsetRequired) {
+            right += getRightPaddingOffset();
+            bottom += getBottomPaddingOffset();
+        }
+
+        final ScrollabilityCache scrollabilityCache = mScrollCache;
+        final float fadeHeight = scrollabilityCache.fadingEdgeLength;
+        int length = (int) fadeHeight;
+
+        // clip the fade length if top and bottom fades overlap
+        // overlapping fades produce odd-looking artifacts
+        if (verticalEdges && (top + length > bottom - length)) {
+            length = (bottom - top) / 2;
+        }
+
+        // also clip horizontal fades if necessary
+        if (horizontalEdges && (left + length > right - length)) {
+            length = (right - left) / 2;
+        }
+
+        if (verticalEdges) {
+            topFadeStrength = Math.max(0.0f, Math.min(1.0f, getTopFadingEdgeStrength()));
+            drawTop = topFadeStrength * fadeHeight > 1.0f;
+            bottomFadeStrength = Math.max(0.0f, Math.min(1.0f, getBottomFadingEdgeStrength()));
+            drawBottom = bottomFadeStrength * fadeHeight > 1.0f;
+        }
+
+        if (horizontalEdges) {
+            leftFadeStrength = Math.max(0.0f, Math.min(1.0f, getLeftFadingEdgeStrength()));
+            drawLeft = leftFadeStrength * fadeHeight > 1.0f;
+            rightFadeStrength = Math.max(0.0f, Math.min(1.0f, getRightFadingEdgeStrength()));
+            drawRight = rightFadeStrength * fadeHeight > 1.0f;
+        }
+
+        saveCount = canvas.getSaveCount();
+
+        int solidColor = getSolidColor();
+        if (solidColor == 0) {
+            final int flags = Canvas.HAS_ALPHA_LAYER_SAVE_FLAG;
+
+            if (drawTop) {
+                canvas.saveLayer(left, top, right, top + length, null, flags);
+            }
+
+            if (drawBottom) {
+                canvas.saveLayer(left, bottom - length, right, bottom, null, flags);
+            }
+
+            if (drawLeft) {
+                canvas.saveLayer(left, top, left + length, bottom, null, flags);
+            }
+
+            if (drawRight) {
+                canvas.saveLayer(right - length, top, right, bottom, null, flags);
+            }
+        } else {
+            scrollabilityCache.setFadeColor(solidColor);
+        }
+
+        // Step 3, draw the content
+        if (!dirtyOpaque) onDraw(canvas);
+
+        // Step 4, draw the children
+        dispatchDraw(canvas);
+
+        // Step 5, draw the fade effect and restore layers
+        final Paint p = scrollabilityCache.paint;
+        final Matrix matrix = scrollabilityCache.matrix;
+        final Shader fade = scrollabilityCache.shader;
+
+        if (drawTop) {
+            matrix.setScale(1, fadeHeight * topFadeStrength);
+            matrix.postTranslate(left, top);
+            fade.setLocalMatrix(matrix);
+            canvas.drawRect(left, top, right, top + length, p);
+        }
+
+        if (drawBottom) {
+            matrix.setScale(1, fadeHeight * bottomFadeStrength);
+            matrix.postRotate(180);
+            matrix.postTranslate(left, bottom);
+            fade.setLocalMatrix(matrix);
+            canvas.drawRect(left, bottom - length, right, bottom, p);
+        }
+
+        if (drawLeft) {
+            matrix.setScale(1, fadeHeight * leftFadeStrength);
+            matrix.postRotate(-90);
+            matrix.postTranslate(left, top);
+            fade.setLocalMatrix(matrix);
+            canvas.drawRect(left, top, left + length, bottom, p);
+        }
+
+        if (drawRight) {
+            matrix.setScale(1, fadeHeight * rightFadeStrength);
+            matrix.postRotate(90);
+            matrix.postTranslate(right, top);
+            fade.setLocalMatrix(matrix);
+            canvas.drawRect(right - length, top, right, bottom, p);
+        }
+
+        canvas.restoreToCount(saveCount);
+
+        // Step 6, draw decorations (scrollbars)
+        onDrawScrollBars(canvas);
+
+        if (mOverlay != null && !mOverlay.isEmpty()) {
+            mOverlay.getOverlayView().dispatchDraw(canvas);
+        }
+    }

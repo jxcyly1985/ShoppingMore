@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import cn.lemon.shopping.R;
 import cn.lemon.utils.DebugUtil;
@@ -26,7 +27,7 @@ public class ValueBuyTypeItemView extends ViewGroup {
         super(context);
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        layoutInflater.inflate(R.layout.value_buy_type_item_layout, this, true);
+        layoutInflater.inflate(R.layout.value_buy_type_item_layout, this);
         mTypeName = (TextView) findViewById(R.id.id_value_buy_type_name);
         mTypeDivider = (ImageView) findViewById(R.id.id_value_buy_type_divider);
 
@@ -34,9 +35,11 @@ public class ValueBuyTypeItemView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
         DebugUtil.debug(TAG, "onLayout changed " + changed + " l " + l + " t " + t
                 + " r " + r + " b " + b);
+        mTypeName.layout(l, t, r - 4, b);
+        mTypeDivider.layout(r - 4, t, r, b);
+
 
     }
 
@@ -51,7 +54,8 @@ public class ValueBuyTypeItemView extends ViewGroup {
                 + " widthSpecMode " + widthSpecMode + " heightSpecMode " + heightSpecMode);
 
         int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);;
+        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+
         mTypeName.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         mTypeDivider.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 

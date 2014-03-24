@@ -1,9 +1,13 @@
 package cn.lemon.shopping.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+import cn.lemon.shopping.R;
 import cn.lemon.shopping.model.ValueBuyTypeInfo;
 import cn.lemon.shopping.ui.ValueBuyTypeItemView;
 import cn.lemon.utils.DebugUtil;
@@ -23,6 +27,11 @@ public class ValueBuyTypeAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<ValueBuyTypeInfo> mValueBuyTypeInfoList;
+
+    private class ViewHolder {
+        TextView mTypeName;
+        ImageView mTypeDivider;
+    }
 
     public ValueBuyTypeAdapter(Context context, List<ValueBuyTypeInfo> list) {
         mContext = context;
@@ -50,15 +59,21 @@ public class ValueBuyTypeAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ValueBuyTypeInfo valueBuyTypeInfo = mValueBuyTypeInfoList.get(position);
-        ValueBuyTypeItemView itemView = null;
+        View typeView = null;
+        ViewHolder viewHolder = null;
         if (convertView == null) {
-            itemView = new ValueBuyTypeItemView(mContext);
+            typeView = LayoutInflater.from(mContext).inflate(R.layout.value_buy_type_item_layout, null);
+            viewHolder = new ViewHolder();
+            viewHolder.mTypeName = (TextView) typeView.findViewById(R.id.id_value_buy_type_name);
+            viewHolder.mTypeDivider = (ImageView) typeView.findViewById(R.id.id_value_buy_type_divider);
+            typeView.setTag(viewHolder);
         } else {
-            itemView = (ValueBuyTypeItemView) convertView;
+            typeView = convertView;
+            viewHolder = (ViewHolder) typeView.getTag();
         }
 
-        itemView.setTypeName(valueBuyTypeInfo.mTypeName);
+        viewHolder.mTypeName.setText(valueBuyTypeInfo.mTypeName);
 
-        return itemView;
+        return typeView;
     }
 }

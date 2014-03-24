@@ -79,13 +79,15 @@
     <dimen name="dimen_value_buy_grid_view_v_spacing">10dp</dimen>
     <dimen name="dimen_value_buy_type_name_text_size">12dp</dimen>
     <dimen name="dimen_value_buy_item_width">168dp</dimen>
-    <dimen name="dimen_value_buy_item_height">184dp</dimen>
+    <dimen name="dimen_value_buy_item_height">205dp</dimen>
     <dimen name="dimen_value_buy_item_price_text_size">16dp</dimen>
     <dimen name="dimen_value_buy_item_name_text_size">12dp</dimen>
     <dimen name="dimen_value_buy_item_image_width">168dp</dimen>
     <dimen name="dimen_value_buy_item_image_height">168dp</dimen>
-    <dimen name="dimen_value_buy_type_text_padding_h">10dp</dimen>
-    <dimen name="dimen_value_buy_type_text_padding_v">10dp</dimen>
+    <dimen name="dimen_value_buy_type_text_padding_h">20dp</dimen>
+    <dimen name="dimen_value_buy_type_text_padding_v">20dp</dimen>
+    <dimen name="dimen_value_buy_favorite_margin_top">5dp</dimen>
+    <dimen name="dimen_value_buy_favorite_margin_right">5dp</dimen>
 
 
     <!-- Integer -->

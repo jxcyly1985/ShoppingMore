@@ -10,15 +10,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_value_buy_type_margin_top"
             android:layout_marginLeft="@dimen/dimen_value_buy_margin_h"
-            android:layout_marginRight="@dimen/dimen_value_buy_margin_h">
+            android:layout_marginRight="@dimen/dimen_value_buy_margin_h"
+            android:background="@color/white">
     </cn.lemon.shopping.ui.HorizontalListView>
-
 
     <GridView
             android:id="@+id/id_value_buy_concrete_commodity_grid"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@+id/id_value_buy_type_list_view"
+            android:layout_below="@id/id_value_buy_type_list_view"
             android:layout_marginTop="@dimen/dimen_value_buy_grid_margin_top"
             android:layout_marginLeft="@dimen/dimen_value_buy_margin_h"
             android:layout_marginRight="@dimen/dimen_value_buy_margin_h"

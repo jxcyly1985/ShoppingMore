@@ -39,7 +39,9 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
     private int mCurrentAdPos = 0;
 
     private boolean mAdCanMove = true;
+    // QiYun<LeiYong><2014-03-22> modify for CR00000007 begin
     private boolean mAdReady = false;
+    // QiYun<LeiYong><2014-03-22> modify for CR00000007 end
 
     // UI
     private LinearLayout mRecommendContainer;
@@ -177,7 +179,7 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
         ImageView categoryIcon = (ImageView) categoryView.findViewById(R.id.id_category_icon);
 
-        //todo 需要替换默认的图标
+        //TODO change default icon
         categoryIcon.setImageResource(R.drawable.icon);
         mCategoryIconManager.getIcon(iconUrl, categoryIcon);
     }

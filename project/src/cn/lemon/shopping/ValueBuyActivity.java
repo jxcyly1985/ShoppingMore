@@ -7,6 +7,8 @@ import java.util.Observable;
 import android.os.Bundle;
 
 import android.os.Message;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import cn.lemon.bitmap.ImageFetcher;
@@ -75,8 +77,22 @@ public class ValueBuyActivity extends BaseActivity {
         mGridView = (GridView) findViewById(R.id.id_value_buy_concrete_commodity_grid);
         mTypeAdapter = new ValueBuyTypeAdapter(this, mValueBuyTypeInfoList);
         mItemAdapter = new ValueBuyItemAdapter(this, mValueBuyItemInfoList, imageFetcher);
-        //mHorizontalListView.setAdapter(mTypeAdapter);
+        mHorizontalListView.setAdapter(mTypeAdapter);
         mGridView.setAdapter(mItemAdapter);
+
+        mHorizontalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                parent.setSelection(position);
+                handleValueBuyTypeClick(position);
+            }
+        });
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                handleValueBuyItemClick(position);
+            }
+        });
 
     }
 
@@ -93,6 +109,7 @@ public class ValueBuyActivity extends BaseActivity {
 
         super.onResume();
         DebugUtil.debug(TAG, "onResume");
+
     }
 
     @Override
@@ -124,6 +141,15 @@ public class ValueBuyActivity extends BaseActivity {
 
         mMesssageManager.deleteObserver(MessageConstants.MSG_VALUE_BUY_TYPE, this);
         mMesssageManager.deleteObserver(MessageConstants.MSG_VALUE_BUY_LIST, this);
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        DebugUtil.debug(TAG, "" + mHorizontalListView.getWidth() + " " + mHorizontalListView.getHeight()
+                + " " + mGridView.getWidth() + " " + mGridView.getHeight());
 
     }
 
@@ -167,6 +193,16 @@ public class ValueBuyActivity extends BaseActivity {
         } else {
             //TODO handle server error
         }
+    }
+
+    private void handleValueBuyTypeClick(int position) {
+
+        DebugUtil.debug(TAG, "handleValueBuyTypeClick position " + position);
+    }
+
+    private void handleValueBuyItemClick(int position) {
+
+        DebugUtil.debug(TAG, "handleValueBuyItemClick position " + position);
     }
 
 }
