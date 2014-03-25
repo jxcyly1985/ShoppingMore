@@ -35,6 +35,10 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
     public static final String TAG = "ShoppingMoreIndexActivity";
 
+    private final int POS_RECOMMEND_ACTIVITY = 0;
+    private final int POS_CASH_DELIVERY_ACTIVITY = 1;
+    private final int POS_VALUE_BUY_ACTIVITY = 2;
+
     private TabHost mTabHost;
     private TabWidget mTabWidget;
 
@@ -193,17 +197,27 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
     }
 
 
-    private void onActivityPageChanged() {
+    // QiYun<LeiYong><2014-03-15> modify for CR00000016 begin
+    private void handleViewPageDragging() {
 
-        // send resume, pause and stop state
-        // QiYun<LeiYong><2014-03-15> modify for CR00000011 begin
-//        mLocalActivityManager.dispatchPause(false);
-//        mLocalActivityManager.dispatchStop();
+        PageScrollActivity recommendActivity = (PageScrollActivity) mLocalActivityManager.getActivity(mRecommendString);
+        if (mSelectPos == POS_RECOMMEND_ACTIVITY) {
+            recommendActivity.onPageScroll();
+        }
 
-        Activity currentActivity = mLocalActivityManager.getCurrentActivity();
-
-        // QiYun<LeiYong><2014-03-15> modify for CR00000011 end
     }
+
+    private void handleViewPageSelected() {
+
+        PageScrollActivity recommendActivity = (PageScrollActivity) mLocalActivityManager.getActivity(mRecommendString);
+        if (mSelectPos == POS_RECOMMEND_ACTIVITY) {
+            recommendActivity.onPageSelected();
+        }else{
+            recommendActivity.onPageScroll();
+        }
+    }
+
+    // QiYun<LeiYong><2014-03-15> modify for CR00000016 end
 
     private void initViewPager() {
 
@@ -217,18 +231,15 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
                 DebugUtil.debug(TAG, "onTabChanged tabId " + tabId);
                 if (tabId.equals(mRecommendString)) {
-                    mSelectPos = 0;
+                    mSelectPos = POS_RECOMMEND_ACTIVITY;
                 } else if (tabId.equals(mCashDeliveryString)) {
-                    mSelectPos = 1;
+                    mSelectPos = POS_CASH_DELIVERY_ACTIVITY;
                 } else if (tabId.equals(mWorthBuyingString)) {
-                    mSelectPos = 2;
+                    mSelectPos = POS_VALUE_BUY_ACTIVITY;
                 } else if (tabId.equals(mSettingString)) {
                     PopupSettingDialog();
                 }
-                onActivityPageChanged();
                 mViewPager.setCurrentItem(mSelectPos);
-
-                // updateTab(mTabHost);
 
             }
         });
@@ -238,7 +249,6 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
             public void onPageSelected(int position) {
 
                 DebugUtil.debug(TAG, "onPageSelected");
-                onActivityPageChanged();
                 mTabHost.setCurrentTab(position);
             }
 
@@ -255,6 +265,16 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
             public void onPageScrollStateChanged(int state) {
 
                 DebugUtil.debug(TAG, "onPageScrollStateChanged state " + state);
+                switch (state) {
+                    case ViewPager.SCROLL_STATE_SETTLING: // 2
+                        break;
+                    case ViewPager.SCROLL_STATE_DRAGGING: // 1
+                        handleViewPageDragging();
+                        break;
+                    case ViewPager.SCROLL_STATE_IDLE: // 0
+                        handleViewPageSelected();
+                        break;
+                }
 
             }
         });
@@ -409,17 +429,6 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
 
         }
     }
-
-
-//    private TabSpec getTabSpecItem(String tag) {
-//
-//        @SuppressWarnings("deprecation")
-//        Drawable iconDrawable = new StateListDrawable();
-//        TabSpec tabspec = mTabHost.newTabSpec(tag)
-//                .setIndicator(tag, iconDrawable)
-//                .setContent(R.id.id_empty_tabcontent_text_view);
-//        return tabspec;
-//    }
 
 
     private TabSpec getTabSpecItem(String tag) {

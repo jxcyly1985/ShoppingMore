@@ -66,6 +66,9 @@ public class LocalSQLiteOperator {
         mSQLiteDatabase.execSQL(MallInfoTable.getDropSQL());
     }
 
+    public void deleteExpiredValueBuyItemInfo() {
+
+    }
 
     public void insertCategory(CategoryEntryInfo categoryInfo) {
 

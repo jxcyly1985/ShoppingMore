@@ -1,0 +1,3 @@
+/framework/base/cmds/app_process/app_main.cpp：zygote服务启动入口
+/frameworks/base/core/java/com/android/internal/os/ZygoteInit.java：初始化Socket服务端，并负责fork dalvik进程
+/libcore/dalvik/src/main/java/dalvik/system/Zygote.java：包装native fork方法

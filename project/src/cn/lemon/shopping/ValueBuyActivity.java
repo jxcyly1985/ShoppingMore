@@ -19,7 +19,7 @@ import cn.lemon.shopping.model.*;
 import cn.lemon.shopping.ui.HorizontalListView;
 import cn.lemon.utils.DebugUtil;
 
-public class ValueBuyActivity extends BaseActivity {
+public class ValueBuyActivity extends PageScrollActivity {
 
     public static final String TAG = "ValueBuyActivity";
 
@@ -29,6 +29,17 @@ public class ValueBuyActivity extends BaseActivity {
     private BaseAdapter mTypeAdapter;
     private BaseAdapter mItemAdapter;
     private List<ValueBuyTypeInfo> mValueBuyTypeInfoList = new ArrayList<ValueBuyTypeInfo>();
+
+    @Override
+    public void onPageScroll() {
+
+    }
+
+    @Override
+    public void onPageSelected() {
+
+    }
+
     private List<ValueBuyItemInfo> mValueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
 
     private ValueBuyTotalTypes mValueBuyTotalTypes;

@@ -9,6 +9,8 @@
     <color name="tab_text_normal_color">#FF787878</color>
     <color name="setting_text_color">#FF787878</color>
 
+    <color name="mall_name_text_color">#FFFFFFFF</color>
+
     <color name="ad_flag_selected_color">#FF5EE0C0</color>
     <color name="ad_flag_normal_color">#FFF3F3F5</color>
 

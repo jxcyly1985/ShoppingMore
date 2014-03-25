@@ -30,11 +30,16 @@ public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL(MallCategoryTable.getCreateSQL());
         db.execSQL(MallInfoTable.getCreateSQL());
+        db.execSQL(ValueBuyItemTable.getCreateSQL());
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        db.execSQL(MallCategoryTable.getDropSQL());
+        db.execSQL(MallInfoTable.getDropSQL());
+        db.execSQL(ValueBuyItemTable.getDropSQL());
 
     }
 

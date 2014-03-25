@@ -47,7 +47,7 @@
     <dimen name="dimen_mall_grid_h_spacing">4dp</dimen>
     <dimen name="dimen_mall_grid_v_spacing">5dp</dimen>
     <dimen name="dimen_mall_grid_item_padding">3dp</dimen>
-    <dimen name="dimen_mall_text_size">12sp</dimen>
+    <dimen name="dimen_mall_text_size">10dp</dimen>
 
     <dimen name="dimen_custom_toast_margin_horizontal">10dp</dimen>
 

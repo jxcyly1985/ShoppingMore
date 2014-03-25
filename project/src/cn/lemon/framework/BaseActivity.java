@@ -20,5 +20,4 @@ public abstract class BaseActivity extends FragmentActivity implements INotifyIn
         super.onDestroy();
         deleteObserver();
     }
-
 }

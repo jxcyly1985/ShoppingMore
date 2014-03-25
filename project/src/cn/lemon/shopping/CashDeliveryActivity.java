@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-public class CashDeliveryActivity extends BaseActivity {
+public class CashDeliveryActivity extends PageScrollActivity {
 
     public static final String TAG = "CashDeliveryActivity";
 
@@ -53,6 +53,15 @@ public class CashDeliveryActivity extends BaseActivity {
         mCommodityListView.setAdapter(mCommodityAdapter);
     }
 
+    @Override
+    public void onPageScroll() {
+
+    }
+
+    @Override
+    public void onPageSelected() {
+
+    }
 
     @Override
     protected void onPause() {

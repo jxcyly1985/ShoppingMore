@@ -22,7 +22,7 @@ import cn.lemon.utils.StaticUtils;
 import java.util.List;
 import java.util.Observable;
 
-public class RecommendActivity extends BaseActivity implements OnClickListener {
+public class RecommendActivity extends PageScrollActivity implements OnClickListener {
 
     public static final String TAG = "RecommendActivity";
 
@@ -62,6 +62,17 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         initData();
         initView();
 
+    }
+
+    @Override
+    public void onPageScroll() {
+
+        setAdCanMove(false);
+    }
+
+    @Override
+    public void onPageSelected() {
+        resumeAd();
     }
 
     @Override
@@ -306,10 +317,8 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
 
     private void invokeNextAdChange() {
 
-        if (isAdCanMove()) {
+        mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
 
-            mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
-        }
     }
 
 
@@ -319,12 +328,14 @@ public class RecommendActivity extends BaseActivity implements OnClickListener {
         public void handleMessage(Message msg) {
 
             DebugUtil.debug(TAG, "AdChangeHandler handleMessage");
+            if (isAdCanMove()) {
+                int pos = getAdPos();
+                String adImageUrl = getAdImageUrl(pos);
+                switchAdView(adImageUrl, pos);
+                IncAdPos();
+                invokeNextAdChange();
+            }
 
-            int pos = getAdPos();
-            String adImageUrl = getAdImageUrl(pos);
-            switchAdView(adImageUrl, pos);
-            IncAdPos();
-            invokeNextAdChange();
         }
     }
 
