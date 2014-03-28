@@ -26,8 +26,8 @@ public class RecommendActivity extends PageScrollActivity implements OnClickList
 
     public static final String TAG = "RecommendActivity";
 
-    private final int AD_WAIT_TIME = 1000;
-    private final int AD_CHANGE_TIMER = 3 * 1000;
+    private final int AD_WAIT_TIME = ShoppingConfig.AD_WAIT_TIME;
+    private final int AD_CHANGE_TIMER = ShoppingConfig.AD_CHANGE_TIMER;
 
     // Data
     private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
@@ -380,6 +380,9 @@ public class RecommendActivity extends PageScrollActivity implements OnClickList
         if (mAdReady) {
             setAdCanMove(true);
             mAdImageManager.onResume();
+            // QiYun<LeiYong><2014-03-22> modify for CR00000007 begin
+            mAdChangeHandler.removeMessages(AD_CHANGE_TIMER);
+            // QiYun<LeiYong><2014-03-22> modify for CR00000007 end
             mAdChangeHandler.sendEmptyMessageDelayed(0, AD_CHANGE_TIMER);
         }
     }

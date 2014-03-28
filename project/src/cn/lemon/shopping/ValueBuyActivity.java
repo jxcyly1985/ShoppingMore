@@ -7,7 +7,9 @@ import java.util.Observable;
 import android.os.Bundle;
 
 import android.os.Message;
+import android.util.SparseArray;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -29,21 +31,18 @@ public class ValueBuyActivity extends PageScrollActivity {
     private BaseAdapter mTypeAdapter;
     private BaseAdapter mItemAdapter;
     private List<ValueBuyTypeInfo> mValueBuyTypeInfoList = new ArrayList<ValueBuyTypeInfo>();
-
-    @Override
-    public void onPageScroll() {
-
-    }
-
-    @Override
-    public void onPageSelected() {
-
-    }
-
     private List<ValueBuyItemInfo> mValueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
+
+    private SparseArray<List<ValueBuyItemInfo>> mTypeItemSparseArray = new SparseArray<List<ValueBuyItemInfo>>();
+
 
     private ValueBuyTotalTypes mValueBuyTotalTypes;
     private ValueBuyItemTotalInfo mValueBuyItemTotalInfo;
+
+    private int mCurrentTypeId;
+    private int mLastTypeId;
+    private BaseRequestEntity mValueBuyItemRequestEntity;
+    private RequestEntityDelegator<ValueBuyItemTotalInfo> mItemTotalInfoRequestEntityDelegator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +59,15 @@ public class ValueBuyActivity extends PageScrollActivity {
 
         mShoppingMoreDomainDataManager = ShoppingMoreDomainDataManager.getInstance();
         RequestEntityDelegator<ValueBuyTotalTypes> typeRequestDelegator = new RequestEntityDelegator<ValueBuyTotalTypes>();
-        RequestEntityDelegator<ValueBuyItemTotalInfo> itemRequestDelegator = new RequestEntityDelegator<ValueBuyItemTotalInfo>();
+        mItemTotalInfoRequestEntityDelegator = new RequestEntityDelegator<ValueBuyItemTotalInfo>();
 
         BaseRequestEntity typeRquestEntity =
                 mShoppingMoreDomainDataManager.getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_VALUE_BUY_TYPE);
-        BaseRequestEntity itemRequestEntity =
+        mValueBuyItemRequestEntity =
                 mShoppingMoreDomainDataManager.getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_VALUE_BUY_ITEM);
 
         mValueBuyTotalTypes = typeRequestDelegator.getRequestEntity(typeRquestEntity);
-        mValueBuyItemTotalInfo = itemRequestDelegator.getRequestEntity(itemRequestEntity);
+        mValueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator.getRequestEntity(mValueBuyItemRequestEntity);
 
         DebugUtil.debug(TAG, "initData mValueBuyTotalTypes " + mValueBuyTotalTypes);
         DebugUtil.debug(TAG, "initData mValueBuyItemTotalInfo " + mValueBuyItemTotalInfo);
@@ -105,8 +104,28 @@ public class ValueBuyActivity extends PageScrollActivity {
             }
         });
 
+        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
     }
 
+    @Override
+    public void onPageScroll() {
+
+    }
+
+    @Override
+    public void onPageSelected() {
+
+    }
 
     @Override
     protected void onPause() {
@@ -182,11 +201,13 @@ public class ValueBuyActivity extends PageScrollActivity {
 
     private void handleValueBuyType(Message message) {
 
-        ValueBuyTotalTypes valueBuyTotalTypes = (ValueBuyTotalTypes) message.obj;
+        mValueBuyTotalTypes = (ValueBuyTotalTypes) message.obj;
 
-        if (valueBuyTotalTypes.mIsSucceed) {
+        if (mValueBuyTotalTypes.mIsSucceed) {
             mValueBuyTypeInfoList.clear();
-            mValueBuyTypeInfoList.addAll(valueBuyTotalTypes.mValueBuyTypeInfoList);
+            mValueBuyTypeInfoList.addAll(mValueBuyTotalTypes.mValueBuyTypeInfoList);
+            mCurrentTypeId = mValueBuyTypeInfoList.get(0).mTypeId;
+            mLastTypeId = mCurrentTypeId;
             mTypeAdapter.notifyDataSetChanged();
         } else {
             //TODO handle server error
@@ -209,11 +230,45 @@ public class ValueBuyActivity extends PageScrollActivity {
     private void handleValueBuyTypeClick(int position) {
 
         DebugUtil.debug(TAG, "handleValueBuyTypeClick position " + position);
+        mCurrentTypeId = mValueBuyTypeInfoList.get(position).mTypeId;
+        Bundle bundle = new Bundle();
+        bundle.putString(BaseRequestEntity.PARAMS_VERSION, "");
+        bundle.putString(BaseRequestEntity.PARAMS_CID, "");
+        bundle.putString(BaseRequestEntity.PARAMS_PAGE, "");
+        ValueBuyItemTotalInfo valueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator
+                .getRequestEntity(mValueBuyItemRequestEntity, bundle);
+
+        List<ValueBuyItemInfo> memValueBuyItemInfoList = null;
+        if (mTypeItemSparseArray.indexOfKey(mCurrentTypeId) >= 0) {
+            memValueBuyItemInfoList = mTypeItemSparseArray.get(mCurrentTypeId);
+        }
+
+        if (valueBuyItemTotalInfo != null) {
+            List<ValueBuyItemInfo> valueBuyItemInfoList;
+            if (mTypeItemSparseArray.indexOfKey(mCurrentTypeId) < 0) {
+                valueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
+            } else {
+                valueBuyItemInfoList = mTypeItemSparseArray.get(mCurrentTypeId);
+            }
+            valueBuyItemInfoList.addAll(valueBuyItemTotalInfo.mValueBuyItemInfoList);
+
+            if (mLastTypeId != mCurrentTypeId) {
+                mValueBuyItemInfoList.clear();
+                mValueBuyItemInfoList.addAll(valueBuyItemInfoList);
+            } else {
+                mValueBuyItemInfoList.addAll(valueBuyItemInfoList);
+            }
+
+            mItemAdapter.notifyDataSetChanged();
+        }
+
+
     }
 
     private void handleValueBuyItemClick(int position) {
 
         DebugUtil.debug(TAG, "handleValueBuyItemClick position " + position);
+
     }
 
 }

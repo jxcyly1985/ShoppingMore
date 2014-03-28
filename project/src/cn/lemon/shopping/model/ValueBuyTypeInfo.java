@@ -9,7 +9,7 @@ package cn.lemon.shopping.model;
  */
 public class ValueBuyTypeInfo {
 
-    public String mTypeId;
+    public int mTypeId;
     public String mTypeName;
 
 }

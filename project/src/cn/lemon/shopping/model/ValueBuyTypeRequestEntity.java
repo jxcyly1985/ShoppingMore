@@ -115,7 +115,7 @@ public class ValueBuyTypeRequestEntity extends BaseRequestEntity<ValueBuyTotalTy
                 for (int i = 0; i < list.length(); ++i) {
                     JSONObject item = list.getJSONObject(i);
                     ValueBuyTypeInfo valueBuyTypeInfo = new ValueBuyTypeInfo();
-                    valueBuyTypeInfo.mTypeId = item.getString(JSON_KEY_ID);
+                    valueBuyTypeInfo.mTypeId = Integer.valueOf(item.getString(JSON_KEY_ID));
                     valueBuyTypeInfo.mTypeName = item.getString(JSON_KEY_NAME);
                     valueBuyTypeInfoList.add(valueBuyTypeInfo);
                 }

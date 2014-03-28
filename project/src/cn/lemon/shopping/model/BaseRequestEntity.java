@@ -1,5 +1,6 @@
 package cn.lemon.shopping.model;
 
+import android.os.Bundle;
 import cn.lemon.network.LemonNetWorkHandler;
 
 import java.util.concurrent.Executors;
@@ -16,6 +17,11 @@ public abstract class BaseRequestEntity<T> {
 
 
     public static final String TAG = "ModelUtils";
+
+    public static final String PARAMS_VERSION = "client_data_version";
+    public static final String PARAMS_CID = "cid";
+    public static final String PARAMS_PAGE = "page";
+
 
     protected static final String BASE_URL = "http://gouclient.9955.com.cn/api";
     protected static final String UPGRADE_URL = BASE_URL + "";
@@ -79,6 +85,10 @@ public abstract class BaseRequestEntity<T> {
     }
 
     protected abstract T getRequestEntity();
+
+    protected T getRequestEntity(Bundle bundle) {
+        return null;
+    }
 
     protected abstract void sendRequest();
 

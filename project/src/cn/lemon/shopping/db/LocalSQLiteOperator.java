@@ -4,9 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import cn.lemon.shopping.model.CategoryEntryInfo;
-import cn.lemon.shopping.model.MallEntryInfo;
-import cn.lemon.shopping.model.MallTotalInfo;
+import cn.lemon.shopping.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +16,7 @@ public class LocalSQLiteOperator {
     public static final String TAG = "LocalSQLiteOperator";
 
     private static LocalSQLiteOperator sInstance;
-    private LocalSQLiteOpenHelper mLocalSqliteOpenHelper;
+    private LocalSQLiteOpenHelper mLocalSQLiteOpenHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     public synchronized static LocalSQLiteOperator getInstance(Context context) {
@@ -30,8 +28,8 @@ public class LocalSQLiteOperator {
     }
 
     private LocalSQLiteOperator(Context context) {
-        mLocalSqliteOpenHelper = LocalSQLiteOpenHelper.getInstance(context);
-        mSQLiteDatabase = mLocalSqliteOpenHelper.getWritableDatabase();
+        mLocalSQLiteOpenHelper = LocalSQLiteOpenHelper.getInstance(context);
+        mSQLiteDatabase = mLocalSQLiteOpenHelper.getWritableDatabase();
     }
 
     public void close() {
@@ -67,6 +65,7 @@ public class LocalSQLiteOperator {
     }
 
     public void deleteExpiredValueBuyItemInfo() {
+
 
     }
 
@@ -232,6 +231,34 @@ public class LocalSQLiteOperator {
         }
 
         return mallInfos;
+    }
+
+    public void insertValueBuyItemList(ValueBuyItemTotalInfo valueBuyItemTotalInfo) {
+
+        try {
+            mSQLiteDatabase.beginTransaction();
+
+            List<ValueBuyItemInfo> valueBuyItemInfoList = valueBuyItemTotalInfo.mValueBuyItemInfoList;
+            int typeId = valueBuyItemTotalInfo.mTypeId;
+            if (valueBuyItemInfoList != null) {
+                for (ValueBuyItemInfo item : valueBuyItemInfoList) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(ValueBuyItemTable.TYPE_ID, typeId);
+                    contentValues.put(ValueBuyItemTable.ITEM_TITLE, item.mTitle);
+                    contentValues.put(ValueBuyItemTable.ITEM_IMAGE, item.mImageUrl);
+                    contentValues.put(ValueBuyItemTable.ITEM_LINK, item.mItemLink);
+                    contentValues.put(ValueBuyItemTable.ITEM_PRICE, item.mPrice);
+                    mSQLiteDatabase.insert(ValueBuyItemTable.TABLE_NAME, null, contentValues);
+                }
+            }
+
+            mSQLiteDatabase.setTransactionSuccessful();
+        } finally {
+            mSQLiteDatabase.endTransaction();
+        }
+
 
     }
+
 }
+

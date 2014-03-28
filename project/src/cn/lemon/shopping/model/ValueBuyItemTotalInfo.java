@@ -17,5 +17,6 @@ public class ValueBuyItemTotalInfo {
     public String mMsg;
     public String mVersion;
     public int mCurrentPage;
+    public int mTypeId;
     public List<ValueBuyItemInfo> mValueBuyItemInfoList;
 }
