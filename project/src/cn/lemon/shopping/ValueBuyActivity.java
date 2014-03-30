@@ -25,6 +25,8 @@ public class ValueBuyActivity extends PageScrollActivity {
 
     public static final String TAG = "ValueBuyActivity";
 
+    private final String DEFAULT_SERVER_DATA_VERSION = "0";
+
     private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private HorizontalListView mHorizontalListView;
     private GridView mGridView;
@@ -43,6 +45,7 @@ public class ValueBuyActivity extends PageScrollActivity {
     private int mLastTypeId;
     private BaseRequestEntity mValueBuyItemRequestEntity;
     private RequestEntityDelegator<ValueBuyItemTotalInfo> mItemTotalInfoRequestEntityDelegator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,8 +235,8 @@ public class ValueBuyActivity extends PageScrollActivity {
         DebugUtil.debug(TAG, "handleValueBuyTypeClick position " + position);
         mCurrentTypeId = mValueBuyTypeInfoList.get(position).mTypeId;
         Bundle bundle = new Bundle();
-        bundle.putString(BaseRequestEntity.PARAMS_VERSION, "");
-        bundle.putString(BaseRequestEntity.PARAMS_CID, "");
+        bundle.putString(BaseRequestEntity.PARAMS_VERSION, DEFAULT_SERVER_DATA_VERSION);
+        bundle.putInt(BaseRequestEntity.PARAMS_CID, mCurrentTypeId);
         bundle.putString(BaseRequestEntity.PARAMS_PAGE, "");
         ValueBuyItemTotalInfo valueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator
                 .getRequestEntity(mValueBuyItemRequestEntity, bundle);

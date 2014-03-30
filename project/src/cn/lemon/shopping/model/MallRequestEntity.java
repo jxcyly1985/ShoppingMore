@@ -190,14 +190,16 @@ public class MallRequestEntity extends BaseRequestEntity<MallTotalInfo> {
 
         StringBuffer stringBuffer = new StringBuffer();
 
-        if (mMallTotalInfo == null) {
-            stringBuffer.append(URL_PARAMS_VERSION)
-                    .append(DEFAULT_MALL_VERSION)
-                    .append("?page=1");
+        if (mMallTotalInfo != null) {
+            stringBuffer.append("?")
+                    .append(URL_PARAMS_VERSION)
+                    .append(mMallTotalInfo.mVersion)
+                    .append("&")
+                    .append(URL_PARAMS_PAGE)
+                    .append(mMallTotalInfo.mCurrentPage + 1);
         }
 
         return MALL_DATA_URL + stringBuffer.toString();
-
 
     }
 

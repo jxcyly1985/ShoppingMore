@@ -38,9 +38,6 @@ public abstract class BaseRequestEntity<T> {
 
     protected static final String URL_PARAMS_VERSION = "version";
     protected static final String URL_PARAMS_PAGE = "curpage";
-    protected static final String URL_
-
-    protected static final String COMMON_USER_INFO_FILE = "common_user_info";
 
     protected static final String JSON_LAST_MODIFY_KEY = "last_modify";
     protected static final String JSON_KEY_DATA = "data";

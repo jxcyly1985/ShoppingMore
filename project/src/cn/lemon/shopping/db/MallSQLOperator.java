@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import cn.lemon.shopping.ShoppingConfig;
 import cn.lemon.shopping.model.CategoryEntryInfo;
-import cn.lemon.shopping.model.DatabaseVersionControlInfo;
+import cn.lemon.shopping.model.MallVersionControlInfo;
 import cn.lemon.shopping.model.MallEntryInfo;
 import cn.lemon.shopping.model.MallTotalInfo;
 
@@ -21,12 +21,12 @@ import java.util.*;
 public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
 
 
-    protected DatabaseVersionControlInfo mDatabaseVersionControlInfo;
-    protected DatabaseVersionControlOperator mDatabaseVersionControlOperator;
+    protected MallVersionControlInfo mDatabaseVersionControlInfo;
+    protected MallVersionControlOperator mMallVersionControlOperator;
 
     public MallSQLOperator(Context context) {
         super(context);
-        mDatabaseVersionControlOperator = new DatabaseVersionControlOperator(mContext);
+        mMallVersionControlOperator = new MallVersionControlOperator(mContext);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
         try {
             mSQLiteDatabase.beginTransaction();
             insertMallEntryInfo(mallTotalInfo);
-            updateDatabaseVersionControl(mallTotalInfo);
+            updateMallVersionControl(mallTotalInfo);
             mSQLiteDatabase.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
     public void delete(String whereClause, String[] whereArgs) {
 
         // TODO can drop table more efficient
-        mSQLiteDatabase.delete(DatabaseVersionControlTable.TABLE_NAME, null, null);
+        mSQLiteDatabase.delete(MallVersionControlTable.TABLE_NAME, null, null);
     }
 
     @Override
@@ -95,14 +95,16 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
         }
     }
 
-    private void updateDatabaseVersionControl(MallTotalInfo mallTotalInfo) {
+    private void updateMallVersionControl(MallTotalInfo mallTotalInfo) {
 
         long requestTime = System.currentTimeMillis();
+        int hasNext = mallTotalInfo.mHasNext ? 1 : 0;
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseVersionControlTable.MALL_SERVER_VERSION, mallTotalInfo.mVersion);
-        contentValues.put(DatabaseVersionControlTable.MALL_REQUEST_TIME, requestTime);
-        contentValues.put(DatabaseVersionControlTable.MALL_REQUEST_PAGE, mallTotalInfo.mCurrentPage);
-        mDatabaseVersionControlOperator.update(contentValues, null, null);
+        contentValues.put(MallVersionControlTable.MALL_SERVER_VERSION, mallTotalInfo.mVersion);
+        contentValues.put(MallVersionControlTable.MALL_REQUEST_TIME, requestTime);
+        contentValues.put(MallVersionControlTable.MALL_REQUEST_PAGE, mallTotalInfo.mCurrentPage);
+        contentValues.put(MallVersionControlTable.MALL_HAS_NEXT, hasNext);
+        mMallVersionControlOperator.update(contentValues, null, null);
 
     }
 
@@ -163,9 +165,9 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
         mallTotalInfo.mCurrentPage = mDatabaseVersionControlInfo.mMallPage;
     }
 
-    private DatabaseVersionControlInfo getDatabaseVersionControlInfo() {
+    private MallVersionControlInfo getDatabaseVersionControlInfo() {
 
-        return mDatabaseVersionControlInfo = mDatabaseVersionControlOperator.query(null, null, null, null);
+        return mDatabaseVersionControlInfo = mMallVersionControlOperator.query(null, null, null, null);
     }
 
     private Map<String, CategoryEntryInfo> getMallCategory() {

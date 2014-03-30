@@ -37,8 +37,9 @@ public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(MallCategoryTable.getCreateSQL());
         db.execSQL(MallInfoTable.getCreateSQL());
         db.execSQL(ValueBuyItemTable.getCreateSQL());
-        db.execSQL(DatabaseVersionControlTable.getCreateSQL());
-        db.execSQL(DatabaseVersionControlTable.getCreateDefaultRow());
+        db.execSQL(MallVersionControlTable.getCreateSQL());
+        db.execSQL(MallVersionControlTable.getCreateDefaultRow());
+        db.execSQL(ValueBuyItemVersionControlTable.getCreateSQL());
 
     }
 
@@ -50,7 +51,8 @@ public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(MallCategoryTable.getDropSQL());
         db.execSQL(MallInfoTable.getDropSQL());
         db.execSQL(ValueBuyItemTable.getDropSQL());
-        db.execSQL(DatabaseVersionControlTable.getDropSQL());
+        db.execSQL(MallVersionControlTable.getDropSQL());
+        db.execSQL(ValueBuyItemVersionControlTable.getDropSQL());
         onCreate(db);
 
     }

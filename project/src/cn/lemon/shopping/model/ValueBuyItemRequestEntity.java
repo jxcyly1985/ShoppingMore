@@ -12,14 +12,10 @@ import cn.lemon.shopping.MessageConstants;
 import cn.lemon.shopping.db.ValueBuyItemSQLOperator;
 import cn.lemon.shopping.db.ValueBuyItemTable;
 import cn.lemon.utils.DebugUtil;
-import cn.lemon.utils.StaticUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +38,7 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
     private int mTypeId;
     private int mRequestPage;
     private String mVersion;
-    private String mRealUrl = VALUE_BUY_LIST_URL;
+    private Bundle mBundle;
 
     private ValueBuyItemSQLOperator mValueBuyItemSQLOperator;
 
@@ -54,22 +50,15 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
 
     @Override
     protected ValueBuyItemTotalInfo getRequestEntity() {
-        ValueBuyItemTotalInfo valueBuyItemTotalInfo = fileGetValueBuyTotalInfo();
-        if (valueBuyItemTotalInfo != null) {
-            if (isExpired()) {
-                sendRequest();
-            }
-            return valueBuyItemTotalInfo;
-        }
-        sendRequest();
+
         return null;
     }
 
     @Override
     protected ValueBuyItemTotalInfo getRequestEntity(Bundle bundle) {
 
-        mRealUrl = VALUE_BUY_LIST_URL + getUrlParams(bundle);
-        ValueBuyItemTotalInfo valueBuyItemTotalInfo = dbGetValueBuyTotalInfo();
+        setRequestBundle(bundle);
+        ValueBuyItemTotalInfo valueBuyItemTotalInfo = getValueBuyItemTotalInfo();
         sendRequest();
         return valueBuyItemTotalInfo;
 
@@ -83,7 +72,7 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
             public void run() {
 
                 LemonNetWorkRequest request = new LemonNetWorkRequest();
-                request.mUrl = mRealUrl;
+                request.mUrl = getRequestUrl();
 
                 LemonHttpRequest httpRequest = new LemonHttpRequest(request, mValueBuyItemHandler);
                 httpRequest.get();
@@ -193,7 +182,12 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
         }
     };
 
+    private void setRequestBundle(Bundle bundle) {
+        mBundle = bundle;
+    }
+
     private String getUrlParams(Bundle bundle) {
+
         StringBuffer stringBuffer = new StringBuffer();
         mVersion = bundle.getString(PARAMS_VERSION);
         mTypeId = bundle.getInt(PARAMS_CID);
@@ -207,55 +201,23 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
                 .append(mRequestPage);
 
         return stringBuffer.toString();
+
     }
 
+    private String getRequestUrl() {
 
-    private void fileLocalize() {
-        File typeFile = getValueBuyItemFile();
-        try {
-            if (!typeFile.exists()) {
-                typeFile.createNewFile();
-            }
-            JSONObject jsonObject = new JSONObject(mServerData);
-            long requestTime = System.currentTimeMillis();
-            jsonObject.put(JSON_LAST_MODIFY_KEY, requestTime);
-            FileOutputStream fileOutputStream = new FileOutputStream(typeFile);
-            fileOutputStream.write(jsonObject.toString().getBytes());
-            fileOutputStream.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        return VALUE_BUY_LIST_URL + getUrlParams(mBundle);
     }
 
+    private ValueBuyItemTotalInfo getValueBuyItemTotalInfo() {
 
-    private File getValueBuyItemFile() {
-
-        File appDirFile = mContext.getFilesDir();
-        String valueBuyItemFilePath = appDirFile.getAbsolutePath() + VALUE_BUY_LIST_FILE;
-        return new File(valueBuyItemFilePath);
-    }
-
-    private ValueBuyItemTotalInfo fileGetValueBuyTotalInfo() {
-        File valueBuyItemFile = getValueBuyItemFile();
-        String jsonString = StaticUtils.getFileString(valueBuyItemFile);
-
-        DebugUtil.debug(TAG, "fileGetValueBuyTotalInfo jsonString " + jsonString);
-
-        if (jsonString != null) {
-            setServerData(jsonString);
-            return deSerialization();
-        }
-        return null;
-    }
-
-    private ValueBuyItemTotalInfo dbGetValueBuyTotalInfo() {
+        DebugUtil.debug(TAG, "getValueBuyItemTotalInfo");
         String selection = ValueBuyItemTable.TYPE_ID + "=?";
-        String[] selectionArgs = new String[]{String.valueOf(mTypeId)};
+        String typeId = String.valueOf(mTypeId);
+        String[] selectionArgs = new String[]{typeId};
         String orderBy = ValueBuyItemTable.ITEM_ID + " DESC";
-        DebugUtil.debug(TAG, "dbGetValueBuyTotalInfo");
         return mValueBuyItemSQLOperator.query(ValueBuyItemTable.COLUMNS, selection, selectionArgs, orderBy);
+
     }
+
 }

@@ -96,7 +96,10 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
         // QiYun<LeiYong><2014-03-19> modify for CR00000012 begin
         mImageFetcherManager.clear();
         // QiYun<LeiYong><2014-03-19> modify for CR00000012 end
+
+        // QiYun<LeiYong><2014-03-19> modify for CR00000019 begin
         LocalSQLiteOperator.getInstance(this).close();
+        // QiYun<LeiYong><2014-03-19> modify for CR00000019 end
         DebugUtil.debug(TAG, "onDestroy");
     }
 

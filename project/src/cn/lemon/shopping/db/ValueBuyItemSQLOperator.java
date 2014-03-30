@@ -53,9 +53,10 @@ public class ValueBuyItemSQLOperator extends BaseSQLOperator<ValueBuyItemTotalIn
     @Override
     public ValueBuyItemTotalInfo query(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
-        Cursor cursor = mSQLiteDatabase.query(ValueBuyItemTable.TABLE_NAME, ValueBuyItemTable.COLUMNS,
-                selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = null;
         try {
+            cursor = mSQLiteDatabase.query(ValueBuyItemTable.TABLE_NAME, ValueBuyItemTable.COLUMNS,
+                    selection, selectionArgs, null, null, sortOrder);
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 ValueBuyItemTotalInfo valueBuyItemTotalInfo = new ValueBuyItemTotalInfo();
@@ -72,6 +73,10 @@ public class ValueBuyItemSQLOperator extends BaseSQLOperator<ValueBuyItemTotalIn
                 valueBuyItemTotalInfo.mValueBuyItemInfoList = valueBuyItemInfoList;
                 return valueBuyItemTotalInfo;
             }
+        } catch (Exception e) {
+            // QiYun<LeiYong><2014-03-19> modify for CR00000019 begin
+            e.printStackTrace();
+            // QiYun<LeiYong><2014-03-19> modify for CR00000019 end
         } finally {
             if (cursor != null) {
                 cursor.close();
