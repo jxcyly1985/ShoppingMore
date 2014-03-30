@@ -37,7 +37,7 @@ public class ShoppingMoreDomainDataManager {
             case TYPE_AD:
                 return new AdRequestEntity(mContext);
             case TYPE_MALL:
-                return new MallCategoryRequestEntity(mContext);
+                return new MallRequestEntity(mContext);
             case TYPE_COMMODITY:
                 return new CommodityRequestEntity(mContext);
             case TYPE_VALUE_BUY_TYPE:

@@ -9,6 +9,7 @@ import android.widget.*;
 import cn.lemon.framework.BaseActivityGroup;
 import cn.lemon.shopping.adapter.ContentViewPagerAdapter;
 import cn.lemon.shopping.adapter.SettingViewAdapter;
+import cn.lemon.shopping.db.LocalSQLiteOperator;
 import cn.lemon.utils.DebugUtil;
 import android.os.Bundle;
 import android.app.LocalActivityManager;
@@ -95,6 +96,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
         // QiYun<LeiYong><2014-03-19> modify for CR00000012 begin
         mImageFetcherManager.clear();
         // QiYun<LeiYong><2014-03-19> modify for CR00000012 end
+        LocalSQLiteOperator.getInstance(this).close();
         DebugUtil.debug(TAG, "onDestroy");
     }
 
@@ -212,7 +214,7 @@ public class ShoppingMoreIndexActivity extends BaseActivityGroup implements
         PageScrollActivity recommendActivity = (PageScrollActivity) mLocalActivityManager.getActivity(mRecommendString);
         if (mSelectPos == POS_RECOMMEND_ACTIVITY) {
             recommendActivity.onPageSelected();
-        }else{
+        } else {
             recommendActivity.onPageScroll();
         }
     }

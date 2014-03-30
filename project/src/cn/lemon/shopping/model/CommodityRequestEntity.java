@@ -142,6 +142,8 @@ public class CommodityRequestEntity extends BaseRequestEntity<CommodityItems> {
                 mCommodityItems.mMsg = jsonObject.getString(JSON_KEY_MSG);
             }
         } catch (JSONException e) {
+
+            mIsSucceed = false;
             e.printStackTrace();
         }
 

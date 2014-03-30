@@ -12,7 +12,7 @@ import java.util.List;
 public class AdInfo {
 
     public long mRequestTime;
-    public boolean mIsSuccess;
+    public boolean mIsSucceed;
     public String mMessage;
     public List<AdData> mDatas;
     public String mVersion;
@@ -25,7 +25,7 @@ public class AdInfo {
 
     public String toString(){
 
-        return "IsSuccess " + mIsSuccess + " Message " + mMessage + " Datas " + mDatas;
+        return "IsSuccess " + mIsSucceed + " Message " + mMessage + " Datas " + mDatas;
     }
 
 }

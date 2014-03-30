@@ -1,5 +1,6 @@
 package cn.lemon.shopping.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -34,6 +35,6 @@ public abstract class BaseSQLOperator<T> {
 
     public abstract void delete(String whereClause, String[] whereArgs);
 
-    public abstract void update();
+    public abstract void update(ContentValues values, String whereClause, String[] whereArgs);
 
 }

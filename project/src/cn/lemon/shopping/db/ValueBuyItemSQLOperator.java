@@ -61,7 +61,7 @@ public class ValueBuyItemSQLOperator extends BaseSQLOperator<ValueBuyItemTotalIn
                 ValueBuyItemTotalInfo valueBuyItemTotalInfo = new ValueBuyItemTotalInfo();
                 List<ValueBuyItemInfo> valueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
                 do {
-                    ValueBuyItemInfo valueBuyItemInfo  = new ValueBuyItemInfo();
+                    ValueBuyItemInfo valueBuyItemInfo = new ValueBuyItemInfo();
                     valueBuyItemInfo.mTitle = cursor.getString(ValueBuyItemTable.ITEM_TITLE_INDEX);
                     valueBuyItemInfo.mImageUrl = cursor.getString(ValueBuyItemTable.ITEM_IMAGE_INDEX);
                     valueBuyItemInfo.mItemLink = cursor.getString(ValueBuyItemTable.ITEM_LINK_INDEX);
@@ -93,7 +93,9 @@ public class ValueBuyItemSQLOperator extends BaseSQLOperator<ValueBuyItemTotalIn
     }
 
     @Override
-    public void update() {
+    public void update(ContentValues values, String whereClause, String[] whereArgs) {
+
+        mSQLiteDatabase.update(ValueBuyItemTable.TABLE_NAME, values, whereClause, whereArgs);
 
     }
 }

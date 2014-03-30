@@ -3,10 +3,14 @@ package cn.lemon.shopping.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import cn.lemon.shopping.ShoppingConfig;
+import cn.lemon.utils.DebugUtil;
 
 public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private static final int DB_VERSION = 1;
+    private static final String TAG = "LocalSQLiteOpenHelper";
+
+    private static final int DB_VERSION = ShoppingConfig.DB_VERSION;
     private static final String DB_NAME = "shopping_more.db";
 
     private static LocalSQLiteOpenHelper sInstance;
@@ -28,18 +32,26 @@ public class LocalSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        DebugUtil.debug(TAG, "onCreate");
+
         db.execSQL(MallCategoryTable.getCreateSQL());
         db.execSQL(MallInfoTable.getCreateSQL());
         db.execSQL(ValueBuyItemTable.getCreateSQL());
+        db.execSQL(DatabaseVersionControlTable.getCreateSQL());
+        db.execSQL(DatabaseVersionControlTable.getCreateDefaultRow());
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        DebugUtil.debug(TAG, "onUpgrade oldVersion " + oldVersion + " newVersion " + newVersion);
+
         db.execSQL(MallCategoryTable.getDropSQL());
         db.execSQL(MallInfoTable.getDropSQL());
         db.execSQL(ValueBuyItemTable.getDropSQL());
+        db.execSQL(DatabaseVersionControlTable.getDropSQL());
+        onCreate(db);
 
     }
 

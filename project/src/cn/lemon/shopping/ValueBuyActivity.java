@@ -262,7 +262,6 @@ public class ValueBuyActivity extends PageScrollActivity {
             mItemAdapter.notifyDataSetChanged();
         }
 
-
     }
 
     private void handleValueBuyItemClick(int position) {

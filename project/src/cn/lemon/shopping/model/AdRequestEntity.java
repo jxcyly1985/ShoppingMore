@@ -108,7 +108,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
                 mAdInfo.mRequestTime = root.getLong(JSON_LAST_MODIFY_KEY);
             }
             boolean isSuccess = root.getBoolean(JSON_KEY_SUCCESS);
-            mAdInfo.mIsSuccess = isSuccess;
+            mAdInfo.mIsSucceed = isSuccess;
             if (isSuccess) {
                 List<AdInfo.AdData> datas = new ArrayList<AdInfo.AdData>();
                 JSONObject data = root.getJSONObject(JSON_KEY_DATA);
@@ -132,6 +132,7 @@ public class AdRequestEntity extends BaseRequestEntity<AdInfo> {
             }
 
         } catch (JSONException e) {
+            mAdInfo.mIsSucceed = false;
             e.printStackTrace();
         }
 

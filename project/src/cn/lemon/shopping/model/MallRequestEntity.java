@@ -1,7 +1,6 @@
 package cn.lemon.shopping.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Message;
 import cn.lemon.framework.FramewokUtils;
 import cn.lemon.framework.MessageManager;
@@ -9,13 +8,15 @@ import cn.lemon.network.LemonHttpRequest;
 import cn.lemon.network.LemonNetWorkHandler;
 import cn.lemon.network.LemonNetWorkRequest;
 import cn.lemon.shopping.MessageConstants;
-import cn.lemon.shopping.db.LocalSQLiteOperator;
+import cn.lemon.shopping.db.MallSQLOperator;
 import cn.lemon.utils.DebugUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,37 +25,31 @@ import java.util.*;
  * Time: 上午10:57
  * To change this template use File | Settings | File Templates.
  */
-public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> {
+public class MallRequestEntity extends BaseRequestEntity<MallTotalInfo> {
 
-    private static final String TAG = "MallCategoryRequestEntity";
+    private static final String TAG = "MallRequestEntity";
 
     private final int MALL_REQUEST_TIMER = 7 * 24 * 3600 * 1000;
     private final String DEFAULT_MALL_VERSION = "0";
 
-    public static final String MALL_VERSION = "mall_version";
-    private final String KEY_MALL_VERSION = "mall_version";
-    private final String KEY_LAST_REQUEST_TIME = "request_time";
-
     private Context mContext;
-    private LocalSQLiteOperator mLocalSQLiteOperator;
+    private MallSQLOperator mMallSQLOperator;
     private MallTotalInfo mMallTotalInfo;
 
-    protected MallCategoryRequestEntity(Context context) {
+    protected MallRequestEntity(Context context) {
         mContext = context;
-        mLocalSQLiteOperator = LocalSQLiteOperator.getInstance(mContext);
+        mMallSQLOperator = new MallSQLOperator(mContext);
     }
 
     @Override
     protected MallTotalInfo getRequestEntity() {
 
-        Map<String, CategoryEntryInfo> categoryInfoMap = mLocalSQLiteOperator.getMallCategory();
-        if (categoryInfoMap != null) {
-            MallTotalInfo mallTotalInfo = getDataFromDatabase(categoryInfoMap);
+        mMallTotalInfo = mMallSQLOperator.query();
+        if (mMallTotalInfo != null) {
             if (shouldNewRequest()) {
                 sendRequest();
             }
-            return mallTotalInfo;
-
+            return mMallTotalInfo;
         }
         sendRequest();
         return null;
@@ -67,7 +62,7 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
             public void run() {
 
                 LemonNetWorkRequest request = new LemonNetWorkRequest();
-                request.mUrl = MALL_DATA_URL;
+                request.mUrl = getRequestUrl();
 
                 LemonHttpRequest httpRequest = new LemonHttpRequest(request, mMallInfoHandler);
                 httpRequest.get();
@@ -78,17 +73,11 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
     @Override
     protected void localize() {
 
-        // SP Version Code
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY_MALL_VERSION, mMallTotalInfo.mVersion);
-        editor.putLong(KEY_LAST_REQUEST_TIME, System.currentTimeMillis());
-        editor.commit();
         // SQL
         if (isExpired()) {
-            mLocalSQLiteOperator.deleteExpiredMallTotalInfo();
+            mMallSQLOperator.delete(null, null);
         }
-        mLocalSQLiteOperator.insertMallTotalInfo(mMallTotalInfo);
+        mMallSQLOperator.insert(mMallTotalInfo);
     }
 
     @Override
@@ -133,6 +122,9 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
                     categoryList.add(categoryEntryInfo);
                 }
 
+                mMallTotalInfo.mHasNext = data.getBoolean(JSON_KEY_HAS_NEXT_PAGE);
+                mMallTotalInfo.mCurrentPage = data.getInt(JSON_KEY_CUR_PAGE);
+
                 mMallTotalInfo.mCategoryList = categoryList;
                 mMallTotalInfo.mVersion = root.getString(JSON_KEY_VERSION);
 
@@ -141,8 +133,8 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
                 mMallTotalInfo.mMsg = root.getString(JSON_KEY_MSG);
             }
 
-
         } catch (JSONException e) {
+            mIsSucceed = false;
             e.printStackTrace();
         }
 
@@ -160,7 +152,6 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
             Message msg = FramewokUtils.makeMessage(MessageConstants.MSG_NET_WORK_ERROR, null, 0, 0);
             MessageManager.getInstance().sendNotifyMessage(msg);
         }
-
 
     }
 
@@ -195,49 +186,19 @@ public class MallCategoryRequestEntity extends BaseRequestEntity<MallTotalInfo> 
         }
     };
 
-    private MallTotalInfo getDataFromDatabase(Map<String, CategoryEntryInfo> categoryInfoMap) {
+    private String getRequestUrl() {
 
-        mMallTotalInfo = new MallTotalInfo();
-        List<MallEntryInfo> mallInfoList = mLocalSQLiteOperator.getMallInfo();
-        if (mallInfoList != null) {
+        StringBuffer stringBuffer = new StringBuffer();
 
-            CategoryEntryInfo categoryEntryInfo = null;
-            ArrayList<CategoryEntryInfo> categoryEntryInfoArrayList = new ArrayList<CategoryEntryInfo>();
-            for (MallEntryInfo mallEntryInfo : mallInfoList) {
-                categoryEntryInfo = categoryInfoMap.get(mallEntryInfo.mCategoryId);
-                categoryEntryInfo.mMallEntryInfoList.add(mallEntryInfo);
-            }
-
-            for (Map.Entry<String, CategoryEntryInfo> entry : categoryInfoMap.entrySet()) {
-                categoryEntryInfoArrayList.add(entry.getValue());
-            }
-
-            Collections.sort(categoryEntryInfoArrayList, new Comparator<CategoryEntryInfo>() {
-                @Override
-                public int compare(CategoryEntryInfo lhs, CategoryEntryInfo rhs) {
-                    return lhs.mServerId.compareTo(rhs.mServerId);
-                }
-            });
-
-            mMallTotalInfo.mCategoryList = categoryEntryInfoArrayList;
-            mMallTotalInfo.mVersion = getMallServerVersion();
-            mMallTotalInfo.mRequestTime = getLastRequestTime();
+        if (mMallTotalInfo == null) {
+            stringBuffer.append(URL_PARAMS_VERSION)
+                    .append(DEFAULT_MALL_VERSION)
+                    .append("?page=1");
         }
 
-        return mMallTotalInfo;
+        return MALL_DATA_URL + stringBuffer.toString();
+
+
     }
-
-    private String getMallServerVersion() {
-
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
-        return sharedPreferences.getString(MALL_VERSION, DEFAULT_MALL_VERSION);
-    }
-
-    private long getLastRequestTime() {
-
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(COMMON_USER_INFO_FILE, 0);
-        return sharedPreferences.getLong(KEY_LAST_REQUEST_TIME, 0);
-    }
-
 
 }

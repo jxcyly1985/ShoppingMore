@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 import cn.lemon.bitmap.ImageFetcher;
-import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.ad.AdImageManager;
 import cn.lemon.shopping.adapter.MallEntryAdapter;
 import cn.lemon.shopping.category.CategoryIconManager;
@@ -149,7 +148,7 @@ public class RecommendActivity extends PageScrollActivity implements OnClickList
     private void initAdResource() {
 
         // QiYun<LeiYong><2014-03-20> modify for CR00000012 begin
-        if (mAdInfo != null && mAdInfo.mIsSuccess) {
+        if (mAdInfo != null && mAdInfo.mIsSucceed) {
             submitAdTask(mAdInfo);
             initImageSwitch();
         }
@@ -258,7 +257,8 @@ public class RecommendActivity extends PageScrollActivity implements OnClickList
     private void initCategory() {
 
         // QiYun<LeiYong><2014-03-20> modify for CR00000012 begin
-        if (mMallTotalInfo != null && mMallTotalInfo.mCategoryList.size() > 0) {
+        if (mMallTotalInfo != null
+                && mMallTotalInfo.mCategoryList != null && mMallTotalInfo.mCategoryList.size() > 0) {
             int pos = 0;
             CategoryEntryInfo categoryEntryInfo = mMallTotalInfo.mCategoryList.get(pos);
             initCategoryViewNoTopSide(categoryEntryInfo);

@@ -8,6 +8,9 @@ public class MallTotalInfo {
     public long mRequestTime;
     public String mVersion;
     public String mMsg;
+    public int mCurrentPage;
+    public boolean mIsSucceed;
+    public boolean mHasNext;
     public List<CategoryEntryInfo> mCategoryList;
 
 }
