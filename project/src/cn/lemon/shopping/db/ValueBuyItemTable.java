@@ -20,7 +20,8 @@ public class ValueBuyItemTable implements BaseColumns {
     public static final String ITEM_LINK = "link";
     public static final String ITEM_PRICE = "price";
 
-    public static final String[] COLUMNS = new String[]{TYPE_ID, ITEM_ID, ITEM_TITLE, ITEM_IMAGE, ITEM_LINK, ITEM_PRICE};
+    public static final String[] COLUMNS = new String[]{TYPE_ID, ITEM_ID, ITEM_TITLE,
+            ITEM_IMAGE, ITEM_LINK, ITEM_PRICE};
 
 
     public static final int TYPE_ID_INDEX = 0;

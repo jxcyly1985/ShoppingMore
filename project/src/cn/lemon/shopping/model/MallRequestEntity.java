@@ -189,6 +189,7 @@ public class MallRequestEntity extends BaseRequestEntity<MallTotalInfo> {
     private String getRequestUrl() {
 
         StringBuffer stringBuffer = new StringBuffer();
+        int requestPage = mMallTotalInfo.mCurrentPage + 1;
 
         if (mMallTotalInfo != null) {
             stringBuffer.append("?")
@@ -196,7 +197,7 @@ public class MallRequestEntity extends BaseRequestEntity<MallTotalInfo> {
                     .append(mMallTotalInfo.mVersion)
                     .append("&")
                     .append(URL_PARAMS_PAGE)
-                    .append(mMallTotalInfo.mCurrentPage + 1);
+                    .append(requestPage);
         }
 
         return MALL_DATA_URL + stringBuffer.toString();

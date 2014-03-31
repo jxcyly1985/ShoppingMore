@@ -21,9 +21,18 @@ public class ValueBuyItemVersionControlOperator extends BaseSQLOperator<ValueBuy
     @Override
     public void insert(ValueBuyItemVersionControlInfo valueBuyItemVersionControlInfo) {
 
+        boolean hasNext = valueBuyItemVersionControlInfo.mHasNext;
         ContentValues contentValues = new ContentValues();
         contentValues.put(ValueBuyItemVersionControlTable.VALUE_BUY_ITEM_TYPE_ID,
                 valueBuyItemVersionControlInfo.mTypeId);
+        contentValues.put(ValueBuyItemVersionControlTable.VALUE_BUY_ITEM_VERSION,
+                valueBuyItemVersionControlInfo.mValueBuyItemVersion);
+        contentValues.put(ValueBuyItemVersionControlTable.VALUE_BUY_REQUEST_TIME,
+                valueBuyItemVersionControlInfo.mValueBuyRequestTime);
+        contentValues.put(ValueBuyItemVersionControlTable.VALUE_BUY_ITEM_PAGE,
+                valueBuyItemVersionControlInfo.mValueBuyPage);
+        contentValues.put(ValueBuyItemVersionControlTable.VALUE_BUY_ITEM_HAS_NEXT, hasNext ? 1 : 0);
+
         mSQLiteDatabase.insert(ValueBuyItemVersionControlTable.TABLE_NAME, null, contentValues);
 
     }

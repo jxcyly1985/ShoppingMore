@@ -11,8 +11,6 @@ public class MallInfoTable implements BaseColumns {
     public static final String MALL_CATEGORY_ID = "category_id";
     public static final String MALL_WEIGHT = "mall_weight";
 
-    public static String SP = " ";
-
     public static final int MALL_NAME_INDEX = 0;
     public static final int MALL_ICON_URL_INDEX = 1;
     public static final int MALL_URL_INDEX = 2;
@@ -24,16 +22,25 @@ public class MallInfoTable implements BaseColumns {
 
     public static String getCreateSQL() {
 
-        String CREATE_SQL = "CREATE TABLE" + SP
-                + TABLE_NAME + SP
-                + "(" + MallInfoTable._ID + SP + "INTEGER PRIMARY KEY,"
-                + MALL_NAME + SP + "TEXT," + SP
-                + MALL_ICON_URL + SP + "TEXT,"
-                + MALL_URL + SP + "TEXT,"
-                + MALL_CATEGORY_ID + SP + "TEXT,"
-                + MALL_WEIGHT + SP + "INTEGER"
-                + ")";
-        return CREATE_SQL;
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("CREATE TABLE ")
+                .append(TABLE_NAME)
+                .append("(")
+                .append(_ID)
+                .append(" INTEGER PRIMARY KEY,")
+                .append(MALL_NAME)
+                .append(" TEXT,")
+                .append(MALL_ICON_URL)
+                .append(" TEXT,")
+                .append(MALL_URL)
+                .append(" TEXT,")
+                .append(MALL_CATEGORY_ID)
+                .append(" TEXT,")
+                .append(MALL_WEIGHT)
+                .append(" INTEGER,")
+                .append(")");
+
+        return stringBuffer.toString();
     }
 
     public static String getDropSQL() {

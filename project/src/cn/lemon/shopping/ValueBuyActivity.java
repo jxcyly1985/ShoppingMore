@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import cn.lemon.bitmap.ImageFetcher;
-import cn.lemon.framework.BaseActivity;
 import cn.lemon.shopping.adapter.ValueBuyItemAdapter;
 import cn.lemon.shopping.adapter.ValueBuyTypeAdapter;
 import cn.lemon.shopping.model.*;
@@ -25,26 +24,21 @@ public class ValueBuyActivity extends PageScrollActivity {
 
     public static final String TAG = "ValueBuyActivity";
 
-    private final String DEFAULT_SERVER_DATA_VERSION = "0";
-
     private ShoppingMoreDomainDataManager mShoppingMoreDomainDataManager;
     private HorizontalListView mHorizontalListView;
     private GridView mGridView;
     private BaseAdapter mTypeAdapter;
     private BaseAdapter mItemAdapter;
     private List<ValueBuyTypeInfo> mValueBuyTypeInfoList = new ArrayList<ValueBuyTypeInfo>();
-    private List<ValueBuyItemInfo> mValueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
+    private List<ValueBuyItemInfo> mAdapterValueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
 
-    private SparseArray<List<ValueBuyItemInfo>> mTypeItemSparseArray = new SparseArray<List<ValueBuyItemInfo>>();
+    private SparseArray<List<ValueBuyItemInfo>> mItemListSparseArray = new SparseArray<List<ValueBuyItemInfo>>();
 
 
     private ValueBuyTotalTypes mValueBuyTotalTypes;
     private ValueBuyItemTotalInfo mValueBuyItemTotalInfo;
-
-    private int mCurrentTypeId;
-    private int mLastTypeId;
-    private BaseRequestEntity mValueBuyItemRequestEntity;
     private RequestEntityDelegator<ValueBuyItemTotalInfo> mItemTotalInfoRequestEntityDelegator;
+    private int mCurrentTypeId;
 
 
     @Override
@@ -66,11 +60,11 @@ public class ValueBuyActivity extends PageScrollActivity {
 
         BaseRequestEntity typeRquestEntity =
                 mShoppingMoreDomainDataManager.getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_VALUE_BUY_TYPE);
-        mValueBuyItemRequestEntity =
+        BaseRequestEntity valueBuyItemRequestEntity =
                 mShoppingMoreDomainDataManager.getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_VALUE_BUY_ITEM);
 
         mValueBuyTotalTypes = typeRequestDelegator.getRequestEntity(typeRquestEntity);
-        mValueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator.getRequestEntity(mValueBuyItemRequestEntity);
+        mValueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator.getRequestEntity(valueBuyItemRequestEntity);
 
         DebugUtil.debug(TAG, "initData mValueBuyTotalTypes " + mValueBuyTotalTypes);
         DebugUtil.debug(TAG, "initData mValueBuyItemTotalInfo " + mValueBuyItemTotalInfo);
@@ -79,7 +73,7 @@ public class ValueBuyActivity extends PageScrollActivity {
             mValueBuyTypeInfoList.addAll(mValueBuyTotalTypes.mValueBuyTypeInfoList);
         }
         if (mValueBuyItemTotalInfo != null && mValueBuyItemTotalInfo.mValueBuyItemInfoList != null) {
-            mValueBuyItemInfoList.addAll(mValueBuyItemTotalInfo.mValueBuyItemInfoList);
+            mAdapterValueBuyItemInfoList.addAll(mValueBuyItemTotalInfo.mValueBuyItemInfoList);
         }
     }
 
@@ -89,7 +83,7 @@ public class ValueBuyActivity extends PageScrollActivity {
         mHorizontalListView = (HorizontalListView) findViewById(R.id.id_value_buy_type_list_view);
         mGridView = (GridView) findViewById(R.id.id_value_buy_concrete_commodity_grid);
         mTypeAdapter = new ValueBuyTypeAdapter(this, mValueBuyTypeInfoList);
-        mItemAdapter = new ValueBuyItemAdapter(this, mValueBuyItemInfoList, imageFetcher);
+        mItemAdapter = new ValueBuyItemAdapter(this, mAdapterValueBuyItemInfoList, imageFetcher);
         mHorizontalListView.setAdapter(mTypeAdapter);
         mGridView.setAdapter(mItemAdapter);
 
@@ -194,15 +188,45 @@ public class ValueBuyActivity extends PageScrollActivity {
 
         switch (what) {
             case MessageConstants.MSG_VALUE_BUY_TYPE:
-                handleValueBuyType(message);
+                handleValueBuyTypeMsg(message);
                 break;
             case MessageConstants.MSG_VALUE_BUY_LIST:
-                handleValueBuyItem(message);
+                handleValueBuyItemMsg(message);
                 break;
         }
     }
 
-    private void handleValueBuyType(Message message) {
+    private List<ValueBuyItemInfo> getCacheItemInfoList(int typeId) {
+
+        if (mItemListSparseArray.indexOfKey(typeId) < 0) {
+            return null;
+        } else {
+            return mItemListSparseArray.get(mCurrentTypeId);
+        }
+    }
+
+    private void putCacheItemInfoList(ValueBuyItemTotalInfo valueBuyItemTotalInfo) {
+
+        int typeId = valueBuyItemTotalInfo.mTypeId;
+        List<ValueBuyItemInfo> valueBuyItemInfoList = null;
+        if (mItemListSparseArray.indexOfKey(typeId) < 0) {
+            valueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
+            mItemListSparseArray.put(valueBuyItemTotalInfo.mTypeId, valueBuyItemInfoList);
+        } else {
+            valueBuyItemInfoList = mItemListSparseArray.get(typeId);
+            valueBuyItemInfoList.addAll(valueBuyItemTotalInfo.mValueBuyItemInfoList);
+        }
+    }
+
+    private void notifyAdapterDataChange(List<ValueBuyItemInfo> valueBuyItemInfoList) {
+
+        mAdapterValueBuyItemInfoList.clear();
+        mAdapterValueBuyItemInfoList.addAll(valueBuyItemInfoList);
+        mItemAdapter.notifyDataSetChanged();
+
+    }
+
+    private void handleValueBuyTypeMsg(Message message) {
 
         mValueBuyTotalTypes = (ValueBuyTotalTypes) message.obj;
 
@@ -210,7 +234,6 @@ public class ValueBuyActivity extends PageScrollActivity {
             mValueBuyTypeInfoList.clear();
             mValueBuyTypeInfoList.addAll(mValueBuyTotalTypes.mValueBuyTypeInfoList);
             mCurrentTypeId = mValueBuyTypeInfoList.get(0).mTypeId;
-            mLastTypeId = mCurrentTypeId;
             mTypeAdapter.notifyDataSetChanged();
         } else {
             //TODO handle server error
@@ -218,53 +241,60 @@ public class ValueBuyActivity extends PageScrollActivity {
 
     }
 
-    private void handleValueBuyItem(Message message) {
+    private void handleValueBuyItemMsg(Message message) {
 
         ValueBuyItemTotalInfo valueBuyItemTotalInfo = (ValueBuyItemTotalInfo) message.obj;
+
         if (valueBuyItemTotalInfo.mIsSucceed) {
-            mValueBuyItemInfoList.clear();
-            mValueBuyItemInfoList.addAll(valueBuyItemTotalInfo.mValueBuyItemInfoList);
-            mItemAdapter.notifyDataSetChanged();
+
+            putCacheItemInfoList(valueBuyItemTotalInfo);
+
+            if (shouldNotifyAdapterDataChange(valueBuyItemTotalInfo)) {
+
+                List<ValueBuyItemInfo> valueBuyItemInfoList = getCacheItemInfoList(mCurrentTypeId);
+                notifyAdapterDataChange(valueBuyItemInfoList);
+            }
+
         } else {
             //TODO handle server error
         }
     }
 
+    private boolean shouldNotifyAdapterDataChange(ValueBuyItemTotalInfo valueBuyItemTotalInfo) {
+
+        return valueBuyItemTotalInfo.mTypeId == mCurrentTypeId;
+    }
+
     private void handleValueBuyTypeClick(int position) {
 
         DebugUtil.debug(TAG, "handleValueBuyTypeClick position " + position);
-        mCurrentTypeId = mValueBuyTypeInfoList.get(position).mTypeId;
-        Bundle bundle = new Bundle();
-        bundle.putString(BaseRequestEntity.PARAMS_VERSION, DEFAULT_SERVER_DATA_VERSION);
-        bundle.putInt(BaseRequestEntity.PARAMS_CID, mCurrentTypeId);
-        bundle.putString(BaseRequestEntity.PARAMS_PAGE, "");
-        ValueBuyItemTotalInfo valueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator
-                .getRequestEntity(mValueBuyItemRequestEntity, bundle);
 
-        List<ValueBuyItemInfo> memValueBuyItemInfoList = null;
-        if (mTypeItemSparseArray.indexOfKey(mCurrentTypeId) >= 0) {
-            memValueBuyItemInfoList = mTypeItemSparseArray.get(mCurrentTypeId);
-        }
+        ValueBuyTypeInfo valueBuyTypeInfo = mValueBuyTypeInfoList.get(position);
+        if (valueBuyTypeInfo.mTypeId != mCurrentTypeId) {
 
-        if (valueBuyItemTotalInfo != null) {
-            List<ValueBuyItemInfo> valueBuyItemInfoList;
-            if (mTypeItemSparseArray.indexOfKey(mCurrentTypeId) < 0) {
-                valueBuyItemInfoList = new ArrayList<ValueBuyItemInfo>();
-            } else {
-                valueBuyItemInfoList = mTypeItemSparseArray.get(mCurrentTypeId);
-            }
-            valueBuyItemInfoList.addAll(valueBuyItemTotalInfo.mValueBuyItemInfoList);
-
-            if (mLastTypeId != mCurrentTypeId) {
-                mValueBuyItemInfoList.clear();
-                mValueBuyItemInfoList.addAll(valueBuyItemInfoList);
-            } else {
-                mValueBuyItemInfoList.addAll(valueBuyItemInfoList);
+            mCurrentTypeId = valueBuyTypeInfo.mTypeId;
+            List<ValueBuyItemInfo> valueBuyItemInfoList = getCacheItemInfoList(mCurrentTypeId);
+            if (valueBuyItemInfoList != null) {
+                notifyAdapterDataChange(valueBuyItemInfoList);
+                return;
             }
 
-            mItemAdapter.notifyDataSetChanged();
-        }
+            // QiYun<LeiYong><2014-03-31> modify for CR00000020 begin
+            BaseRequestEntity valueBuyItemRequestEntity = mShoppingMoreDomainDataManager
+                    .getRequestEntityDelegator(ShoppingMoreDomainDataManager.TYPE_VALUE_BUY_ITEM);
+            // QiYun<LeiYong><2014-03-31> modify for CR00000020 end
 
+            Bundle bundle = new Bundle();
+            bundle.putInt(BaseRequestEntity.PARAMS_CID, mCurrentTypeId);
+            ValueBuyItemTotalInfo valueBuyItemTotalInfo = mItemTotalInfoRequestEntityDelegator
+                    .getRequestEntity(valueBuyItemRequestEntity, bundle);
+
+            if (valueBuyItemTotalInfo != null) {
+
+                putCacheItemInfoList(valueBuyItemTotalInfo);
+                notifyAdapterDataChange(valueBuyItemTotalInfo.mValueBuyItemInfoList);
+            }
+        }
     }
 
     private void handleValueBuyItemClick(int position) {

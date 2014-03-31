@@ -116,7 +116,7 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
             contentValues.put(MallCategoryTable.CATEGORY_ID, categoryInfo.mServerId);
             contentValues.put(MallCategoryTable.CATEGORY_NAME, categoryInfo.mCategoryName);
             contentValues.put(MallCategoryTable.CATEGORY_ICON, categoryInfo.mIconUrl);
-            contentValues.put(MallCategoryTable.CATEGROY_BG_COLOR, categoryInfo.mBackgroundColor);
+            contentValues.put(MallCategoryTable.CATEGORY_BG_COLOR, categoryInfo.mBackgroundColor);
             mSQLiteDatabase.insert(MallCategoryTable.TABLE_NAME, null, contentValues);
         }
 
@@ -147,7 +147,6 @@ public class MallSQLOperator extends BaseSQLOperator<MallTotalInfo> {
         sortCategoryEntryInfo(categoryEntryInfoList);
         setCategoryEntryInfoList(mallTotalInfo, categoryEntryInfoList);
         setDatabaseVersionControlInfo(mallTotalInfo);
-
 
         return mallTotalInfo;
     }

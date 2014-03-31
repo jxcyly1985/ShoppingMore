@@ -53,6 +53,9 @@
     CR00000019(ShoppingMoreIndexActivity.java, BaseSQLOperator.java的子类的查询操作)
     处理程序退出时候关闭数据库，数据的完整性由数据库事务机制来保证, 但是查询操作需要加异常处理
 
+    CR00000020 (ValueBuyActivity.java)
+    修改值得买的请求实体，每次需要重新创建，防止entity数据需要同步，以及bundle被其他请求所覆盖
+
 未解决：
 
     CR00000015(HorizontalListView.java)
@@ -63,6 +66,8 @@
 
     CR00000018
     值得买页面是否需要内存数据缓存，还是每次都是去数据库里取（取在UI线程，是否会引起UI卡顿现象）
+
+
 
 
 

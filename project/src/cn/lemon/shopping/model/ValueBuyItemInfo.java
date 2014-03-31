@@ -9,6 +9,7 @@ package cn.lemon.shopping.model;
  */
 public class ValueBuyItemInfo {
 
+    public int mTypeId;
     public int mItemId;
     public String mTitle;
     public String mImageUrl;
@@ -16,7 +17,7 @@ public class ValueBuyItemInfo {
     public String mPrice;
 
     public String toString() {
-        return "ItemId " + mItemId + " Title " + mTitle + " ImageUrl "
+        return "TypeId " + mTypeId + " ItemId " + mItemId + " Title " + mTitle + " ImageUrl "
                 + mImageUrl + " ItemLink " + mItemLink + " Price " + mPrice;
     }
 

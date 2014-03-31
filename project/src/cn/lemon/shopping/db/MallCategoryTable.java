@@ -9,11 +9,9 @@ public class MallCategoryTable implements BaseColumns {
     public static final String CATEGORY_ID = "server_id";
     public static final String CATEGORY_NAME = "category_name";
     public static final String CATEGORY_ICON = "icon";
-    public static final String CATEGROY_BG_COLOR = "color";
+    public static final String CATEGORY_BG_COLOR = "color";
 
-    public static String SP = " ";
-
-    public static String[] COLUMNS = new String[]{CATEGORY_ID, CATEGORY_NAME, CATEGORY_ICON, CATEGROY_BG_COLOR};
+    public static String[] COLUMNS = new String[]{CATEGORY_ID, CATEGORY_NAME, CATEGORY_ICON, CATEGORY_BG_COLOR};
 
     public static final int CATEGORY_ID_INDEX = 0;
     public static final int CATEGORY_NAME_INDEX = 1;
@@ -22,17 +20,27 @@ public class MallCategoryTable implements BaseColumns {
 
     public static String getCreateSQL() {
 
-        String CREATE_SQL = "CREATE TABLE" + SP
-                + TABLE_NAME + SP
-                + "(" + MallCategoryTable._ID + SP + "INTEGER PRIMARY KEY,"
-                + CATEGORY_ID + SP + "TEXT,"
-                + CATEGORY_NAME + SP + "TEXT,"
-                + CATEGORY_ICON + SP + "TEXT,"
-                + CATEGROY_BG_COLOR + SP + "TEXT" + ")";
-        return CREATE_SQL;
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("CREATE TABLE ")
+                .append(TABLE_NAME)
+                .append("(")
+                .append(_ID)
+                .append(" INTEGER PRIMARY KEY,")
+                .append(CATEGORY_ID)
+                .append(" TEXT,")
+                .append(CATEGORY_NAME)
+                .append(" TEXT,")
+                .append(CATEGORY_ICON)
+                .append(" TEXT,")
+                .append(CATEGORY_BG_COLOR)
+                .append(" TEXT,")
+                .append(")");
+
+        return stringBuffer.toString();
     }
 
     public static String getDropSQL() {
+
         return "DROP TABLE IF EXISTS mall_category";
 
     }

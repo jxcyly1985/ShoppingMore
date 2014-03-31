@@ -11,6 +11,8 @@ import cn.lemon.network.LemonNetWorkRequest;
 import cn.lemon.shopping.MessageConstants;
 import cn.lemon.shopping.db.ValueBuyItemSQLOperator;
 import cn.lemon.shopping.db.ValueBuyItemTable;
+import cn.lemon.shopping.db.ValueBuyItemVersionControlOperator;
+import cn.lemon.shopping.db.ValueBuyItemVersionControlTable;
 import cn.lemon.utils.DebugUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,8 +31,8 @@ import java.util.List;
 public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTotalInfo> {
 
     private static final String TAG = "ValueBuyItemRequestEntity";
-    private final long VALUE_BUY_ITEM_REQUEST_TIMER = 6 * 3600 * 1000;
 
+    private final long VALUE_BUY_ITEM_REQUEST_TIMER = 6 * 3600 * 1000;
 
     private Context mContext;
     private ValueBuyItemTotalInfo mValueBuyTotalInfo;
@@ -41,11 +43,12 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
     private Bundle mBundle;
 
     private ValueBuyItemSQLOperator mValueBuyItemSQLOperator;
-
+    private ValueBuyItemVersionControlOperator mValueBuyItemVersionControlOperator;
 
     protected ValueBuyItemRequestEntity(Context context) {
         mContext = context;
         mValueBuyItemSQLOperator = new ValueBuyItemSQLOperator(mContext);
+        mValueBuyItemVersionControlOperator = new ValueBuyItemVersionControlOperator(mContext);
     }
 
     @Override
@@ -189,15 +192,26 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
     private String getUrlParams(Bundle bundle) {
 
         StringBuffer stringBuffer = new StringBuffer();
-        mVersion = bundle.getString(PARAMS_VERSION);
+
         mTypeId = bundle.getInt(PARAMS_CID);
-        mRequestPage = bundle.getInt(PARAMS_PAGE);
+
+        String selection = ValueBuyItemVersionControlTable.VALUE_BUY_ITEM_TYPE_ID + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(mTypeId)};
+
+        ValueBuyItemVersionControlInfo valueBuyItemVersionControlInfo =
+                mValueBuyItemVersionControlOperator.query(null, selection, selectionArgs, null);
+
+        mVersion = valueBuyItemVersionControlInfo.mValueBuyItemVersion;
+        mRequestPage = valueBuyItemVersionControlInfo.mValueBuyPage + 1;
+
         stringBuffer.append("?")
-                .append(PARAMS_VERSION).append("=")
+                .append(URL_PARAMS_VERSION).append("=")
                 .append(mVersion)
+                .append("&")
                 .append(PARAMS_CID).append("=")
                 .append(mTypeId)
-                .append(PARAMS_PAGE).append("=")
+                .append("&")
+                .append(URL_PARAMS_PAGE).append("=")
                 .append(mRequestPage);
 
         return stringBuffer.toString();
@@ -212,10 +226,12 @@ public class ValueBuyItemRequestEntity extends BaseRequestEntity<ValueBuyItemTot
     private ValueBuyItemTotalInfo getValueBuyItemTotalInfo() {
 
         DebugUtil.debug(TAG, "getValueBuyItemTotalInfo");
+
         String selection = ValueBuyItemTable.TYPE_ID + "=?";
         String typeId = String.valueOf(mTypeId);
         String[] selectionArgs = new String[]{typeId};
         String orderBy = ValueBuyItemTable.ITEM_ID + " DESC";
+
         return mValueBuyItemSQLOperator.query(ValueBuyItemTable.COLUMNS, selection, selectionArgs, orderBy);
 
     }
